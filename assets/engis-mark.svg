@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 112" role="img" aria-labelledby="engisMarkTitle">
+  <title id="engisMarkTitle">EnGIS mark</title>
+  <defs>
+    <linearGradient id="engisGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8bbc5c" />
+      <stop offset="100%" stop-color="#5e9d53" />
+    </linearGradient>
+    <linearGradient id="engisBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5a94c8" />
+      <stop offset="100%" stop-color="#2f5f90" />
+    </linearGradient>
+  </defs>
+  <path
+    d="M26 10h60c8.84 0 16 7.16 16 16v24c0 1.66-1.34 3-3 3H82c-1.66 0-3-1.34-3-3V32c0-4.42-3.58-8-8-8H41c-4.42 0-8 3.58-8 8v18c0 1.66-1.34 3-3 3H13c-1.66 0-3-1.34-3-3V26c0-8.84 7.16-16 16-16Z"
+    fill="url(#engisGreen)"
+  />
+  <path
+    d="M13 59h17c1.66 0 3 1.34 3 3v18c0 4.42 3.58 8 8 8h30c4.42 0 8-3.58 8-8V62c0-1.66 1.34-3 3-3h17c1.66 0 3 1.34 3 3v24c0 8.84-7.16 16-16 16H26c-8.84 0-16-7.16-16-16V62c0-1.66 1.34-3 3-3Z"
+    fill="url(#engisBlue)"
+  />
+</svg>

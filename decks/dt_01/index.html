@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DT 01 Sample Screens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #eef3f7;
+    --panel: #ffffff;
+    --line: rgba(15, 23, 32, 0.08);
+    --text: #162130;
+    --muted: #64748b;
+    --brand: #0f6e56;
+    --brand-2: #1b3a6b;
+    --shadow: 0 24px 50px rgba(15, 23, 32, 0.08);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: Pretendard, "Noto Sans KR", sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(circle at top left, rgba(15, 110, 86, 0.08), transparent 24%),
+      radial-gradient(circle at right 10%, rgba(27, 58, 107, 0.08), transparent 22%),
+      linear-gradient(180deg, #f6f9fc 0%, #edf2f7 100%);
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  .page {
+    width: min(1240px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 2rem 0 4rem;
+  }
+
+  .utility-bar {
+    position: sticky;
+    top: 0.85rem;
+    z-index: 40;
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 1rem;
+  }
+
+  .utility-bar a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.6rem;
+    padding: 0.65rem 0.95rem;
+    border-radius: 999px;
+    border: 1px solid rgba(15, 110, 86, 0.18);
+    background: rgba(15, 110, 86, 0.94);
+    color: #fff;
+    font-weight: 700;
+    box-shadow: var(--shadow);
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
+    gap: 1.5rem;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .eyebrow {
+    font-family: Montserrat, sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--brand);
+  }
+
+  h1 {
+    margin: 0.75rem 0 0;
+    font-family: Montserrat, Pretendard, sans-serif;
+    font-size: clamp(2.4rem, 4.8vw, 4.8rem);
+    line-height: 0.95;
+    letter-spacing: -0.05em;
+    text-wrap: balance;
+    max-width: 11ch;
+  }
+
+  .hero p {
+    margin: 1.25rem 0 0;
+    color: var(--muted);
+    line-height: 1.8;
+    max-width: 40rem;
+  }
+
+  .hero-card {
+    padding: 1.4rem;
+    border-radius: 1.6rem;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.74);
+    box-shadow: var(--shadow);
+  }
+
+  .hero-list {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .hero-list div {
+    display: grid;
+    grid-template-columns: 2.6rem 1fr;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.85rem 0.95rem;
+    border-radius: 1rem;
+    background: rgba(15, 23, 32, 0.03);
+  }
+
+  .hero-list strong {
+    display: inline-grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 999px;
+    background: rgba(15, 110, 86, 0.12);
+    color: var(--brand);
+    font-family: Montserrat, sans-serif;
+    font-size: 0.88rem;
+  }
+
+  .screen-stack {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .screen-card {
+    padding: 1.1rem;
+    border-radius: 1.7rem;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.78);
+    box-shadow: var(--shadow);
+  }
+
+  .screen-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .screen-head-copy {
+    max-width: 42rem;
+  }
+
+  .screen-num {
+    display: inline-block;
+    margin-bottom: 0.3rem;
+    color: var(--brand);
+    font-family: Montserrat, sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+
+  .screen-head h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+  }
+
+  .screen-head p {
+    margin: 0.45rem 0 0;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .screen-actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0.7rem 0.95rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .button-primary {
+    background: var(--brand-2);
+    color: white;
+  }
+
+  .button-secondary {
+    background: rgba(15, 23, 32, 0.04);
+    border-color: var(--line);
+    color: var(--text);
+  }
+
+  .frame-shell {
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem 0 0.1rem;
+  }
+
+  .frame-shell.desktop iframe,
+  .frame-shell.tablet iframe {
+    width: min(100%, 1060px);
+    height: 700px;
+    border: 0;
+    border-radius: 1.2rem;
+    background: white;
+    box-shadow: inset 0 0 0 1px rgba(15, 23, 32, 0.08);
+  }
+
+  .frame-shell.mobile iframe {
+    width: 360px;
+    height: 760px;
+    border: 0;
+    border-radius: 2rem;
+    background: white;
+    box-shadow: 0 0 0 10px rgba(15, 23, 32, 0.06);
+  }
+
+  @media (max-width: 1024px) {
+    .hero {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .page {
+      width: min(100% - 1rem, 1240px);
+      padding-top: 1rem;
+    }
+
+    .screen-head {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .frame-shell.desktop iframe,
+    .frame-shell.tablet iframe {
+      height: 560px;
+    }
+
+    .frame-shell.mobile iframe {
+      width: min(100%, 360px);
+      height: 700px;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="utility-bar">
+      <a href="../../services.html#service-decks">사업설명자료로 돌아가기</a>
+    </div>
+    <section class="hero">
+      <div>
+        <div class="eyebrow">KHOA Lite Digital Twin</div>
+        <h1>한국해양조사협회 Lite 디지털트윈 화면 구상안</h1>
+        <p>
+          한국해양조사협회 Lite 디지털트윈 서비스의 핵심 화면을 대시보드, 관측소,
+          알람, 경력, 모바일 순서로 정리했습니다. 각 화면은 검토와 설명에 적합하도록
+          과도하게 커지지 않는 프리뷰 카드 형태로 구성했습니다.
+        </p>
+      </div>
+      <div class="hero-card">
+        <div class="hero-list">
+          <div><strong>1</strong><span>대시보드</span></div>
+          <div><strong>2</strong><span>관측소 상세</span></div>
+          <div><strong>3</strong><span>AI 알람</span></div>
+          <div><strong>4</strong><span>경력 디지털카드</span></div>
+          <div><strong>5</strong><span>모바일 현장점검</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen-stack">
+      <article class="screen-card" id="dashboard">
+        <div class="screen-head">
+          <div class="screen-head-copy">
+            <span class="screen-num">01</span>
+            <h2>대시보드</h2>
+            <p>전국 관측소 현황, 상태 분포, 지도 기반 위치 파악을 한 화면에 담은 메인 운영 화면입니다.</p>
+          </div>
+          <div class="screen-actions">
+            <a class="button button-primary" href="./toms_gis_dashboard.html">전체 보기</a>
+          </div>
+        </div>
+        <div class="frame-shell desktop">
+          <iframe src="./toms_gis_dashboard.html" title="TOMS GIS Dashboard"></iframe>
+        </div>
+      </article>
+
+      <article class="screen-card" id="station">
+        <div class="screen-head">
+          <div class="screen-head-copy">
+            <span class="screen-num">02</span>
+            <h2>관측소 상세</h2>
+            <p>개별 관측소의 상태, 장비별 이슈, 점검 요청 액션까지 한곳에서 볼 수 있는 상세 화면입니다.</p>
+          </div>
+          <div class="screen-actions">
+            <a class="button button-primary" href="./toms_station_detail.html">전체 보기</a>
+          </div>
+        </div>
+        <div class="frame-shell tablet">
+          <iframe src="./toms_station_detail.html" title="TOMS Station Detail"></iframe>
+        </div>
+      </article>
+
+      <article class="screen-card" id="alerts">
+        <div class="screen-head">
+          <div class="screen-head-copy">
+            <span class="screen-num">03</span>
+            <h2>알람 센터</h2>
+            <p>이상 탐지 결과를 우선순위별로 정리하고, AI 예측과 대응 이력까지 함께 보는 알람 화면입니다.</p>
+          </div>
+          <div class="screen-actions">
+            <a class="button button-primary" href="./toms_ai_alerts.html">전체 보기</a>
+          </div>
+        </div>
+        <div class="frame-shell tablet">
+          <iframe src="./toms_ai_alerts.html" title="TOMS AI Alerts"></iframe>
+        </div>
+      </article>
+
+      <article class="screen-card" id="career">
+        <div class="screen-head">
+          <div class="screen-head-copy">
+            <span class="screen-num">04</span>
+            <h2>경력 디지털카드</h2>
+            <p>기술자의 자격, 활동 이력, 교육 현황을 한눈에 정리한 인력 운영용 카드 화면입니다.</p>
+          </div>
+          <div class="screen-actions">
+            <a class="button button-primary" href="./career_digital_card.html">전체 보기</a>
+          </div>
+        </div>
+        <div class="frame-shell tablet">
+          <iframe src="./career_digital_card.html" title="Career Digital Card"></iframe>
+        </div>
+      </article>
+
+      <article class="screen-card" id="mobile">
+        <div class="screen-head">
+          <div class="screen-head-copy">
+            <span class="screen-num">05</span>
+            <h2>모바일 현장점검</h2>
+            <p>현장 기사 관점에서 체크리스트, 사진 첨부, 결과 제출까지 이어지는 모바일 점검 화면입니다.</p>
+          </div>
+          <div class="screen-actions">
+            <a class="button button-primary" href="./mobile_field_inspection.html">전체 보기</a>
+          </div>
+        </div>
+        <div class="frame-shell mobile">
+          <iframe src="./mobile_field_inspection.html" title="Mobile Field Inspection"></iframe>
+        </div>
+      </article>
+    </section>
+  </div>
+</body>
+</html>

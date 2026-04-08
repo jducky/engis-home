@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>해양관측시설 경량 디지털트윈 검토보고서</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #eef4f7;
+    --panel: rgba(255, 255, 255, 0.82);
+    --line: rgba(15, 23, 32, 0.1);
+    --text: #152130;
+    --muted: #607083;
+    --brand: #0d6b57;
+    --brand-2: #245ea8;
+    --shadow: 0 24px 50px rgba(15, 23, 32, 0.08);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Pretendard, "Noto Sans KR", sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(circle at top left, rgba(13, 107, 87, 0.08), transparent 24%),
+      radial-gradient(circle at right 10%, rgba(36, 94, 168, 0.08), transparent 22%),
+      linear-gradient(180deg, #f7fafc 0%, #edf3f7 100%);
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  .page {
+    width: min(1180px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 2rem 0 4rem;
+  }
+
+  .utility-bar {
+    position: sticky;
+    top: 0.85rem;
+    z-index: 40;
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 1rem;
+  }
+
+  .utility-bar a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.6rem;
+    padding: 0.65rem 0.95rem;
+    border-radius: 999px;
+    border: 1px solid rgba(13, 107, 87, 0.18);
+    background: rgba(13, 107, 87, 0.94);
+    color: #fff;
+    font-weight: 700;
+    box-shadow: var(--shadow);
+  }
+
+  .hero,
+  .section {
+    padding: 1.2rem 0;
+  }
+
+  .eyebrow,
+  .section-kicker {
+    color: var(--brand);
+    font-family: Montserrat, sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .hero-grid,
+  .two-grid,
+  .three-grid,
+  .metrics {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1.05fr 0.95fr;
+    align-items: start;
+  }
+
+  h1,
+  h2 {
+    margin: 0.8rem 0 0;
+    font-family: Montserrat, Pretendard, sans-serif;
+    letter-spacing: -0.05em;
+    line-height: 0.96;
+  }
+
+  h1 {
+    font-size: clamp(2.4rem, 4.8vw, 4.8rem);
+    max-width: 12ch;
+  }
+
+  h2 {
+    font-size: clamp(1.8rem, 3.5vw, 3rem);
+    max-width: 15ch;
+  }
+
+  .intro,
+  .section p,
+  .card p,
+  .note,
+  .table-wrap {
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .intro { margin-top: 1.2rem; max-width: 46rem; }
+
+  .panel,
+  .card,
+  .metric,
+  .note,
+  .table-wrap {
+    border-radius: 1.5rem;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    box-shadow: var(--shadow);
+  }
+
+  .panel,
+  .card,
+  .note,
+  .table-wrap { padding: 1.25rem; }
+
+  .metrics {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-top: 1.4rem;
+  }
+
+  .metric {
+    padding: 1rem;
+  }
+
+  .metric strong {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-family: Montserrat, sans-serif;
+    font-size: 1.35rem;
+    color: var(--brand-2);
+  }
+
+  .two-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 1rem;
+  }
+
+  .three-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 1rem;
+  }
+
+  .card-index {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    height: 2rem;
+    padding: 0 0.6rem;
+    border-radius: 999px;
+    background: rgba(13, 107, 87, 0.1);
+    color: var(--brand);
+    font-family: Montserrat, sans-serif;
+    font-size: 0.82rem;
+    font-weight: 800;
+  }
+
+  .card h3 {
+    margin: 0.85rem 0 0;
+    font-size: 1.35rem;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-top: 0.9rem;
+  }
+
+  .chip {
+    padding: 0.42rem 0.72rem;
+    border-radius: 999px;
+    background: rgba(36, 94, 168, 0.08);
+    color: var(--brand-2);
+    font-size: 0.84rem;
+    font-weight: 600;
+  }
+
+  .table-wrap {
+    margin-top: 1rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  th,
+  td {
+    padding: 0.9rem 0.75rem;
+    border-bottom: 1px solid rgba(15, 23, 32, 0.08);
+    vertical-align: top;
+    text-align: left;
+  }
+
+  th {
+    color: var(--text);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin-top: 1.4rem;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.9rem;
+    padding: 0.75rem 1rem;
+    border-radius: 999px;
+    font-weight: 700;
+  }
+
+  .button-primary {
+    background: var(--brand-2);
+    color: #fff;
+  }
+
+  .button-secondary {
+    background: rgba(15, 23, 32, 0.04);
+    border: 1px solid var(--line);
+  }
+
+  @media (max-width: 1024px) {
+    .hero-grid,
+    .metrics,
+    .two-grid,
+    .three-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .page { width: min(100% - 1rem, 1180px); }
+    table, thead, tbody, tr, th, td { display: block; }
+    thead { display: none; }
+    td { padding: 0.6rem 0; }
+    tr { padding: 0.7rem 0; border-bottom: 1px solid rgba(15, 23, 32, 0.08); }
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="utility-bar">
+      <a href="../services.html#service-decks">사업설명자료로 돌아가기</a>
+    </div>
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">Lite Digital Twin Report</div>
+          <h1>해양관측시설 경량 디지털트윈 검토보고서</h1>
+          <p class="intro">
+            해양관측시설 운영관리를 수작업 중심에서 데이터 기반 운영으로 전환하기 위한
+            경량 디지털트윈 도입 검토 보고서입니다. 3D 중심의 고비용 디지털트윈이 아니라,
+            IoT·AI·WebGIS 기반으로 즉시 운용 가능한 운영관리 플랫폼 구축 방향을 제안합니다.
+          </p>
+          <div class="actions">
+            <a class="button button-primary" href="./해양관측시설_경량DT_검토보고서.pdf" target="_blank" rel="noreferrer">PDF 보기</a>
+            <a class="button button-secondary" href="./해양관측시설_경량DT_검토보고서.docx" target="_blank" rel="noreferrer">DOCX 보기</a>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="section-kicker">핵심 요약</div>
+          <h2>작게 시작해 운영체계를 바꾸는 사업</h2>
+          <p>
+            1단계는 조위관측소 3~5개소를 대상으로 하는 PoC이며, 약 5억 원 규모와
+            12개월 이내 시범운영 개시를 기준으로 설계됩니다. 목표는 3D 구현이 아니라
+            운영 효율, 이상 감지 자동화, 유지보수 체계화입니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <strong>~5억</strong>
+          <span>1단계 PoC 기준 투자 규모</span>
+        </div>
+        <div class="metric">
+          <strong>12개월</strong>
+          <span>시범운영 개시 목표 기간</span>
+        </div>
+        <div class="metric">
+          <strong>50%</strong>
+          <span>현장 출동 감소 기대치</span>
+        </div>
+        <div class="metric">
+          <strong>30%</strong>
+          <span>유지보수 비용 절감 기대치</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-kicker">문제 정의</div>
+      <h2>데이터는 쌓이지만 운영관리는 여전히 수작업 중심입니다</h2>
+      <p>
+        관측 데이터 수집과 공개 체계는 갖춰져 있지만, 장비 이상 감지, 유지보수 이력,
+        전국 현황 파악은 여전히 현장 확인과 개인 기록에 의존하는 구조입니다. 그 결과
+        데이터 품질 저하, 사전 감지 불가, 통합 운영 부재가 반복됩니다.
+      </p>
+      <div class="two-grid">
+        <article class="card">
+          <span class="card-index">01</span>
+          <h3>현재 운영 현실</h3>
+          <p>이상값 검수는 수작업 중심이고, 장비 상태는 현장 출동 후에야 확인되며, 이력은 담당자별로 분산 관리됩니다.</p>
+          <div class="chips">
+            <span class="chip">수작업 검수</span>
+            <span class="chip">사전 감지 부재</span>
+            <span class="chip">개인 기록 의존</span>
+          </div>
+        </article>
+        <article class="card">
+          <span class="card-index">02</span>
+          <h3>핵심 문제</h3>
+          <p>해양관측시설은 데이터를 쌓는 시스템은 있지만, 시설을 운영관리하는 시스템은 없는 상태라는 점이 본질입니다.</p>
+          <div class="chips">
+            <span class="chip">운영관리 공백</span>
+            <span class="chip">품질 저하</span>
+            <span class="chip">재난 대응 지연</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-kicker">접근 방식</div>
+      <h2>Full DT가 아니라 Lite DT로 즉시 가치를 만드는 접근입니다</h2>
+      <p>
+        본 사업은 3D 모델링과 물리 시뮬레이션을 우선하지 않습니다. IoT, AI, WebGIS
+        대시보드를 중심으로 실시간 모니터링, 상태관리, 이상탐지, 유지보수 관리에 집중합니다.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>비교 항목</th>
+              <th>Full DT</th>
+              <th>경량 Lite DT</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>핵심 기술</td>
+              <td>3D 모델 + 물리 시뮬레이션</td>
+              <td>IoT + AI + WebGIS 대시보드</td>
+            </tr>
+            <tr>
+              <td>구축 비용</td>
+              <td>시설당 수십억 원+</td>
+              <td>PoC 약 5억 원</td>
+            </tr>
+            <tr>
+              <td>구축 기간</td>
+              <td>2~3년</td>
+              <td>12개월 이내</td>
+            </tr>
+            <tr>
+              <td>즉시 활용</td>
+              <td>시뮬레이션 완성 후 가능</td>
+              <td>구축 즉시 운영 가능</td>
+            </tr>
+            <tr>
+              <td>주요 가치</td>
+              <td>시각적 완성도, 시뮬레이션</td>
+              <td>운영 효율, 비용 절감</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-kicker">핵심 기능</div>
+      <h2>TOMS는 4가지 기능으로 정의됩니다</h2>
+      <div class="two-grid">
+        <article class="card">
+          <span class="card-index">01</span>
+          <h3>실시간 모니터링</h3>
+          <p>전국 관측소 조위와 장비 현황을 GIS 지도와 그래프로 즉시 파악합니다.</p>
+        </article>
+        <article class="card">
+          <span class="card-index">02</span>
+          <h3>AI 이상탐지</h3>
+          <p>센서 오류와 이상 조위를 자동 감지하고 경보를 발령해 수작업 검수를 줄입니다.</p>
+        </article>
+        <article class="card">
+          <span class="card-index">03</span>
+          <h3>장비 상태관리</h3>
+          <p>관측소별 장비 목록, 전원, 수명 정보를 원격으로 통합 관리합니다.</p>
+        </article>
+        <article class="card">
+          <span class="card-index">04</span>
+          <h3>유지보수 이력관리</h3>
+          <p>점검 일지와 부품 교체 이력을 모바일 기반으로 입력하고 공유합니다.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-kicker">사례와 시장</div>
+      <h2>해외는 이미 운영관리형 경량 DT로 움직이고 있습니다</h2>
+      <div class="three-grid">
+        <article class="card">
+          <span class="card-index">UK</span>
+          <h3>NTSLF</h3>
+          <p>영국 NOC는 3D 없이 실시간 텔레메트리 기반의 장비 상태 관리와 품질 관리를 운영합니다.</p>
+        </article>
+        <article class="card">
+          <span class="card-index">US</span>
+          <h3>NOAA CO-OPS</h3>
+          <p>자동 품질관리 알고리즘과 실시간 경보 체계를 적용해 대규모 관측망을 적은 인력으로 운영합니다.</p>
+        </article>
+        <article class="card">
+          <span class="card-index">NO</span>
+          <h3>북해 오프쇼어 사례</h3>
+          <p>데이터 수집, 엣지 분석, 이상탐지, 시각화 계층 중심의 모듈형 경량 아키텍처가 실증되었습니다.</p>
+        </article>
+      </div>
+      <div class="note">
+        국내는 데이터 공개는 발전했지만, 해양관측시설 운영관리 스마트화는 아직 본격적인
+        선행 사례가 부족합니다. 이 공백은 선점 기회로 볼 수 있습니다.
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-kicker">추진 전략</div>
+      <h2>PoC에서 시작해 플랫폼으로 확장하는 단계 전략입니다</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>단계</th>
+              <th>기간</th>
+              <th>핵심 내용</th>
+              <th>투자 규모</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1단계 PoC</td>
+              <td>~12개월</td>
+              <td>시범관측소 3~5개소, TOMS v1.0, AI 이상탐지 적용</td>
+              <td>~5억 원</td>
+            </tr>
+            <tr>
+              <td>2단계 전국 확대</td>
+              <td>~36개월</td>
+              <td>전국 조위관측소 적용, LSTM 예측 모델, 모바일 앱 출시</td>
+              <td>성과 기반 확대</td>
+            </tr>
+            <tr>
+              <td>3단계 플랫폼화</td>
+              <td>~60개월</td>
+              <td>전 관측시설 통합, SaaS 전환, 해외 수출 연계</td>
+              <td>자립 운영 구조</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note">
+        작게 시작하고, 성과를 확인한 뒤 확대하는 구조라서 전국 일괄 투자보다 리스크를
+        낮출 수 있습니다. 동시에 협회는 국가 해양관측 스마트화의 표준 모델을 선점할 수 있습니다.
+      </div>
+    </section>
+  </div>
+</body>
+</html>

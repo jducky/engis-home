@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ENGIS Solution Deck PDF Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Montserrat:wght@600;700;800&family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --deep: #071e30;
+    --ocean: #0b3a58;
+    --ink: #0f2234;
+    --paper: #f5f2ec;
+    --white: #ffffff;
+    --cyan: #00bcd0;
+    --signal: #f0e940;
+    --mist: #c4d4e0;
+    --line: rgba(11, 58, 88, 0.12);
+    --shadow: 0 24px 50px rgba(7, 30, 48, 0.12);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #e9eef3;
+    color: var(--ink);
+    font-family: Pretendard, "Noto Sans KR", sans-serif;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  .utility-bar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    background: rgba(7, 30, 48, 0.9);
+    backdrop-filter: blur(10px);
+  }
+
+  .utility-bar a,
+  .utility-bar span {
+    color: #fff;
+    font-size: 0.92rem;
+    font-weight: 700;
+  }
+
+  .utility-bar a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    padding: 0.55rem 0.85rem;
+    border-radius: 999px;
+    background: rgba(0, 188, 208, 0.2);
+    border: 1px solid rgba(0, 188, 208, 0.28);
+  }
+
+  .deck {
+    width: min(100%, 1520px);
+    margin: 0 auto;
+    padding: 1.2rem 0 2.5rem;
+  }
+
+  .slide {
+    width: 297mm;
+    min-height: 210mm;
+    margin: 0 auto 1.25rem;
+    padding: 14mm 16mm 12mm;
+    background: var(--white);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .slide-dark {
+    background: linear-gradient(160deg, #071b2b 0%, #0b3550 56%, #082132 100%);
+    color: #fff;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--cyan);
+    font-family: Montserrat, sans-serif;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .eyebrow::before {
+    content: "";
+    width: 1.8rem;
+    height: 1px;
+    background: currentColor;
+  }
+
+  .slide-no {
+    position: absolute;
+    right: 14mm;
+    top: 12mm;
+    font-family: Montserrat, sans-serif;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.42);
+  }
+
+  .slide:not(.slide-dark) .slide-no {
+    color: rgba(11, 58, 88, 0.32);
+  }
+
+  .hero-grid,
+  .two-col,
+  .three-col,
+  .four-grid,
+  .matrix {
+    display: grid;
+    gap: 10mm;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1.04fr 0.96fr;
+    align-items: stretch;
+  }
+
+  .two-col {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .three-col {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .four-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .matrix {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  h1, h2, h3 {
+    margin: 0;
+    letter-spacing: -0.04em;
+  }
+
+  h1, h2 {
+    font-family: "DM Serif Display", serif;
+    line-height: 0.98;
+  }
+
+  h1 {
+    margin-top: 7mm;
+    font-size: 28mm;
+    max-width: 10.5ch;
+  }
+
+  h2 {
+    margin-top: 5mm;
+    font-size: 17mm;
+    max-width: 12.5ch;
+  }
+
+  .accent { color: var(--cyan); }
+
+  .lead,
+  .sublead,
+  .body-text,
+  .card p,
+  .mini-card p,
+  .quote,
+  .footer-line {
+    line-height: 1.7;
+  }
+
+  .lead {
+    margin-top: 6mm;
+    max-width: 34rem;
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  .sublead {
+    margin-top: 4mm;
+    max-width: 44rem;
+    font-size: 1rem;
+    color: #516071;
+  }
+
+  .hero-panel,
+  .card,
+  .mini-card,
+  .quote-box,
+  .roadmap,
+  .service-box {
+    border-radius: 22px;
+  }
+
+  .hero-panel {
+    padding: 8mm;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .panel-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5mm;
+  }
+
+  .metric {
+    padding: 5mm;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .metric strong {
+    display: block;
+    margin-bottom: 2mm;
+    font-family: Montserrat, sans-serif;
+    font-size: 1.55rem;
+    color: #fff;
+  }
+
+  .metric span {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.92rem;
+  }
+
+  .card {
+    padding: 7mm;
+    background: #fff;
+    border: 1px solid var(--line);
+  }
+
+  .slide-dark .card,
+  .slide-dark .mini-card,
+  .slide-dark .service-box,
+  .slide-dark .roadmap {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .card-index {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.1rem;
+    height: 2.1rem;
+    padding: 0 0.5rem;
+    border-radius: 999px;
+    background: rgba(0, 188, 208, 0.12);
+    color: var(--cyan);
+    font-family: Montserrat, sans-serif;
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  .card h3,
+  .mini-card h3 {
+    margin-top: 4mm;
+    font-size: 1.2rem;
+    line-height: 1.25;
+  }
+
+  .card p,
+  .mini-card p {
+    margin-top: 2.5mm;
+    color: #5a697a;
+    font-size: 0.95rem;
+  }
+
+  .slide-dark .card p,
+  .slide-dark .mini-card p,
+  .slide-dark .body-text,
+  .slide-dark .quote {
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  .mini-card,
+  .service-box,
+  .roadmap {
+    padding: 6mm;
+  }
+
+  .mini-card {
+    background: rgba(11, 58, 88, 0.04);
+    border: 1px solid var(--line);
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.5mm;
+    margin-top: 4mm;
+  }
+
+  .chip {
+    padding: 1.8mm 3mm;
+    border-radius: 999px;
+    background: rgba(0, 188, 208, 0.1);
+    color: var(--ocean);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .slide-dark .chip {
+    color: #fff;
+    background: rgba(0, 188, 208, 0.16);
+  }
+
+  .quote-box {
+    margin-top: 7mm;
+    padding: 6mm 7mm;
+    background: rgba(0, 188, 208, 0.08);
+    border: 1px solid rgba(0, 188, 208, 0.12);
+  }
+
+  .quote {
+    font-size: 1.12rem;
+    font-weight: 700;
+    color: var(--ocean);
+  }
+
+  .slide-dark .quote-box {
+    background: rgba(0, 188, 208, 0.12);
+    border-color: rgba(0, 188, 208, 0.18);
+  }
+
+  .slide-dark .quote {
+    color: #fff;
+  }
+
+  .flow {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4mm;
+    margin-top: 8mm;
+  }
+
+  .flow-step {
+    padding: 6mm;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .flow-step strong {
+    display: block;
+    margin-bottom: 3mm;
+    font-family: Montserrat, sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cyan);
+  }
+
+  .flow-step h3 {
+    font-size: 1.12rem;
+    color: #fff;
+  }
+
+  .flow-step ul {
+    margin: 4mm 0 0;
+    padding-left: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    line-height: 1.65;
+  }
+
+  .service-box h3,
+  .roadmap h3 {
+    font-size: 1.16rem;
+  }
+
+  .service-box ul,
+  .roadmap ul {
+    margin: 4mm 0 0;
+    padding-left: 1rem;
+    line-height: 1.65;
+    font-size: 0.92rem;
+  }
+
+  .service-box ul { color: #5a697a; }
+  .slide-dark .service-box ul,
+  .slide-dark .roadmap ul { color: rgba(255, 255, 255, 0.8); }
+
+  .footer-line {
+    position: absolute;
+    left: 16mm;
+    right: 16mm;
+    bottom: 8mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: rgba(11, 58, 88, 0.42);
+  }
+
+  .slide-dark .footer-line {
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  .print-note {
+    width: min(100%, 1520px);
+    margin: 0 auto 0.75rem;
+    padding: 0 1rem;
+    color: #4f5d6e;
+    font-size: 0.92rem;
+  }
+
+  @media print {
+    @page {
+      size: A4 landscape;
+      margin: 0;
+    }
+
+    html, body {
+      background: #fff;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .utility-bar,
+    .print-note {
+      display: none !important;
+    }
+
+    .deck {
+      width: auto;
+      margin: 0;
+      padding: 0;
+    }
+
+    .slide {
+      margin: 0;
+      box-shadow: none;
+      page-break-after: always;
+      break-after: page;
+    }
+
+    .slide:last-child {
+      page-break-after: auto;
+      break-after: auto;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="utility-bar">
+    <a href="../services.html#service-decks">사업설명자료로 돌아가기</a>
+    <span>PDF 전용 슬라이드 버전</span>
+  </div>
+  <div class="print-note">브라우저에서 `인쇄 → PDF 저장`을 선택하면 슬라이드 단위로 안정적으로 저장됩니다.</div>
+
+  <main class="deck">
+    <section class="slide slide-dark">
+      <div class="slide-no">01 Cover</div>
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">ENGIS Solution Deck</div>
+          <h1>AI 기반 <span class="accent">연안 환경 위험도 분석</span> 및 서비스 구축</h1>
+          <p class="lead">
+            복잡한 해양 데이터를 운영 가능한 위험 지표와 서비스로 전환하는 엔지스의
+            제안 구조입니다. 핵심은 데이터를 쌓는 데서 끝나지 않고, 현장에서 바로 쓸 수
+            있는 판단 기준과 API 서비스까지 연결하는 것입니다.
+          </p>
+          <div class="quote-box">
+            <div class="quote">"복잡한 해양 데이터를 운영 가능한 위험 지표와 서비스로 전환합니다"</div>
+          </div>
+        </div>
+        <div class="hero-panel">
+          <div class="panel-grid">
+            <div class="metric">
+              <strong>Data</strong>
+              <span>관측·위성·모델·이력 데이터 통합</span>
+            </div>
+            <div class="metric">
+              <strong>AI</strong>
+              <span>이상탐지·예측·설명 가능 분석</span>
+            </div>
+            <div class="metric">
+              <strong>Risk</strong>
+              <span>표준화된 위험 지표 설계</span>
+            </div>
+            <div class="metric">
+              <strong>API</strong>
+              <span>기관 시스템 연계 가능한 서비스 제공</span>
+            </div>
+          </div>
+          <div class="quote-box" style="margin-top: 8mm;">
+            <div class="quote">DATA → ANALYSIS → RISK INDEX → SERVICE</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-line">
+        <span>ENGIS Capability + Solution Deck</span>
+        <span>AI · GIS · Coastal Intelligence</span>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="slide-no">02 Why This Matters</div>
+      <div class="eyebrow">Why This Matters</div>
+      <h2>데이터는 충분하지만, <span class="accent">'판단 기준'</span>이 부족합니다</h2>
+      <p class="sublead">현장에서 데이터는 넘쳐나지만, 그것이 일관된 의사결정과 운영 서비스로 이어지지 못하는 구조적 문제가 있습니다.</p>
+      <div class="two-col" style="margin-top: 8mm;">
+        <div class="card">
+          <span class="card-index">01</span>
+          <h3>데이터 분산·단절</h3>
+          <p>관측, 위성, 수치모델, 이력 데이터가 기관별로 분산되어 있어 통합 분석이 어렵습니다.</p>
+        </div>
+        <div class="card">
+          <span class="card-index">02</span>
+          <h3>데이터 간 연결 부족</h3>
+          <p>개별 데이터는 존재하지만 서로 연결되지 않아 종합적인 환경 상태 파악이 어렵습니다.</p>
+        </div>
+        <div class="card">
+          <span class="card-index">03</span>
+          <h3>경험 의존적 판단</h3>
+          <p>위험 판단이 개인 경험이나 개별 분석에 의존해 일관성과 재현성이 떨어집니다.</p>
+        </div>
+        <div class="card">
+          <span class="card-index">Result</span>
+          <h3>현장에서 발생하는 결과</h3>
+          <p>적조 및 이상환경 대응 지연, 정책 판단의 일관성 부족, 사후 대응 중심 운영으로 이어집니다.</p>
+          <div class="chips">
+            <span class="chip">대응 지연</span>
+            <span class="chip">운영 비효율</span>
+            <span class="chip">판단 편차</span>
+          </div>
+        </div>
+      </div>
+      <div class="quote-box">
+        <div class="quote">"데이터 → 판단으로 이어지지 못하는 구조적 문제"</div>
+      </div>
+      <div class="footer-line">
+        <span>문제 정의</span>
+        <span>02</span>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="slide-no">03 What Is Needed</div>
+      <div class="eyebrow">What Is Needed</div>
+      <h2>데이터가 아니라 <span class="accent">'판단 가능한 지표와 서비스'</span>가 필요합니다</h2>
+      <p class="sublead">4가지 핵심 요소가 갖춰질 때 데이터는 비로소 운영 가치를 가집니다.</p>
+      <div class="four-grid" style="margin-top: 8mm;">
+        <div class="card">
+          <span class="card-index">Need 01</span>
+          <h3>데이터 통합 체계</h3>
+          <p>분산된 이기종 데이터를 하나의 표준 체계로 정리하고 연결합니다.</p>
+        </div>
+        <div class="card">
+          <span class="card-index">Need 02</span>
+          <h3>환경 상태 분석 모델</h3>
+          <p>이상탐지·예측·패턴 분석으로 현재 상태와 변화 징후를 읽어냅니다.</p>
+        </div>
+        <div class="card">
+          <span class="card-index">Need 03</span>
+          <h3>표준화된 위험도 지표</h3>
+          <p>Risk Index로 변환해 누구나 같은 기준으로 현황을 판단할 수 있게 합니다.</p>
+        </div>
+        <div class="card">
+          <span class="card-index">Need 04</span>
+          <h3>API 기반 서비스 제공</h3>
+          <p>분석 결과를 기관 시스템과 운영 화면에서 바로 활용 가능한 형태로 배포합니다.</p>
+        </div>
+      </div>
+      <div class="quote-box">
+        <div class="quote">"분석 결과를 누구나 사용할 수 있는 형태로 제공해야 합니다"</div>
+      </div>
+      <div class="footer-line">
+        <span>핵심 요구사항</span>
+        <span>03</span>
+      </div>
+    </section>
+
+    <section class="slide slide-dark">
+      <div class="slide-no">04 Approach</div>
+      <div class="eyebrow">ENGIS Approach</div>
+      <h2>Risk Index를 중심으로 데이터를 서비스로 연결합니다</h2>
+      <p class="lead" style="max-width: 44rem;">엔지스는 데이터 수집부터 분석, 지표화, API 제공까지 이어지는 4단계 구조로 구현합니다.</p>
+      <div class="flow">
+        <div class="flow-step">
+          <strong>Step 01</strong>
+          <h3>Data Integration</h3>
+          <ul>
+            <li>관측 데이터</li>
+            <li>위성 영상</li>
+            <li>수치 모델</li>
+            <li>이력 DB</li>
+          </ul>
+        </div>
+        <div class="flow-step">
+          <strong>Step 02</strong>
+          <h3>Environmental Analysis</h3>
+          <ul>
+            <li>상태 분석</li>
+            <li>이상 탐지</li>
+            <li>패턴 분석</li>
+            <li>공간 통계</li>
+          </ul>
+        </div>
+        <div class="flow-step">
+          <strong>Step 03</strong>
+          <h3>Risk Index</h3>
+          <ul>
+            <li>표준화 위험도 산정</li>
+            <li>Score / Level 변환</li>
+            <li>XAI 근거 제공</li>
+            <li>시계열 추적</li>
+          </ul>
+        </div>
+        <div class="flow-step">
+          <strong>Step 04</strong>
+          <h3>Service</h3>
+          <ul>
+            <li>REST API</li>
+            <li>대시보드</li>
+            <li>Alert 시스템</li>
+            <li>의사결정 UI</li>
+          </ul>
+        </div>
+      </div>
+      <div class="quote-box">
+        <div class="quote">"Risk Index를 중심으로 데이터를 서비스로 연결"</div>
+      </div>
+      <div class="footer-line">
+        <span>핵심 구조</span>
+        <span>04</span>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="slide-no">05 Service</div>
+      <div class="eyebrow">What It Looks Like</div>
+      <h2>연안 환경 <span class="accent">Risk Index API 서비스</span></h2>
+      <p class="sublead">분석 결과를 API로 제공해 기관 시스템과 운영 화면에서 바로 활용 가능한 형태로 구현합니다.</p>
+      <div class="two-col" style="margin-top: 8mm;">
+        <div class="service-box">
+          <h3>주요 제공 기능</h3>
+          <ul>
+            <li>해역별 위험도 수치 제공</li>
+            <li>시간 변화 분석 및 단기 예측</li>
+            <li>XAI 기반 영향 요인 설명</li>
+            <li>적조·이상환경 이벤트 자동 감지</li>
+          </ul>
+        </div>
+        <div class="service-box">
+          <h3>제공 방식</h3>
+          <ul>
+            <li>REST API: 기관 시스템 직접 연동</li>
+            <li>Dashboard: GIS 기반 시각화</li>
+            <li>Alert 시스템: 임계값 자동 경보</li>
+          </ul>
+          <div class="quote-box" style="margin-top: 6mm;">
+            <div class="quote">"분석 결과를 API로 제공하여 다양한 기관이 직접 활용 가능"</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-line">
+        <span>서비스 형태</span>
+        <span>05</span>
+      </div>
+    </section>
+
+    <section class="slide slide-dark">
+      <div class="slide-no">06 Why ENGIS</div>
+      <div class="eyebrow">Why ENGIS</div>
+      <h2>왜 <span class="accent">ENGIS</span>인가</h2>
+      <p class="lead" style="max-width: 44rem;">분석에서 끝나지 않고 실제 운영 서비스까지 연결하는 3가지 차별점이 있습니다.</p>
+      <div class="three-col" style="margin-top: 8mm;">
+        <div class="mini-card">
+          <span class="card-index">01</span>
+          <h3>데이터 → 지표화 능력</h3>
+          <p>단순 분석이 아니라 Risk Index 설계와 서비스화까지 연결합니다.</p>
+        </div>
+        <div class="mini-card">
+          <span class="card-index">02</span>
+          <h3>AI + GIS 융합 기술</h3>
+          <p>해양·공간 도메인 이해 위에 AI 분석을 결합해 현장에서 작동하는 구조를 만듭니다.</p>
+        </div>
+        <div class="mini-card">
+          <span class="card-index">03</span>
+          <h3>서비스 구현 경험</h3>
+          <p>분석 결과를 API, 플랫폼, 운영 시스템까지 연결한 납품 경험이 있습니다.</p>
+        </div>
+      </div>
+      <div class="quote-box">
+        <div class="quote">"분석에서 끝나지 않고 실제 운영 서비스까지 연결합니다"</div>
+      </div>
+      <div class="footer-line">
+        <span>핵심 차별점</span>
+        <span>06</span>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="slide-no">07 Collaboration</div>
+      <div class="eyebrow">Collaboration & Next Step</div>
+      <h2>작게 시작해 <span class="accent">실제 운영 서비스</span>로 확장합니다</h2>
+      <p class="sublead">파일럿 해역부터 시작해 Risk Index를 검증하고, 이후 API와 기관 운영 시스템으로 확장하는 접근입니다.</p>
+      <div class="two-col" style="margin-top: 8mm;">
+        <div class="roadmap">
+          <h3>협력 구조</h3>
+          <ul>
+            <li>해양 데이터 기관: 관측·위성·이력 데이터 제공</li>
+            <li>연구기관: 분석 모델 설계 및 검증</li>
+            <li>ENGIS: 통합, 분석, API·플랫폼 구현</li>
+          </ul>
+        </div>
+        <div class="roadmap">
+          <h3>실행 단계</h3>
+          <ul>
+            <li>Step 1: 특정 해역 파일럿 Risk Index 구축</li>
+            <li>Step 2: 데이터 확장 및 정확도 향상</li>
+            <li>Step 3: 정책·현장 운영 시스템 연계</li>
+          </ul>
+        </div>
+      </div>
+      <div class="quote-box">
+        <div class="quote">보유하신 데이터와 해결하고 싶은 문제를 공유해 주세요. ENGIS가 Risk Index 설계부터 서비스화까지 함께 만듭니다.</div>
+      </div>
+      <div class="footer-line">
+        <span>Next Step</span>
+        <span>07</span>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

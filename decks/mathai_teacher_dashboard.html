@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MathAI Teacher Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#1E3A5F;--blue:#2E86C1;--teal:#1ABC9C;
+  --red:#C0392B;--redbg:#FCEBEB;--redtext:#791F1F;
+  --orange:#BA7517;--orangebg:#FAEEDA;--orangetext:#633806;
+  --greenbg:#E1F5EE;--greentext:#085041;
+  --bluebg:#E6F1FB;--bluetext:#0C447C;
+  --bd:rgba(0,0,0,0.1);
+}
+body{font-family:'Noto Sans KR',system-ui,sans-serif;background:var(--color-background-tertiary,#F0F4F8);}
+
+.topbar{background:var(--navy);padding:0 20px;height:50px;display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:8px;}
+.logo-icon{width:26px;height:26px;background:var(--teal);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;}
+.logo-name{color:#fff;font-size:14px;font-weight:500;}
+.topbar-right{display:flex;align-items:center;gap:16px;}
+.topbar-nav{display:flex;gap:20px;}
+.topbar-nav a{color:rgba(255,255,255,0.5);font-size:12px;font-weight:500;text-decoration:none;padding:3px 0;border-bottom:2px solid transparent;}
+.topbar-nav a.on{color:#fff;border-bottom-color:var(--teal);}
+.topbar-nav a.return-link{color:#fff;padding:7px 10px;border-radius:999px;border:1px solid rgba(26,188,156,0.32);background:rgba(26,188,156,0.2);border-bottom:none;}
+.teacher-chip{display:flex;align-items:center;gap:7px;}
+.teacher-av{width:28px;height:28px;border-radius:50%;background:#2E86C1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;}
+.teacher-name{color:rgba(255,255,255,0.75);font-size:12px;}
+
+.wrap{padding:16px 20px;display:flex;flex-direction:column;gap:14px;}
+
+.row{display:grid;gap:12px;}
+.r4{grid-template-columns:repeat(4,minmax(0,1fr));}
+.r31{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);}
+.r211{grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);}
+.r12{grid-template-columns:minmax(0,1fr) minmax(0,2fr);}
+
+.card{background:var(--color-background-primary,#fff);border:0.5px solid var(--bd);border-radius:12px;overflow:hidden;}
+.card-head{padding:11px 14px;border-bottom:0.5px solid var(--bd);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:12px;font-weight:500;color:var(--color-text-primary);}
+.card-sub{font-size:11px;color:var(--color-text-secondary);}
+.card-body{padding:14px;}
+
+.metric{background:var(--color-background-secondary,#F7F9FC);border-radius:10px;padding:13px 14px;}
+.metric-lbl{font-size:11px;color:var(--color-text-secondary);margin-bottom:4px;}
+.metric-val{font-size:22px;font-weight:500;color:var(--color-text-primary);}
+.metric-chg{font-size:11px;margin-top:3px;}
+.chg-up{color:#0F6E56;}
+.chg-dn{color:var(--red);}
+
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500;}
+.b-red{background:var(--redbg);color:var(--redtext);}
+.b-orange{background:var(--orangebg);color:var(--orangetext);}
+.b-blue{background:var(--bluebg);color:var(--bluetext);}
+.b-green{background:var(--greenbg);color:var(--greentext);}
+
+.priority-bar{height:5px;background:#EEF1F5;border-radius:3px;overflow:hidden;margin-top:4px;}
+.priority-fill{height:100%;border-radius:3px;}
+
+.stu-row{display:grid;grid-template-columns:28px minmax(0,2fr) minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr) 80px;gap:0;align-items:center;padding:9px 14px;border-bottom:0.5px solid var(--bd);}
+.stu-row:last-child{border-bottom:none;}
+.stu-hd{background:var(--color-background-secondary,#F7F9FC);padding:8px 14px;}
+.th{font-size:10px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;}
+
+.av-sm{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;}
+
+.risk-pill{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;}
+.risk-high{background:var(--redbg);color:var(--redtext);}
+.risk-mid{background:var(--orangebg);color:var(--orangetext);}
+.risk-low{background:var(--greenbg);color:var(--greentext);}
+
+.bar-h{height:6px;background:#EEF1F5;border-radius:3px;overflow:hidden;}
+.bar-f{height:100%;border-radius:3px;}
+
+.alert-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:0.5px solid var(--bd);}
+.alert-item:last-child{border-bottom:none;padding-bottom:0;}
+.alert-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;}
+.alert-body{flex:1;}
+.alert-title{font-size:12px;font-weight:500;color:var(--color-text-primary);line-height:1.4;}
+.alert-desc{font-size:11px;color:var(--color-text-secondary);margin-top:2px;line-height:1.5;}
+.alert-time{font-size:10px;color:var(--color-text-secondary);margin-top:2px;}
+
+.seg-bar{display:flex;gap:0;height:12px;border-radius:6px;overflow:hidden;}
+.seg{height:100%;}
+
+.plan-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--bd);}
+.plan-row:last-child{border-bottom:none;padding-bottom:0;}
+.plan-step{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;flex-shrink:0;}
+.plan-text{flex:1;font-size:12px;color:var(--color-text-primary);}
+.plan-sub{font-size:11px;color:var(--color-text-secondary);margin-top:1px;}
+.plan-tag{font-size:10px;font-weight:500;padding:2px 8px;border-radius:10px;}
+
+.mini-chart{display:flex;align-items:flex-end;gap:3px;height:40px;}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;}
+.bar-col-fill{width:100%;border-radius:2px 2px 0 0;}
+.bar-col-lbl{font-size:9px;color:var(--color-text-secondary);}
+
+.err-type-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--bd);}
+.err-type-row:last-child{border-bottom:none;padding-bottom:0;}
+.err-type-name{font-size:12px;color:var(--color-text-primary);flex:1;}
+.err-bar-wrap{width:90px;}
+.err-count{font-size:11px;font-weight:500;min-width:28px;text-align:right;}
+</style>
+
+<div style="background:var(--color-background-tertiary,#F0F4F8);min-height:100vh;padding-bottom:2rem;">
+
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-icon">AI</div>
+    <span class="logo-name">수학 오개념 분석</span>
+    <span style="margin-left:12px;background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);font-size:10px;padding:2px 8px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);">교사 모드</span>
+  </div>
+  <div class="topbar-nav">
+    <a href="../services.html#service-decks" class="return-link">사업설명자료</a>
+    <a href="#" class="on">학급 현황</a>
+    <a href="#">학생 관리</a>
+    <a href="#">문제 출제</a>
+    <a href="#">리포트</a>
+  </div>
+  <div class="teacher-chip">
+    <div class="teacher-av">이</div>
+    <span class="teacher-name">이지현 선생님 · 3학년 A반</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- 상단 요약 지표 -->
+  <div class="row r4">
+    <div class="metric">
+      <div class="metric-lbl">반 전체 학생</div>
+      <div class="metric-val">28명</div>
+      <div class="metric-chg chg-up">오늘 출석 26명</div>
+    </div>
+    <div class="metric">
+      <div class="metric-lbl">이번 주 분석 완료</div>
+      <div class="metric-val">143건</div>
+      <div class="metric-chg chg-up">↑ 전주 대비 +18건</div>
+    </div>
+    <div class="metric">
+      <div class="metric-lbl">미해소 오개념</div>
+      <div class="metric-val" style="color:var(--red);">47건</div>
+      <div class="metric-chg chg-dn">긴급 지도 필요 5명</div>
+    </div>
+    <div class="metric">
+      <div class="metric-lbl">반 평균 정답률</div>
+      <div class="metric-val" style="color:#185FA5;">71%</div>
+      <div class="metric-chg chg-up">↑ 전월 대비 +6%p</div>
+    </div>
+  </div>
+
+  <!-- 2행: 오류 유형 분포 + 주간 트렌드 + 긴급 알림 -->
+  <div class="row r211">
+
+    <!-- 오류 유형 분포 -->
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">반 전체 오개념 유형 분포</span>
+        <span class="card-sub">최근 30일 · 143건</span>
+      </div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;gap:8px;margin-bottom:4px;">
+          <div class="seg-bar" style="flex:1;">
+            <div class="seg" style="width:44%;background:#BA7517;"></div>
+            <div class="seg" style="width:35%;background:var(--red);"></div>
+            <div class="seg" style="width:21%;background:#185FA5;"></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:14px;margin-bottom:6px;">
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--color-text-secondary);">
+            <div style="width:8px;height:8px;background:#BA7517;border-radius:50%;"></div>절차 오류 44%
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--color-text-secondary);">
+            <div style="width:8px;height:8px;background:var(--red);border-radius:50%;"></div>개념 오류 35%
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--color-text-secondary);">
+            <div style="width:8px;height:8px;background:#185FA5;border-radius:50%;"></div>계산 실수 21%
+          </div>
+        </div>
+        <div class="err-type-row">
+          <div class="dot" style="background:#BA7517;"></div>
+          <span class="err-type-name">절차 오류</span>
+          <div class="err-bar-wrap"><div class="bar-h"><div class="bar-f" style="width:88%;background:#BA7517;"></div></div></div>
+          <span class="err-count" style="color:#BA7517;">63건</span>
+        </div>
+        <div class="err-type-row">
+          <div class="dot" style="background:var(--red);"></div>
+          <span class="err-type-name">개념 오류</span>
+          <div class="err-bar-wrap"><div class="bar-h"><div class="bar-f" style="width:70%;background:var(--red);"></div></div></div>
+          <span class="err-count" style="color:var(--red);">50건</span>
+        </div>
+        <div class="err-type-row">
+          <div class="dot" style="background:#185FA5;"></div>
+          <span class="err-type-name">계산 실수</span>
+          <div class="err-bar-wrap"><div class="bar-h"><div class="bar-f" style="width:42%;background:#185FA5;"></div></div></div>
+          <span class="err-count" style="color:#185FA5;">30건</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 주간 분석 트렌드 -->
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">주간 분석 건수</span>
+        <span class="card-sub">이번 주</span>
+      </div>
+      <div class="card-body">
+        <div class="mini-chart" style="height:60px;">
+          <div class="bar-col">
+            <div class="bar-col-fill" style="height:55%;background:#B5D4F4;"></div>
+            <div class="bar-col-lbl">월</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar-col-fill" style="height:70%;background:#B5D4F4;"></div>
+            <div class="bar-col-lbl">화</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar-col-fill" style="height:45%;background:#B5D4F4;"></div>
+            <div class="bar-col-lbl">수</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar-col-fill" style="height:90%;background:#2E86C1;"></div>
+            <div class="bar-col-lbl">목</div>
+          </div>
+          <div class="bar-col">
+            <div class="bar-col-fill" style="height:60%;background:#B5D4F4;"></div>
+            <div class="bar-col-lbl">금</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;justify-content:space-between;font-size:11px;">
+            <span style="color:var(--color-text-secondary);">오늘(목) 분석</span>
+            <span style="font-weight:500;color:var(--color-text-primary);">38건</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;">
+            <span style="color:var(--color-text-secondary);">주간 합계</span>
+            <span style="font-weight:500;color:var(--color-text-primary);">143건</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;">
+            <span style="color:var(--color-text-secondary);">학생 1인 평균</span>
+            <span style="font-weight:500;color:#185FA5;">5.1건</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 긴급 알림 -->
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">긴급 지도 알림</span>
+        <span class="badge b-red">5명</span>
+      </div>
+      <div class="card-body">
+        <div class="alert-item">
+          <div class="alert-icon" style="background:var(--redbg);">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2L14 13H2L8 2Z" stroke="#791F1F" stroke-width="1.5" fill="none"/><path d="M8 7v3" stroke="#791F1F" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11.5" r="0.7" fill="#791F1F"/></svg>
+          </div>
+          <div class="alert-body">
+            <div class="alert-title">김민준 — 등비수열 절차 오류 3회 반복</div>
+            <div class="alert-desc">a·r 혼동 패턴. 수업 중 집중 확인 필요.</div>
+          </div>
+        </div>
+        <div class="alert-item">
+          <div class="alert-icon" style="background:var(--redbg);">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2L14 13H2L8 2Z" stroke="#791F1F" stroke-width="1.5" fill="none"/><path d="M8 7v3" stroke="#791F1F" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11.5" r="0.7" fill="#791F1F"/></svg>
+          </div>
+          <div class="alert-body">
+            <div class="alert-title">박서연 — 삼각함수 개념 오류 4건 누적</div>
+            <div class="alert-desc">sinθ·cosθ 정의 혼동. 개념 재학습 권장.</div>
+          </div>
+        </div>
+        <div class="alert-item">
+          <div class="alert-icon" style="background:var(--orangebg);">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#633806" stroke-width="1.5" fill="none"/><path d="M8 5v3" stroke="#633806" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="10.5" r="0.7" fill="#633806"/></svg>
+          </div>
+          <div class="alert-body">
+            <div class="alert-title">이준호 — 로그 절차 오류 2회</div>
+            <div class="alert-desc">밑 변환 공식 적용 순서 오류.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 3행: 취약 단원 히트맵 + 집중 지도 계획 -->
+  <div class="row r31">
+
+    <!-- 취약 단원 학생 목록 테이블 -->
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">학생별 오개념 현황</span>
+        <span style="display:flex;gap:6px;align-items:center;">
+          <span class="card-sub">오늘 기준</span>
+          <span style="font-size:11px;color:#185FA5;font-weight:500;cursor:pointer;">전체 보기 →</span>
+        </span>
+      </div>
+
+      <div class="stu-hd">
+        <div style="display:grid;grid-template-columns:28px minmax(0,2fr) minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr) 80px;gap:0;align-items:center;padding:0 0;">
+          <div></div>
+          <div class="th">학생</div>
+          <div class="th">주요 취약 단원</div>
+          <div class="th">누적 오류</div>
+          <div class="th">정답률</div>
+          <div class="th">위험도</div>
+        </div>
+      </div>
+
+      <div class="stu-row">
+        <div class="av-sm" style="background:#FCEBEB;color:#791F1F;">김</div>
+        <div>
+          <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);">김민준</div>
+          <div style="font-size:10px;color:var(--color-text-secondary);">절차 오류 집중</div>
+        </div>
+        <div style="font-size:12px;color:var(--color-text-primary);">등비수열</div>
+        <div>
+          <div style="font-size:12px;font-weight:500;color:var(--red);">9건</div>
+          <div class="bar-h" style="margin-top:3px;width:60px;"><div class="bar-f" style="width:90%;background:var(--red);"></div></div>
+        </div>
+        <div style="font-size:12px;color:var(--color-text-primary);">62%</div>
+        <div><span class="risk-pill risk-high">긴급</span></div>
+      </div>
+
+      <div class="stu-row">
+        <div class="av-sm" style="background:#FCEBEB;color:#791F1F;">박</div>
+        <div>
+          <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);">박서연</div>
+          <div style="font-size:10px;color:var(--color-text-secondary);">개념 오류 집중</div>
+        </div>
+        <div style="font-size:12px;color:var(--color-text-primary);">삼각함수</div>
+        <div>
+          <div style="font-size:12px;font-weight:500;color:var(--red);">8건</div>
+          <div class="bar-h" style="margin-top:3px;width:60px;"><div class="bar-f" style="width:80%;background:var(--red);"></div></div>
+        </div>
+        <div style="font-size:12px;color:var(--color-text-primary);">58%</div>
+        <div><span class="risk-pill risk-high">긴급</span></div>
+      </div>
+
+      <div class="stu-row">
+        <div class="av-sm" style="background:#FAEEDA;color:#633806;">이</div>
+        <div>
+          <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);">이준호</div>
+          <div style="font-size:10px;color:var(--color-text-secondary);">절차 오류</div>
+        </div>
+        <div style="font-size:12px;color:var(--color-text-primary);">로그</div>
+        <div>
+          <div style="font-size:12px;font-weight:500;color:#BA7517;">5건</div>
+          <div class="bar-h" style="margin-top:3px;width:60px;"><div class="bar-f" style="width:50%;background:#BA7517;"></div></div>
+        </div>
+        <div style="font-size:12px;color:var(--color-text-primary);">69%</div>
+        <div><span class="risk-pill risk-mid">주의</span></div>
+      </div>
+
+      <div class="stu-row">
+        <div class="av-sm" style="background:#FAEEDA;color:#633806;">최</div>
+        <div>
+          <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);">최유나</div>
+          <div style="font-size:10px;color:var(--color-text-secondary);">계산 실수 多</div>
+        </div>
+        <div style="font-size:12px;color:var(--color-text-primary);">이차방정식</div>
+        <div>
+          <div style="font-size:12px;font-weight:500;color:#BA7517;">4건</div>
+          <div class="bar-h" style="margin-top:3px;width:60px;"><div class="bar-f" style="width:40%;background:#BA7517;"></div></div>
+        </div>
+        <div style="font-size:12px;color:var(--color-text-primary);">74%</div>
+        <div><span class="risk-pill risk-mid">주의</span></div>
+      </div>
+
+      <div class="stu-row">
+        <div class="av-sm" style="background:#E1F5EE;color:#085041;">정</div>
+        <div>
+          <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);">정다은</div>
+          <div style="font-size:10px;color:var(--color-text-secondary);">전반적 안정</div>
+        </div>
+        <div style="font-size:12px;color:var(--color-text-primary);">미분</div>
+        <div>
+          <div style="font-size:12px;font-weight:500;color:#0F6E56;">2건</div>
+          <div class="bar-h" style="margin-top:3px;width:60px;"><div class="bar-f" style="width:20%;background:#1ABC9C;"></div></div>
+        </div>
+        <div style="font-size:12px;color:var(--color-text-primary);">88%</div>
+        <div><span class="risk-pill risk-low">양호</span></div>
+      </div>
+
+      <div class="stu-row">
+        <div class="av-sm" style="background:#E1F5EE;color:#085041;">한</div>
+        <div>
+          <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);">한지수</div>
+          <div style="font-size:10px;color:var(--color-text-secondary);">우수</div>
+        </div>
+        <div style="font-size:12px;color:var(--color-text-primary);">적분</div>
+        <div>
+          <div style="font-size:12px;font-weight:500;color:#0F6E56;">1건</div>
+          <div class="bar-h" style="margin-top:3px;width:60px;"><div class="bar-f" style="width:10%;background:#1ABC9C;"></div></div>
+        </div>
+        <div style="font-size:12px;color:var(--color-text-primary);">93%</div>
+        <div><span class="risk-pill risk-low">양호</span></div>
+      </div>
+
+    </div>
+
+    <!-- 오른쪽: 집중 지도 계획 + 취약 단원 현황 -->
+    <div style="display:flex;flex-direction:column;gap:12px;">
+
+      <!-- 취약 단원 Top 4 -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">반 전체 취약 단원</span>
+          <span class="card-sub">Top 4</span>
+        </div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+              <span style="font-size:12px;color:var(--color-text-primary);">등비수열의 합</span>
+              <span style="font-size:11px;font-weight:500;color:var(--red);">17명 관련</span>
+            </div>
+            <div class="priority-bar"><div class="priority-fill" style="width:85%;background:var(--red);"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+              <span style="font-size:12px;color:var(--color-text-primary);">삼각함수 기본</span>
+              <span style="font-size:11px;font-weight:500;color:#BA7517;">13명 관련</span>
+            </div>
+            <div class="priority-bar"><div class="priority-fill" style="width:65%;background:#BA7517;"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+              <span style="font-size:12px;color:var(--color-text-primary);">로그의 성질</span>
+              <span style="font-size:11px;font-weight:500;color:#BA7517;">9명 관련</span>
+            </div>
+            <div class="priority-bar"><div class="priority-fill" style="width:45%;background:#BA7517;"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+              <span style="font-size:12px;color:var(--color-text-primary);">이차방정식 판별식</span>
+              <span style="font-size:11px;font-weight:500;color:#185FA5;">6명 관련</span>
+            </div>
+            <div class="priority-bar"><div class="priority-fill" style="width:30%;background:#185FA5;"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 오늘 수업 지도 포인트 -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-title">오늘 수업 지도 포인트</span>
+          <span style="background:var(--bluebg);color:#185FA5;font-size:10px;font-weight:500;padding:2px 8px;border-radius:10px;">AI 자동 생성</span>
+        </div>
+        <div class="card-body">
+          <div class="plan-row">
+            <div class="plan-step" style="background:#FCEBEB;color:#791F1F;">1</div>
+            <div>
+              <div class="plan-text">등비수열 a·r 혼동 집중 점검</div>
+              <div class="plan-sub">김민준 외 4명 대상 — 수업 첫 5분</div>
+            </div>
+            <span class="plan-tag" style="background:var(--redbg);color:var(--redtext);">긴급</span>
+          </div>
+          <div class="plan-row">
+            <div class="plan-step" style="background:#FAEEDA;color:#633806;">2</div>
+            <div>
+              <div class="plan-text">삼각함수 sin·cos 정의 재확인</div>
+              <div class="plan-sub">박서연 외 2명 — 풀이 중 질문 유도</div>
+            </div>
+            <span class="plan-tag" style="background:var(--orangebg);color:var(--orangetext);">권장</span>
+          </div>
+          <div class="plan-row">
+            <div class="plan-step" style="background:#E6F1FB;color:#0C447C;">3</div>
+            <div>
+              <div class="plan-text">반 전체 오늘의 확인 문제 1개 배포</div>
+              <div class="plan-sub">등비수열 합 공식 — 5분 미니 테스트</div>
+            </div>
+            <span class="plan-tag" style="background:var(--bluebg);color:var(--bluetext);">전체</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</div>
+</body>
+</html>

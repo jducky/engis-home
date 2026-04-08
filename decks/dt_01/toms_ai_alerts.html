@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOMS AI Alerts</title>
+<style>
+  :root{
+    --color-background-primary:#ffffff;
+    --color-background-secondary:#f4f7fb;
+    --color-border-secondary:#cfd8e3;
+    --color-border-tertiary:#dce4ec;
+    --color-text-primary:#192432;
+    --color-text-secondary:#5f6f82;
+    --color-text-tertiary:#8492a6;
+    --border-radius-md:10px;
+    --border-radius-lg:16px;
+  }
+  body{margin:0;padding:20px;background:#e9eff5;font-family:Pretendard,"Noto Sans KR",sans-serif;}
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.shell{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;font-size:13px}
+.topbar{background:#1B3A6B;color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
+.inner{padding:16px}
+.filters{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.fchip{font-size:12px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);cursor:pointer;color:var(--color-text-secondary);background:var(--color-background-secondary)}
+.fchip.on{background:#E6F1FB;border-color:#378ADD;color:#0C447C;font-weight:500}
+.stat-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.stat{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px;text-align:center}
+.stat-n{font-size:22px;font-weight:500}
+.stat-l{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.alert-list{display:flex;flex-direction:column;gap:8px}
+.alert-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px 14px;display:flex;gap:12px;align-items:flex-start;cursor:pointer}
+.alert-card:hover{background:var(--color-background-secondary)}
+.alert-card.critical{border-left:3px solid #E24B4A;padding-left:11px}
+.alert-card.warning{border-left:3px solid #BA7517;padding-left:11px}
+.alert-card.info{border-left:3px solid #378ADD;padding-left:11px}
+.alert-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+.icon-red{background:#FCEBEB}.icon-amber{background:#FAEEDA}.icon-blue{background:#E6F1FB}
+.alert-body{flex:1}
+.alert-title{font-weight:500;color:var(--color-text-primary);margin-bottom:3px;font-size:13px}
+.alert-desc{font-size:12px;color:var(--color-text-secondary);margin-bottom:6px}
+.alert-meta{display:flex;gap:10px;align-items:center}
+.tag{font-size:11px;padding:2px 8px;border-radius:8px}
+.tag-red{background:#FCEBEB;color:#791F1F}
+.tag-amber{background:#FAEEDA;color:#633806}
+.tag-blue{background:#E6F1FB;color:#0C447C}
+.tag-green{background:#EAF3DE;color:#27500A}
+.tag-purple{background:#EDE9FE;color:#3C3489}
+.alert-time{font-size:11px;color:var(--color-text-tertiary);margin-left:auto}
+.ai-conf{font-size:11px;color:var(--color-text-tertiary);display:flex;align-items:center;gap:4px}
+.conf-bar{height:3px;border-radius:2px;background:#EAF3DE;width:60px;display:inline-block;vertical-align:middle;margin-right:2px;overflow:hidden}
+.conf-fill{height:100%;background:#639922;border-radius:2px}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <div class="topbar">
+    <span style="font-size:15px;font-weight:500">AI 이상탐지 알람 센터</span>
+    <span style="font-size:12px;opacity:.7">오늘 신규 알람 7건</span>
+  </div>
+  <div class="inner">
+    <div class="stat-row">
+      <div class="stat"><div class="stat-n" style="color:#791F1F">2</div><div class="stat-l">긴급 처리 필요</div></div>
+      <div class="stat"><div class="stat-n" style="color:#633806">5</div><div class="stat-l">검토 필요</div></div>
+      <div class="stat"><div class="stat-n" style="color:#27500A">18</div><div class="stat-l">오늘 자동 해소</div></div>
+      <div class="stat"><div class="stat-n">97.2<span style="font-size:13px;font-weight:400">%</span></div><div class="stat-l">AI 탐지 정확도</div></div>
+    </div>
+
+    <div class="filters">
+      <span class="fchip on">전체</span>
+      <span class="fchip">센서 이상</span>
+      <span class="fchip">이상 조위</span>
+      <span class="fchip">통신 단절</span>
+      <span class="fchip">장비 수명</span>
+      <span class="fchip">처리 완료</span>
+    </div>
+
+    <div class="alert-list">
+      <div class="alert-card critical" onclick="sendPrompt('인천 조위관측소 압력센서 이상 상세 분석 및 조치 방안')">
+        <div class="alert-icon icon-red">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2L14 13H2L8 2Z" fill="#E24B4A"/><rect x="7.3" y="7" width="1.4" height="3.5" fill="white"/><rect x="7.3" y="11.5" width="1.4" height="1.4" fill="white"/></svg>
+        </div>
+        <div class="alert-body">
+          <div class="alert-title">인천 — 압력센서 드리프트 이상</div>
+          <div class="alert-desc">관측값이 AI 예측 범위를 ±12cm 지속 초과. 센서 교체 또는 재보정 필요.</div>
+          <div class="alert-meta">
+            <span class="tag tag-red">긴급</span>
+            <span class="tag tag-purple">AI 감지</span>
+            <span class="tag tag-amber">센서 이상</span>
+            <div class="ai-conf">신뢰도 <span class="conf-bar"><span class="conf-fill" style="width:94%"></span></span> 94%</div>
+            <span class="alert-time">14분 전</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert-card critical" onclick="sendPrompt('통영 조위관측소 통신 단절 원인 및 복구 방안')">
+        <div class="alert-icon icon-red">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" fill="#E24B4A"/><rect x="7.3" y="4.5" width="1.4" height="4" fill="white"/><rect x="7.3" y="9.5" width="1.4" height="1.5" fill="white"/></svg>
+        </div>
+        <div class="alert-body">
+          <div class="alert-title">통영 — LTE 통신 단절 (38분 경과)</div>
+          <div class="alert-desc">데이터 수신 완전 중단. 백업 LoRa 전환 실패. 현장 점검 필요.</div>
+          <div class="alert-meta">
+            <span class="tag tag-red">긴급</span>
+            <span class="tag tag-amber">통신 단절</span>
+            <span class="alert-time">38분 전</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert-card warning" onclick="sendPrompt('군산 조위관측소 폭풍해일 패턴 감지 상세 분석')">
+        <div class="alert-icon icon-amber">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2L14 13H2L8 2Z" fill="#BA7517"/><rect x="7.3" y="7" width="1.4" height="3.5" fill="white"/><rect x="7.3" y="11.5" width="1.4" height="1.4" fill="white"/></svg>
+        </div>
+        <div class="alert-body">
+          <div class="alert-title">군산 — 폭풍해일 유사 패턴 감지</div>
+          <div class="alert-desc">LSTM 모델이 기상 유도 급상승 패턴 감지. 인근 기상청 데이터 교차 확인 권장.</div>
+          <div class="alert-meta">
+            <span class="tag tag-amber">검토 필요</span>
+            <span class="tag tag-purple">AI 감지</span>
+            <span class="tag tag-blue">이상 조위</span>
+            <div class="ai-conf">신뢰도 <span class="conf-bar"><span class="conf-fill" style="width:78%"></span></span> 78%</div>
+            <span class="alert-time">1시간 전</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert-card warning">
+        <div class="alert-icon icon-amber">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="2" fill="#BA7517"/><path d="M8 6V9M8 10.5V11" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="alert-body">
+          <div class="alert-title">목포 — 압력식 조위계 운영연한 초과</div>
+          <div class="alert-desc">설치 후 6년 2개월 경과. 권장 교체 주기(5년) 초과. 계획 교체 일정 수립 필요.</div>
+          <div class="alert-meta">
+            <span class="tag tag-amber">검토 필요</span>
+            <span class="tag">장비 수명</span>
+            <span class="alert-time">어제</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert-card info">
+        <div class="alert-icon icon-blue">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" fill="#378ADD"/><rect x="7.3" y="7" width="1.4" height="4.5" fill="white"/><rect x="7.3" y="4.5" width="1.4" height="1.5" fill="white"/></svg>
+        </div>
+        <div class="alert-body">
+          <div class="alert-title">울산 — 배터리 잔량 34% 경고</div>
+          <div class="alert-desc">태양광 충전 효율 저하 감지. 흐린 날씨 지속 시 72시간 내 배터리 부족 예상.</div>
+          <div class="alert-meta">
+            <span class="tag tag-blue">정보</span>
+            <span class="tag tag-purple">AI 예측</span>
+            <span class="alert-time">3시간 전</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

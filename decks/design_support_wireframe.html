@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 설계 지원 시스템 - 5개 화면 세트</title>
+  <style>
+    :root {
+      --bg: #eef2f7;
+      --panel: #ffffff;
+      --line: #d9dee5;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --primary-soft: #dbeafe;
+      --warn: #f59e0b;
+      --warn-soft: #fef3c7;
+      --danger: #ef4444;
+      --danger-soft: #fee2e2;
+      --ok: #10b981;
+      --ok-soft: #d1fae5;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+      --sidebar: #0f172a;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .topnav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #dbe2ea;
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .topnav .title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .topnav .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .topnav a {
+      text-decoration: none;
+      color: #334155;
+      border: 1px solid #d9dee5;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .wrap {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #111827, #1e3a8a);
+      color: white;
+      border-radius: 24px;
+      padding: 28px 30px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 30px;
+    }
+
+    .hero p {
+      margin: 0;
+      color: #dbeafe;
+      line-height: 1.7;
+      max-width: 980px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      margin: 0 0 8px;
+    }
+
+    .section-sub {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .screen {
+      background: #cfd8e3;
+      padding: 18px;
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .app {
+      background: #f8fafc;
+      border-radius: 22px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: 760px;
+      border: 1px solid #dbe2ea;
+    }
+
+    .sidebar {
+      background: var(--sidebar);
+      color: white;
+      padding: 22px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .brand {
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      padding-bottom: 16px;
+    }
+
+    .brand h2 {
+      margin: 0 0 6px;
+      font-size: 20px;
+    }
+
+    .brand p {
+      margin: 0;
+      font-size: 12px;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    .menu { display: flex; flex-direction: column; gap: 10px; }
+    .menu-item {
+      padding: 11px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      color: #d1d5db;
+      border: 1px solid rgba(255,255,255,0.05);
+      font-size: 14px;
+    }
+    .menu-item.active {
+      background: rgba(37,99,235,0.28);
+      border-color: rgba(96,165,250,0.55);
+      color: white;
+      font-weight: 700;
+    }
+
+    .main {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .topbar {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .topbar h3 {
+      margin: 0 0 6px;
+      font-size: 22px;
+    }
+
+    .topbar p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      border: 1px solid var(--line);
+      background: white;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .btn.primary {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .panel {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+    }
+    .panel h4 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+    .sub {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1.2fr 1fr; gap: 18px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+    .upload-box {
+      min-height: 260px;
+      border-radius: 18px;
+      border: 2px dashed #bfd1f8;
+      background: #f8fbff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      gap: 10px;
+      padding: 20px;
+    }
+
+    .mock-file {
+      width: 220px;
+      height: 150px;
+      background: white;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      position: relative;
+      box-shadow: 0 10px 20px rgba(37,99,235,0.08);
+    }
+    .mock-file::before, .mock-file::after {
+      content: "";
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 999px;
+    }
+    .mock-file::before { top: 28px; }
+    .mock-file::after { top: 52px; }
+
+    .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field {
+      background: #fafafa;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .field label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .field .value {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .chip {
+      background: #f3f4f6;
+      border: 1px solid var(--line);
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 999px;
+    }
+
+    .stat {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+    }
+    .stat .label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .stat .num { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+    .stat .desc { font-size: 13px; color: var(--muted); }
+
+    .viewer {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      background: white;
+      min-height: 460px;
+    }
+    .viewer-toolbar {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .viewer-canvas {
+      min-height: 410px;
+      position: relative;
+      background-image:
+        linear-gradient(to right, rgba(148, 163, 184, 0.14) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(148, 163, 184, 0.14) 1px, transparent 1px);
+      background-size: 24px 24px;
+      background-color: #f8fafc;
+    }
+    .shape {
+      position: absolute;
+      border: 2px solid #64748b;
+      background: rgba(255,255,255,0.55);
+    }
+    .shape.a { left: 60px; top: 70px; width: 420px; height: 80px; }
+    .shape.b { left: 120px; top: 190px; width: 300px; height: 70px; }
+    .shape.c { left: 510px; top: 110px; width: 140px; height: 180px; }
+    .dimline {
+      position: absolute;
+      border-top: 2px dashed #2563eb;
+      height: 0;
+    }
+    .dimline.x1 { left: 60px; top: 48px; width: 420px; }
+    .dimline.x2 { left: 510px; top: 94px; width: 140px; }
+    .badge {
+      position: absolute;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 6px 8px;
+      font-size: 12px;
+      box-shadow: var(--shadow);
+    }
+    .badge.warn { border-color: #fbbf24; background: #fffaf0; }
+
+    .result-box {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      background: #fcfcfd;
+      margin-bottom: 12px;
+    }
+    .result-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .pill.info { background: var(--primary-soft); color: #1d4ed8; }
+    .pill.warn { background: var(--warn-soft); color: #92400e; }
+    .pill.danger { background: var(--danger-soft); color: #b91c1c; }
+    .pill.ok { background: var(--ok-soft); color: #047857; }
+
+    .result-box ul { margin: 0; padding-left: 18px; line-height: 1.7; font-size: 14px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+    }
+    th { font-size: 12px; color: var(--muted); background: #f9fafb; }
+
+    .sheet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .sheet-box {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      background: #fafafa;
+    }
+    .sheet-canvas {
+      height: 180px;
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+    .sheet-canvas.gray { background: linear-gradient(180deg,#f3f4f6,#e5e7eb); }
+    .sheet-canvas.blue { background: linear-gradient(180deg,#eff6ff,#dbeafe); }
+
+    .cut { position: absolute; border: 2px solid #94a3b8; }
+    .cut.blue { border-color: #2563eb; }
+
+    .report-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      background: white;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+    .flow-step {
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: 16px;
+      padding: 14px;
+      min-height: 120px;
+    }
+    .flow-step .n {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--primary-soft);
+      color: #1d4ed8;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .note {
+      margin-top: 10px;
+      background: #eef6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e3a8a;
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 1200px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .grid-2, .grid-3, .grid-4, .sheet-grid, .flow { grid-template-columns: 1fr; }
+      .field-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topnav">
+    <div class="title">AI 설계 지원 시스템 · 5개 화면 세트</div>
+    <div class="links">
+      <a href="#screen1">1. 프로젝트/업로드</a>
+      <a href="#screen2">2. 도면 분석</a>
+      <a href="#screen3">3. 설계 검토</a>
+      <a href="#screen4">4. BOM/최적화</a>
+      <a href="#screen5">5. 리포트</a>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="hero">
+      <h1>실제 화면을 상상할 수 있는 5개 UI 세트</h1>
+      <p>이 시안은 “도면 업로드 → 설계 조건 입력 → 도면 분석 → 설계 검토 → BOM 생성/절단 최적화 → 최종 리포트” 흐름을 5개의 대표 화면으로 나눈 와이어프레임입니다. 제안서, 발표자료, 내부 검토용 설명자료에 바로 활용할 수 있도록 구성했습니다.</p>
+    </section>
+
+    <section id="screen1">
+      <h2 class="section-title">화면 1. 프로젝트 생성 / 도면 업로드 / 설계 조건 입력</h2>
+      <div class="section-sub">처음 진입하는 화면이다. 사용자는 프로젝트를 만들고 PDF 또는 DXF 도면을 업로드한 뒤, 제품 크기·무게·속도 같은 조건을 입력한다.</div>
+      <div class="screen">
+        <div class="app">
+          <aside class="sidebar">
+            <div class="brand"><h2>설계 지원 AI</h2><p>프로젝트 관리 · 도면 업로드 · 조건 입력</p></div>
+            <div class="menu">
+              <div class="menu-item active">프로젝트 생성</div>
+              <div class="menu-item">도면 분석 결과</div>
+              <div class="menu-item">설계 검토</div>
+              <div class="menu-item">BOM 생성</div>
+              <div class="menu-item">절단 최적화</div>
+              <div class="menu-item">리포트</div>
+            </div>
+          </aside>
+          <main class="main">
+            <div class="topbar">
+              <div>
+                <h3>자동포장라인 A / 신규 프로젝트</h3>
+                <p>도면과 설계 조건을 입력하면 시스템이 자동 분석을 시작합니다.</p>
+              </div>
+              <div class="actions">
+                <button class="btn">임시 저장</button>
+                <button class="btn primary">분석 준비 완료</button>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="panel">
+                <h4>도면 업로드</h4>
+                <div class="sub">PDF / DXF 업로드, 도면 버전 관리, 주요 레이어 자동 인식 상태 표시</div>
+                <div class="upload-box">
+                  <div class="mock-file"></div>
+                  <strong>포장설비_메인라인_A.dxf</strong>
+                  <div style="font-size:13px;color:#6b7280;">업로드 완료 · 레이어 12개 · 치수 텍스트 38건 추출</div>
+                </div>
+              </div>
+              <div class="panel">
+                <h4>설계 조건 입력</h4>
+                <div class="sub">설계자가 기존에 구두로 전달하던 내용을 구조화해 입력하는 영역</div>
+                <div class="field-grid">
+                  <div class="field"><label>제품 길이</label><div class="value">300 mm</div></div>
+                  <div class="field"><label>제품 폭</label><div class="value">200 mm</div></div>
+                  <div class="field"><label>제품 무게</label><div class="value">12 kg</div></div>
+                  <div class="field"><label>목표 속도</label><div class="value">20 m/min</div></div>
+                  <div class="field"><label>처리량</label><div class="value">40 개/min</div></div>
+                  <div class="field"><label>설비 유형</label><div class="value">컨베이어 + 포장기</div></div>
+                </div>
+                <div class="chips">
+                  <div class="chip">깨짐 가능</div>
+                  <div class="chip">저진동 필요</div>
+                  <div class="chip">연속 운전</div>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen2">
+      <h2 class="section-title">화면 2. 도면 자동 분석 / 치수·구성요소 추출</h2>
+      <div class="section-sub">시스템이 도면을 읽고 길이, 프레임, 모터 위치, 롤러 구간 같은 주요 정보를 자동으로 표시하는 화면이다.</div>
+      <div class="screen">
+        <div class="app">
+          <aside class="sidebar">
+            <div class="brand"><h2>설계 지원 AI</h2><p>도면 구조 인식 · 치수 추출 · 구성요소 탐색</p></div>
+            <div class="menu">
+              <div class="menu-item">프로젝트 생성</div>
+              <div class="menu-item active">도면 분석 결과</div>
+              <div class="menu-item">설계 검토</div>
+              <div class="menu-item">BOM 생성</div>
+              <div class="menu-item">절단 최적화</div>
+              <div class="menu-item">리포트</div>
+            </div>
+          </aside>
+          <main class="main">
+            <div class="topbar">
+              <div>
+                <h3>도면 분석 결과</h3>
+                <p>주요 치수와 구성요소를 추출해 설계 검토의 기초 데이터를 만듭니다.</p>
+              </div>
+              <div class="actions">
+                <button class="btn">레이어 보기</button>
+                <button class="btn primary">결과 확정</button>
+              </div>
+            </div>
+            <div class="grid-4">
+              <div class="stat"><div class="label">도면 길이</div><div class="num">8.5m</div><div class="desc">자동 추출</div></div>
+              <div class="stat"><div class="label">롤러 개수</div><div class="num">24</div><div class="desc">블록 기준</div></div>
+              <div class="stat"><div class="label">치수 인식</div><div class="num">38</div><div class="desc">텍스트/치수선</div></div>
+              <div class="stat"><div class="label">검토 후보</div><div class="num">5</div><div class="desc">중요 구간 추출</div></div>
+            </div>
+            <div class="grid-2">
+              <div class="panel">
+                <h4>도면 뷰어</h4>
+                <div class="sub">원도면 위에 추출 결과와 검토 포인트를 레이어처럼 표시</div>
+                <div class="viewer">
+                  <div class="viewer-toolbar"><span>Frame / Roller / Motor / Dimension</span><span>확대 125%</span></div>
+                  <div class="viewer-canvas">
+                    <div class="shape a"></div>
+                    <div class="shape b"></div>
+                    <div class="shape c"></div>
+                    <div class="dimline x1"></div>
+                    <div class="dimline x2"></div>
+                    <div class="badge" style="left:220px;top:26px;">길이 8.5m 추출</div>
+                    <div class="badge" style="left:540px;top:64px;">모터 위치</div>
+                    <div class="badge warn" style="left:190px;top:280px;">롤러 간격 주의</div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel">
+                <h4>추출 정보 요약</h4>
+                <div class="sub">도면을 읽은 결과를 표와 목록으로 제공</div>
+                <table>
+                  <thead><tr><th>항목</th><th>값</th><th>비고</th></tr></thead>
+                  <tbody>
+                    <tr><td>전체 길이</td><td>8.5m</td><td>치수선 기준</td></tr>
+                    <tr><td>프레임 폭</td><td>450mm</td><td>주요 구간 평균</td></tr>
+                    <tr><td>롤러 간격</td><td>320mm</td><td>일부 구간 과대</td></tr>
+                    <tr><td>모터 표기</td><td>1HP</td><td>텍스트 추출</td></tr>
+                    <tr><td>도면 상태</td><td>분석 완료</td><td>검토 가능</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen3">
+      <h2 class="section-title">화면 3. 설계 검토 / 부품 추천 / 위험 경고</h2>
+      <div class="section-sub">이 화면이 핵심이다. 설계자는 여기서 이송 방식, 모터, 벨트, 롤러 간격, 경고 메시지를 한눈에 확인한다.</div>
+      <div class="screen">
+        <div class="app">
+          <aside class="sidebar">
+            <div class="brand"><h2>설계 지원 AI</h2><p>룰 기반 검토 · 부품 추천 · AI 코멘트</p></div>
+            <div class="menu">
+              <div class="menu-item">프로젝트 생성</div>
+              <div class="menu-item">도면 분석 결과</div>
+              <div class="menu-item active">설계 검토</div>
+              <div class="menu-item">BOM 생성</div>
+              <div class="menu-item">절단 최적화</div>
+              <div class="menu-item">리포트</div>
+            </div>
+          </aside>
+          <main class="main">
+            <div class="topbar">
+              <div>
+                <h3>설계 검토 결과</h3>
+                <p>도면 분석 결과와 설계 조건을 기반으로 추천·경고·설계 변경 포인트를 제시합니다.</p>
+              </div>
+              <div class="actions">
+                <button class="btn">설계자 메모</button>
+                <button class="btn primary">추천안 반영</button>
+              </div>
+            </div>
+            <div class="grid-3">
+              <div class="stat"><div class="label">추천 부품 수</div><div class="num">8건</div><div class="desc">후보 1순위 제시</div></div>
+              <div class="stat"><div class="label">경고 수</div><div class="num">2건</div><div class="desc">간격/동력 검토</div></div>
+              <div class="stat"><div class="label">설계 적합도</div><div class="num">82%</div><div class="desc">초기 검토 기준</div></div>
+            </div>
+            <div class="grid-2">
+              <div class="panel">
+                <h4>추천 및 경고</h4>
+                <div class="result-box">
+                  <div class="result-head"><div><strong>이송 방식 추천</strong><div class="sub" style="margin:4px 0 0;">제품 특성과 속도 조건 기준</div></div><span class="pill info">추천</span></div>
+                  <ul>
+                    <li>벨트 방식 권장</li>
+                    <li>이유: 깨짐 가능 제품 + 저진동 필요</li>
+                    <li>후보: 저진동 벨트 / 가이드 포함 구조</li>
+                  </ul>
+                </div>
+                <div class="result-box">
+                  <div class="result-head"><div><strong>모터 출력 검토</strong><div class="sub" style="margin:4px 0 0;">하중 및 처리량 기준 계산</div></div><span class="pill warn">검토 필요</span></div>
+                  <ul>
+                    <li>현재 설계안: 1HP</li>
+                    <li>권장 사양: 2HP</li>
+                    <li>사유: 목표 처리량 기준 여유율 부족</li>
+                  </ul>
+                </div>
+                <div class="result-box">
+                  <div class="result-head"><div><strong>설계 위험 경고</strong><div class="sub" style="margin:4px 0 0;">룰 기반 자동 검토 결과</div></div><span class="pill danger">경고</span></div>
+                  <ul>
+                    <li>롤러 간격이 제품 길이 대비 큼</li>
+                    <li>초기 가속 구간 부족 가능성</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="panel">
+                <h4>AI 코멘트 / 설계자 판단 보조</h4>
+                <div class="report-card">
+                  <strong>자동 코멘트</strong>
+                  <div class="note">현재 설계는 제품 파손 방지를 위해 저진동 벨트 구성이 더 적합합니다. 또한 목표 처리량 기준으로 모터 출력 여유가 부족할 수 있어 2HP 이상 재검토가 필요합니다.</div>
+                </div>
+                <div class="report-card" style="margin-top:14px;">
+                  <strong>추천 부품 리스트</strong>
+                  <table style="margin-top:10px;">
+                    <thead><tr><th>구분</th><th>추천</th><th>상태</th></tr></thead>
+                    <tbody>
+                      <tr><td>벨트</td><td>저진동형</td><td><span class="pill ok">적합</span></td></tr>
+                      <tr><td>모터</td><td>2HP</td><td><span class="pill warn">재검토</span></td></tr>
+                      <tr><td>가이드</td><td>보조형</td><td><span class="pill ok">적합</span></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen4">
+      <h2 class="section-title">화면 4. BOM 자동 생성 / 자재 절단 최적화</h2>
+      <div class="section-sub">설계 검토가 끝나면 부품 목록과 비용이 자동 정리되고, 철판이나 판재 절단 효율까지 함께 검토하는 화면이다.</div>
+      <div class="screen">
+        <div class="app">
+          <aside class="sidebar">
+            <div class="brand"><h2>설계 지원 AI</h2><p>BOM 생성 · 수량 산출 · 절단 최적화</p></div>
+            <div class="menu">
+              <div class="menu-item">프로젝트 생성</div>
+              <div class="menu-item">도면 분석 결과</div>
+              <div class="menu-item">설계 검토</div>
+              <div class="menu-item active">BOM 생성</div>
+              <div class="menu-item active">절단 최적화</div>
+              <div class="menu-item">리포트</div>
+            </div>
+          </aside>
+          <main class="main">
+            <div class="topbar">
+              <div>
+                <h3>BOM 및 자재 최적화</h3>
+                <p>부품, 규격, 수량, 금액을 자동 생성하고 자재 사용 효율을 함께 보여줍니다.</p>
+              </div>
+              <div class="actions">
+                <button class="btn">엑셀 내보내기</button>
+                <button class="btn primary">최적화 반영</button>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="panel">
+                <h4>BOM 자동 생성</h4>
+                <div class="sub">도면과 추천 결과를 바탕으로 자동 초안을 생성</div>
+                <table>
+                  <thead>
+                    <tr><th>품목</th><th>규격</th><th>수량</th><th>단가</th><th>금액</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>모터</td><td>2HP</td><td>1</td><td>350,000</td><td>350,000</td></tr>
+                    <tr><td>벨트</td><td>저진동형</td><td>8m</td><td>20,000</td><td>160,000</td></tr>
+                    <tr><td>프레임</td><td>SS400</td><td>2</td><td>180,000</td><td>360,000</td></tr>
+                    <tr><td>가이드</td><td>보조형</td><td>2</td><td>40,000</td><td>80,000</td></tr>
+                  </tbody>
+                </table>
+                <div class="note">총 예상 비용: 870,000원 · 자동 생성된 초안이므로 설계자가 수정 가능</div>
+              </div>
+              <div class="panel">
+                <h4>절단 최적화</h4>
+                <div class="sub">현재 절단안과 최적화 결과를 시각적으로 비교</div>
+                <div class="sheet-grid">
+                  <div class="sheet-box">
+                    <strong>현재 설계안</strong>
+                    <div class="sheet-canvas gray">
+                      <div class="cut" style="left:14px;top:18px;width:120px;height:60px;"></div>
+                      <div class="cut" style="left:146px;top:18px;width:90px;height:90px;"></div>
+                      <div class="cut" style="left:14px;top:96px;width:160px;height:54px;"></div>
+                    </div>
+                    <div style="margin-top:10px;font-weight:700;">사용률 62%</div>
+                  </div>
+                  <div class="sheet-box">
+                    <strong>최적화 결과</strong>
+                    <div class="sheet-canvas blue">
+                      <div class="cut blue" style="left:10px;top:14px;width:110px;height:56px;"></div>
+                      <div class="cut blue" style="left:126px;top:14px;width:80px;height:56px;"></div>
+                      <div class="cut blue" style="left:10px;top:78px;width:196px;height:62px;"></div>
+                    </div>
+                    <div style="margin-top:10px;font-weight:700;">사용률 88%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen5">
+      <h2 class="section-title">화면 5. 최종 리포트 / 승인 / 다운로드</h2>
+      <div class="section-sub">최종 화면에서는 설계 검토 결과, 추천 사항, 비용, 자재 최적화 결과를 요약해 보고서 형태로 정리하고 PDF·엑셀로 내보낸다.</div>
+      <div class="screen">
+        <div class="app">
+          <aside class="sidebar">
+            <div class="brand"><h2>설계 지원 AI</h2><p>결과 요약 · 보고서 · 승인 이력</p></div>
+            <div class="menu">
+              <div class="menu-item">프로젝트 생성</div>
+              <div class="menu-item">도면 분석 결과</div>
+              <div class="menu-item">설계 검토</div>
+              <div class="menu-item">BOM 생성</div>
+              <div class="menu-item">절단 최적화</div>
+              <div class="menu-item active">리포트</div>
+            </div>
+          </aside>
+          <main class="main">
+            <div class="topbar">
+              <div>
+                <h3>최종 설계 검토 리포트</h3>
+                <p>설계안 비교, 비용, 경고, 추천 변경사항을 한 번에 보고 승인할 수 있습니다.</p>
+              </div>
+              <div class="actions">
+                <button class="btn">엑셀 다운로드</button>
+                <button class="btn">PDF 다운로드</button>
+                <button class="btn primary">승인 요청</button>
+              </div>
+            </div>
+            <div class="grid-3">
+              <div class="stat"><div class="label">최종 적합도</div><div class="num">89%</div><div class="desc">추천안 반영 후</div></div>
+              <div class="stat"><div class="label">BOM 금액</div><div class="num">87만</div><div class="desc">자동 초안 기준</div></div>
+              <div class="stat"><div class="label">자재 사용률</div><div class="num">88%</div><div class="desc">최적화 반영</div></div>
+            </div>
+            <div class="panel">
+              <h4>프로젝트 요약 플로우</h4>
+              <div class="sub">전체 작업 흐름과 각 단계의 핵심 결과를 한 장으로 요약</div>
+              <div class="flow">
+                <div class="flow-step"><div class="n">1</div><strong>도면 업로드</strong><div class="sub" style="margin-top:8px;">PDF/DXF 등록</div></div>
+                <div class="flow-step"><div class="n">2</div><strong>도면 분석</strong><div class="sub" style="margin-top:8px;">치수/구성요소 추출</div></div>
+                <div class="flow-step"><div class="n">3</div><strong>설계 검토</strong><div class="sub" style="margin-top:8px;">추천·경고 생성</div></div>
+                <div class="flow-step"><div class="n">4</div><strong>BOM/최적화</strong><div class="sub" style="margin-top:8px;">비용/절단안 확정</div></div>
+                <div class="flow-step"><div class="n">5</div><strong>리포트</strong><div class="sub" style="margin-top:8px;">승인·배포</div></div>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="panel">
+                <h4>핵심 변경 사항</h4>
+                <table>
+                  <thead><tr><th>구분</th><th>기존</th><th>추천</th></tr></thead>
+                  <tbody>
+                    <tr><td>이송 방식</td><td>기본 벨트</td><td>저진동 벨트</td></tr>
+                    <tr><td>모터</td><td>1HP</td><td>2HP</td></tr>
+                    <tr><td>절단 효율</td><td>62%</td><td>88%</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="panel">
+                <h4>승인 메모</h4>
+                <div class="note">현재 안은 PoC 단계에서 충분히 설명 가능한 구조입니다. 실제 제안서에서는 이 5개 화면 중 3개만 발췌해도 전체 시스템 흐름과 핵심 기능을 이해시키기에 충분합니다.</div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

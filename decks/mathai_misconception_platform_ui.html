@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MathAI Misconception Platform UI</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=DM+Sans:wght@400;500;600&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #1E3A5F;
+    --blue: #2E86C1;
+    --teal: #1ABC9C;
+    --red: #E74C3C;
+    --orange: #F39C12;
+    --bg: #F0F4F8;
+    --card: #FFFFFF;
+    --border: #DDE3EC;
+    --text: #1a2332;
+    --muted: #7A8BA0;
+    --tag-blue-bg: #EBF4FB;
+    --tag-blue-text: #1E6FA8;
+    --tag-teal-bg: #E8FAF5;
+    --tag-teal-text: #0D8A6E;
+    --tag-red-bg: #FDEDEC;
+    --tag-red-text: #C0392B;
+    --tag-orange-bg: #FEF5E7;
+    --tag-orange-text: #B7770D;
+  }
+
+  body { font-family: 'DM Sans', 'Noto Sans KR', sans-serif; background: var(--bg); }
+
+  .screen-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 2rem 0 0.6rem;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .screen-label::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--blue);
+  }
+
+  /* ===================== TOP NAV ===================== */
+  .topnav {
+    background: var(--navy);
+    padding: 0 1.5rem;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .topnav-logo {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .topnav-logo-icon {
+    width: 28px; height: 28px;
+    background: var(--teal);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: #fff;
+  }
+  .topnav-logo-text { color: #fff; font-weight: 600; font-size: 15px; }
+  .topnav-menu { display: flex; gap: 2rem; }
+  .topnav-menu a {
+    color: rgba(255,255,255,0.6);
+    font-size: 13px; text-decoration: none; font-weight: 500;
+    padding: 4px 0;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .topnav-menu a.return-link {
+    color: #fff;
+    padding: 7px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(26, 188, 156, 0.32);
+    background: rgba(26, 188, 156, 0.2);
+    border-bottom: none;
+  }
+  .topnav-menu a.active { color: #fff; border-bottom-color: var(--teal); }
+  .topnav-right { display: flex; align-items: center; gap: 12px; }
+  .avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--blue); color: #fff;
+    font-size: 12px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ===================== SCREEN 1: 문제 풀이 입력 ===================== */
+  .screen-1 { padding: 1.2rem 1.5rem; }
+
+  .problem-card {
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .problem-header {
+    background: var(--navy);
+    padding: 14px 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .problem-badge {
+    background: rgba(255,255,255,0.15);
+    color: #fff; font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.25);
+  }
+  .problem-title-text { color: #fff; font-size: 14px; font-weight: 500; }
+  .problem-meta { color: rgba(255,255,255,0.55); font-size: 12px; margin-left: auto; }
+
+  .problem-body { padding: 18px 20px; }
+  .problem-text {
+    background: #F7F9FC;
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .problem-text strong { color: var(--navy); }
+
+  .step-section-title {
+    font-size: 12px; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+  .steps-grid {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .step-row {
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .step-num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--blue); color: #fff;
+    font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .step-num.done { background: var(--teal); }
+  .step-num.error { background: var(--red); }
+  .step-content { flex: 1; }
+  .step-label { font-size: 12px; color: var(--muted); margin-bottom: 5px; font-weight: 500; }
+  .choice-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: #fff;
+    font-size: 12px; color: var(--text);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .chip.selected-blue {
+    border-color: var(--blue);
+    background: var(--tag-blue-bg);
+    color: var(--tag-blue-text);
+    font-weight: 600;
+  }
+  .chip.selected-red {
+    border-color: var(--red);
+    background: var(--tag-red-bg);
+    color: var(--tag-red-text);
+    font-weight: 600;
+  }
+  .chip.selected-teal {
+    border-color: var(--teal);
+    background: var(--tag-teal-bg);
+    color: var(--tag-teal-text);
+    font-weight: 600;
+  }
+  .step-divider { border: none; border-top: 0.5px solid var(--border); margin: 4px 0; }
+
+  .submit-row {
+    padding: 14px 20px;
+    border-top: 0.5px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    background: #FAFBFD;
+  }
+  .submit-hint { font-size: 12px; color: var(--muted); }
+  .btn-submit {
+    background: var(--blue);
+    color: #fff; font-size: 13px; font-weight: 600;
+    border: none; border-radius: 8px;
+    padding: 9px 22px; cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-analyze {
+    background: var(--teal);
+    color: #fff; font-size: 13px; font-weight: 600;
+    border: none; border-radius: 8px;
+    padding: 9px 22px; cursor: pointer;
+    font-family: inherit;
+  }
+
+  /* ===================== SCREEN 2: AI 오개념 분석 결과 ===================== */
+  .screen-2 { padding: 0 1.5rem 1.2rem; }
+
+  .result-top-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .metric-card {
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .metric-label { font-size: 11px; color: var(--muted); font-weight: 500; margin-bottom: 4px; }
+  .metric-val { font-size: 22px; font-weight: 600; color: var(--text); }
+  .metric-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .metric-val.bad { color: var(--red); }
+  .metric-val.good { color: var(--teal); }
+
+  .result-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 12px; }
+
+  .result-card {
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .result-card-header {
+    padding: 12px 16px;
+    border-bottom: 0.5px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .result-card-header-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+  .result-card-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .result-card-body { padding: 14px 16px; }
+
+  .diagnosis-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .diagnosis-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .diag-icon {
+    width: 30px; height: 30px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0;
+  }
+  .diag-main { flex: 1; }
+  .diag-type { font-size: 11px; font-weight: 600; margin-bottom: 2px; }
+  .diag-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .diag-badge {
+    font-size: 10px; font-weight: 700; padding: 2px 7px;
+    border-radius: 10px; align-self: flex-start; margin-top: 2px;
+  }
+
+  .severity-bar-wrap { margin-top: 6px; }
+  .severity-bar-label {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--muted); margin-bottom: 4px;
+  }
+  .severity-bar-track {
+    height: 6px; background: #EEF1F5; border-radius: 3px; overflow: hidden;
+  }
+  .severity-bar-fill { height: 100%; border-radius: 3px; }
+
+  .recommend-list { display: flex; flex-direction: column; gap: 8px; }
+  .recommend-item {
+    display: flex; align-items: center; gap: 10px;
+    background: #F7F9FC;
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .rec-icon {
+    width: 28px; height: 28px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; flex-shrink: 0;
+  }
+  .rec-text { flex: 1; }
+  .rec-title { font-size: 12px; font-weight: 600; color: var(--text); }
+  .rec-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .rec-arrow { color: var(--muted); font-size: 12px; }
+
+  /* ===================== SCREEN 3: 학생 대시보드 ===================== */
+  .screen-3 { padding: 0 1.5rem 1.5rem; }
+
+  .dash-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .dash-greeting { font-size: 15px; font-weight: 600; color: var(--text); }
+  .dash-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .dash-streak {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--tag-orange-bg);
+    border: 1px solid #F5CBA7;
+    padding: 6px 12px; border-radius: 20px;
+  }
+  .dash-streak-text { font-size: 12px; font-weight: 600; color: var(--tag-orange-text); }
+
+  .dash-grid { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 12px; margin-bottom: 12px; }
+
+  .weak-list { display: flex; flex-direction: column; gap: 6px; }
+  .weak-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 0.5px solid var(--border);
+    background: #fff;
+  }
+  .weak-rank {
+    width: 20px; height: 20px; border-radius: 50%;
+    font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .weak-topic { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; }
+  .weak-bar-wrap { width: 80px; }
+  .weak-bar-track { height: 5px; background: #EEF1F5; border-radius: 3px; overflow: hidden; }
+  .weak-bar-fill { height: 100%; border-radius: 3px; }
+  .weak-count { font-size: 11px; color: var(--muted); min-width: 30px; text-align: right; }
+
+  .error-donut-card {
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .donut-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 12px; align-self: flex-start; }
+
+  .donut-wrap { position: relative; width: 100px; height: 100px; margin: 0 auto 12px; }
+  .donut-center-text {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  .donut-center-val { font-size: 18px; font-weight: 700; color: var(--text); }
+  .donut-center-sub { font-size: 9px; color: var(--muted); }
+
+  .donut-legend { width: 100%; display: flex; flex-direction: column; gap: 5px; }
+  .legend-row {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--text);
+  }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .legend-pct { margin-left: auto; font-weight: 600; font-size: 11px; }
+
+  .recent-table {
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .table-header-row {
+    display: grid;
+    grid-template-columns: 2fr 1.2fr 1fr 1fr 1fr;
+    padding: 10px 16px;
+    border-bottom: 0.5px solid var(--border);
+    background: #FAFBFD;
+  }
+  .th { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .table-row {
+    display: grid;
+    grid-template-columns: 2fr 1.2fr 1fr 1fr 1fr;
+    padding: 10px 16px;
+    border-bottom: 0.5px solid var(--border);
+    align-items: center;
+  }
+  .table-row:last-child { border-bottom: none; }
+  .td { font-size: 12px; color: var(--text); }
+  .td.muted { color: var(--muted); }
+  .error-tag {
+    display: inline-flex; align-items: center;
+    padding: 2px 8px; border-radius: 10px;
+    font-size: 10px; font-weight: 600;
+  }
+  .error-concept { background: var(--tag-red-bg); color: var(--tag-red-text); }
+  .error-proc { background: var(--tag-orange-bg); color: var(--tag-orange-text); }
+  .error-calc { background: var(--tag-blue-bg); color: var(--tag-blue-text); }
+  .status-done { color: var(--teal); font-size: 11px; font-weight: 600; }
+  .status-todo { color: var(--muted); font-size: 11px; }
+
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .section-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .section-link { font-size: 12px; color: var(--blue); font-weight: 500; cursor: pointer; }
+
+  .divider-line {
+    height: 0.5px; background: var(--border); margin: 1rem 0;
+  }
+</style>
+
+<div style="background: var(--bg); min-height: 100vh; padding-bottom: 2rem;">
+
+  <!-- TOP NAV -->
+  <div class="topnav">
+    <div class="topnav-logo">
+      <div class="topnav-logo-icon">AI</div>
+      <span class="topnav-logo-text">수학 오개념 분석</span>
+    </div>
+  <div class="topnav-menu">
+      <a href="../services.html#service-decks" class="return-link">사업설명자료</a>
+      <a href="#" class="active">학습 분석</a>
+      <a href="#">문제 추천</a>
+      <a href="#">학습 기록</a>
+      <a href="#">교사 리포트</a>
+    </div>
+    <div class="topnav-right">
+      <div style="font-size: 12px; color: rgba(255,255,255,0.6);">김민준 (3학년)</div>
+      <div class="avatar">김</div>
+    </div>
+  </div>
+
+  <!-- =========== SCREEN 1: 풀이 과정 입력 =========== -->
+  <div class="screen-label">화면 1 — 풀이 과정 입력</div>
+  <div class="screen-1">
+    <div class="problem-card">
+      <div class="problem-header">
+        <span class="problem-badge">고2 수학 / 수열</span>
+        <span class="problem-title-text">문제 #42 — 등비수열의 합</span>
+        <span class="problem-meta">2025.03.28</span>
+      </div>
+      <div class="problem-body">
+        <div class="problem-text">
+          첫째항이 <strong>3</strong>이고 공비가 <strong>2</strong>인 등비수열에서,<br>
+          첫째항부터 제 <strong>n</strong>항까지의 합 <strong>Sₙ</strong>을 구하고,<br>
+          <strong>S₅</strong>의 값을 계산하시오.
+        </div>
+
+        <div class="step-section-title">풀이 과정 입력</div>
+        <div class="steps-grid">
+
+          <div class="step-row">
+            <div class="step-num done">1</div>
+            <div class="step-content">
+              <div class="step-label">공식 선택 — 어떤 공식을 적용했나요?</div>
+              <div class="choice-chips">
+                <button class="chip selected-blue">등비수열 합 공식 Sₙ = a(rⁿ-1)/(r-1)</button>
+                <button class="chip">등차수열 합 공식</button>
+                <button class="chip">직접 나열</button>
+                <button class="chip">모르겠음</button>
+              </div>
+            </div>
+          </div>
+
+          <hr class="step-divider">
+
+          <div class="step-row">
+            <div class="step-num done">2</div>
+            <div class="step-content">
+              <div class="step-label">값 대입 — a, r 값을 어떻게 대입했나요?</div>
+              <div class="choice-chips">
+                <button class="chip selected-red">a = 2, r = 3 으로 대입</button>
+                <button class="chip">a = 3, r = 2 으로 대입</button>
+                <button class="chip">잘 모르겠어서 넘김</button>
+              </div>
+            </div>
+          </div>
+
+          <hr class="step-divider">
+
+          <div class="step-row">
+            <div class="step-num error">3</div>
+            <div class="step-content">
+              <div class="step-label">막힌 단계 — 어디서 어려움을 겪었나요?</div>
+              <div class="choice-chips">
+                <button class="chip selected-teal">a와 r 값을 헷갈렸음</button>
+                <button class="chip">분수 계산</button>
+                <button class="chip">n에 5 대입하는 부분</button>
+                <button class="chip">어렵지 않았음</button>
+              </div>
+            </div>
+          </div>
+
+          <hr class="step-divider">
+
+          <div class="step-row">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <div class="step-label">최종 답 입력</div>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <div style="background: #FEF5E7; border: 1px solid #F5CBA7; border-radius: 8px; padding: 7px 14px; font-size: 13px; font-weight: 600; color: #8E6010;">S₅ = 93</div>
+                <span style="font-size: 12px; color: var(--red); font-weight: 500;">✕ 오답 (정답: 93 → 계산은 맞으나 과정 오류)</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="submit-row">
+        <span class="submit-hint">풀이 과정 입력 완료 시 AI 분석이 시작됩니다</span>
+        <button class="btn-analyze">AI 분석 시작 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========== SCREEN 2: AI 분석 결과 =========== -->
+  <div class="screen-label">화면 2 — AI 오개념 분석 결과</div>
+  <div class="screen-2">
+
+    <div class="result-top-grid">
+      <div class="metric-card">
+        <div class="metric-label">오개념 유형</div>
+        <div class="metric-val bad">절차 오류</div>
+        <div class="metric-sub">항의 값 대입 순서 혼동</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">신뢰도</div>
+        <div class="metric-val" style="color: var(--blue);">94%</div>
+        <div class="metric-sub">AI 분석 신뢰도</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">동일 오류 횟수</div>
+        <div class="metric-val bad">3회</div>
+        <div class="metric-sub">최근 30일 기준</div>
+      </div>
+    </div>
+
+    <div class="result-grid">
+      <!-- 왼쪽: 오개념 상세 -->
+      <div class="result-card">
+        <div class="result-card-header">
+          <div class="result-card-header-dot" style="background: var(--red);"></div>
+          <span class="result-card-title">오개념 진단 결과</span>
+        </div>
+        <div class="result-card-body">
+
+          <div class="diagnosis-item">
+            <div class="diag-icon" style="background: var(--tag-orange-bg);">📋</div>
+            <div class="diag-main">
+              <div class="diag-type" style="color: var(--orange);">절차 오류 (주요)</div>
+              <div class="diag-desc">공식 자체는 정확히 알고 있으나, <strong style="color: var(--text);">a(첫째항)와 r(공비)를 반대로 대입</strong>하는 실수가 반복됩니다. 수열 문제에서 가장 흔한 혼동 패턴입니다.</div>
+            </div>
+            <div class="diag-badge" style="background: var(--tag-orange-bg); color: var(--tag-orange-text);">HIGH</div>
+          </div>
+
+          <div class="diagnosis-item">
+            <div class="diag-icon" style="background: var(--tag-red-bg);">🔑</div>
+            <div class="diag-main">
+              <div class="diag-type" style="color: var(--red);">개념 오류 (보조)</div>
+              <div class="diag-desc">등비수열에서 <strong style="color: var(--text);">"첫째항"과 "공비"의 정의 구분</strong>이 불명확합니다. 용어 정의 재학습이 필요합니다.</div>
+            </div>
+            <div class="diag-badge" style="background: var(--tag-red-bg); color: var(--tag-red-text);">MED</div>
+          </div>
+
+          <div class="diagnosis-item">
+            <div class="diag-icon" style="background: var(--tag-teal-bg);">✓</div>
+            <div class="diag-main">
+              <div class="diag-type" style="color: var(--teal);">계산 능력 (정상)</div>
+              <div class="diag-desc">값을 대입한 후의 산술 계산은 정확합니다. 계산 실수는 발생하지 않았습니다.</div>
+            </div>
+            <div class="diag-badge" style="background: var(--tag-teal-bg); color: var(--tag-teal-text);">OK</div>
+          </div>
+
+          <div style="margin-top: 14px;">
+            <div class="severity-bar-label">
+              <span>단원 누적 오개념 빈도</span>
+              <span style="color: var(--text); font-weight: 600;">등비수열</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 6px;">
+              <div>
+                <div class="severity-bar-label"><span>절차 오류</span><span style="color: var(--orange); font-weight: 600;">5회</span></div>
+                <div class="severity-bar-track"><div class="severity-bar-fill" style="width: 75%; background: var(--orange);"></div></div>
+              </div>
+              <div>
+                <div class="severity-bar-label"><span>개념 오류</span><span style="color: var(--red); font-weight: 600;">3회</span></div>
+                <div class="severity-bar-track"><div class="severity-bar-fill" style="width: 45%; background: var(--red);"></div></div>
+              </div>
+              <div>
+                <div class="severity-bar-label"><span>계산 실수</span><span style="color: var(--blue); font-weight: 600;">1회</span></div>
+                <div class="severity-bar-track"><div class="severity-bar-fill" style="width: 15%; background: var(--blue);"></div></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 오른쪽: 맞춤 학습 추천 -->
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div class="result-card">
+          <div class="result-card-header">
+            <div class="result-card-header-dot" style="background: var(--teal);"></div>
+            <span class="result-card-title">맞춤 학습 방향</span>
+          </div>
+          <div class="result-card-body">
+            <div class="recommend-list">
+              <div class="recommend-item">
+                <div class="rec-icon" style="background: var(--tag-red-bg);">📖</div>
+                <div class="rec-text">
+                  <div class="rec-title">등비수열 용어 정의 복습</div>
+                  <div class="rec-sub">첫째항·공비 개념 재확인</div>
+                </div>
+                <span class="rec-arrow">›</span>
+              </div>
+              <div class="recommend-item">
+                <div class="rec-icon" style="background: var(--tag-orange-bg);">✏️</div>
+                <div class="rec-text">
+                  <div class="rec-title">대입 순서 연습 문제 3개</div>
+                  <div class="rec-sub">난이도 ★★☆ / 유사 유형</div>
+                </div>
+                <span class="rec-arrow">›</span>
+              </div>
+              <div class="recommend-item">
+                <div class="rec-icon" style="background: var(--tag-blue-bg);">🎯</div>
+                <div class="rec-text">
+                  <div class="rec-title">같은 유형 확인 테스트</div>
+                  <div class="rec-sub">오개념 해소 여부 검증</div>
+                </div>
+                <span class="rec-arrow">›</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-card">
+          <div class="result-card-header">
+            <div class="result-card-header-dot" style="background: var(--blue);"></div>
+            <span class="result-card-title">교사 알림</span>
+          </div>
+          <div class="result-card-body">
+            <div style="background: #EBF4FB; border-radius: 8px; padding: 10px 12px; font-size: 12px; color: var(--tag-blue-text); line-height: 1.6;">
+              <strong>김민준</strong> 학생: 등비수열 합 공식에서 <strong>a/r 혼동(절차 오류)</strong>가 3회 반복됩니다.<br>
+              다음 수업 시 첫째항·공비 구별 집중 지도를 권장합니다.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =========== SCREEN 3: 학생 대시보드 =========== -->
+  <div class="screen-label">화면 3 — 학생 대시보드</div>
+  <div class="screen-3">
+
+    <div class="dash-header">
+      <div>
+        <div class="dash-greeting">안녕하세요, 김민준 학생</div>
+        <div class="dash-sub">오늘도 취약 단원을 집중 공략해 볼까요?</div>
+      </div>
+      <div class="dash-streak">
+        <span style="font-size: 15px;">🔥</span>
+        <span class="dash-streak-text">7일 연속 학습 중</span>
+      </div>
+    </div>
+
+    <div class="result-top-grid" style="margin-bottom: 12px;">
+      <div class="metric-card">
+        <div class="metric-label">이번 달 풀이 문제</div>
+        <div class="metric-val">48문제</div>
+        <div class="metric-sub">목표 60문제 대비 80%</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">오개념 해소 완료</div>
+        <div class="metric-val good">12건</div>
+        <div class="metric-sub">전월 대비 +4건</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">정답률 (최근 30일)</div>
+        <div class="metric-val" style="color: var(--blue);">67%</div>
+        <div class="metric-sub">↑ 전월 대비 +8%p</div>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+      <!-- 취약 단원 -->
+      <div class="result-card">
+        <div class="result-card-header" style="justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="result-card-header-dot" style="background: var(--red);"></div>
+            <span class="result-card-title">취약 단원 Top 5</span>
+          </div>
+          <span style="font-size: 11px; color: var(--blue); font-weight: 500; cursor: pointer;">전체 보기</span>
+        </div>
+        <div class="result-card-body">
+          <div class="weak-list">
+            <div class="weak-item">
+              <div class="weak-rank" style="background: var(--tag-red-bg); color: var(--tag-red-text);">1</div>
+              <span class="weak-topic">등비수열의 합</span>
+              <div class="weak-bar-wrap">
+                <div class="weak-bar-track"><div class="weak-bar-fill" style="width: 90%; background: var(--red);"></div></div>
+              </div>
+              <span class="weak-count" style="color: var(--red);">9오류</span>
+            </div>
+            <div class="weak-item">
+              <div class="weak-rank" style="background: var(--tag-orange-bg); color: var(--tag-orange-text);">2</div>
+              <span class="weak-topic">삼각함수 기본 공식</span>
+              <div class="weak-bar-wrap">
+                <div class="weak-bar-track"><div class="weak-bar-fill" style="width: 70%; background: var(--orange);"></div></div>
+              </div>
+              <span class="weak-count" style="color: var(--orange);">7오류</span>
+            </div>
+            <div class="weak-item">
+              <div class="weak-rank" style="background: #F4F6F7; color: var(--muted);">3</div>
+              <span class="weak-topic">이차방정식 판별식</span>
+              <div class="weak-bar-wrap">
+                <div class="weak-bar-track"><div class="weak-bar-fill" style="width: 50%; background: #95a5a6;"></div></div>
+              </div>
+              <span class="weak-count">5오류</span>
+            </div>
+            <div class="weak-item">
+              <div class="weak-rank" style="background: #F4F6F7; color: var(--muted);">4</div>
+              <span class="weak-topic">로그의 성질</span>
+              <div class="weak-bar-wrap">
+                <div class="weak-bar-track"><div class="weak-bar-fill" style="width: 35%; background: #95a5a6;"></div></div>
+              </div>
+              <span class="weak-count">3오류</span>
+            </div>
+            <div class="weak-item">
+              <div class="weak-rank" style="background: #F4F6F7; color: var(--muted);">5</div>
+              <span class="weak-topic">미분의 정의</span>
+              <div class="weak-bar-wrap">
+                <div class="weak-bar-track"><div class="weak-bar-fill" style="width: 20%; background: #95a5a6;"></div></div>
+              </div>
+              <span class="weak-count">2오류</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 오류 유형 도넛 -->
+      <div class="error-donut-card">
+        <div class="donut-title">오류 유형 분포</div>
+        <div class="donut-wrap">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#EEF1F5" stroke-width="14"/>
+            <!-- concept: 36%, proc: 45%, calc: 19% -->
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#E74C3C" stroke-width="14"
+              stroke-dasharray="85.9 152.8" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#F39C12" stroke-width="14"
+              stroke-dasharray="108.3 130.4" stroke-dashoffset="-85.9" transform="rotate(-90 50 50)"/>
+            <circle cx="50" cy="50" r="38" fill="none" stroke="#2E86C1" stroke-width="14"
+              stroke-dasharray="45.5 193.2" stroke-dashoffset="-194.2" transform="rotate(-90 50 50)"/>
+          </svg>
+          <div class="donut-center-text">
+            <div class="donut-center-val">26</div>
+            <div class="donut-center-sub">총 오류</div>
+          </div>
+        </div>
+        <div class="donut-legend">
+          <div class="legend-row">
+            <div class="legend-dot" style="background: var(--orange);"></div>
+            <span>절차 오류</span>
+            <span class="legend-pct" style="color: var(--orange);">45%</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-dot" style="background: var(--red);"></div>
+            <span>개념 오류</span>
+            <span class="legend-pct" style="color: var(--red);">36%</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-dot" style="background: var(--blue);"></div>
+            <span>계산 실수</span>
+            <span class="legend-pct" style="color: var(--blue);">19%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 최근 학습 기록 -->
+    <div class="section-header">
+      <span class="section-title">최근 학습 기록</span>
+      <span class="section-link">전체 보기 →</span>
+    </div>
+    <div class="recent-table">
+      <div class="table-header-row">
+        <div class="th">문제</div>
+        <div class="th">단원</div>
+        <div class="th">오류 유형</div>
+        <div class="th">날짜</div>
+        <div class="th">상태</div>
+      </div>
+      <div class="table-row">
+        <div class="td">등비수열 합 #42</div>
+        <div class="td muted">수열</div>
+        <div class="td"><span class="error-tag error-proc">절차 오류</span></div>
+        <div class="td muted">03.28</div>
+        <div class="td"><span class="status-todo">학습 중</span></div>
+      </div>
+      <div class="table-row">
+        <div class="td">sinθ 값 계산 #38</div>
+        <div class="td muted">삼각함수</div>
+        <div class="td"><span class="error-tag error-concept">개념 오류</span></div>
+        <div class="td muted">03.26</div>
+        <div class="td"><span class="status-done">✓ 해소</span></div>
+      </div>
+      <div class="table-row">
+        <div class="td">판별식 D 활용 #31</div>
+        <div class="td muted">이차방정식</div>
+        <div class="td"><span class="error-tag error-calc">계산 실수</span></div>
+        <div class="td muted">03.25</div>
+        <div class="td"><span class="status-done">✓ 해소</span></div>
+      </div>
+      <div class="table-row">
+        <div class="td">등비중항 #29</div>
+        <div class="td muted">수열</div>
+        <div class="td"><span class="error-tag error-proc">절차 오류</span></div>
+        <div class="td muted">03.24</div>
+        <div class="td"><span class="status-done">✓ 해소</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
