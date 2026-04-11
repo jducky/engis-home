@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF 자료실 | EnGIS</title>
+    <meta
+      name="description"
+      content="엔지스 사업설명자료에 포함된 PDF 문서를 목록으로 확인하고 열람할 수 있는 자료실입니다."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Pretendard:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css?v=20260408-2" />
+    <style>
+      .pdf-library,
+      .pdf-viewer-shell {
+        width: min(1180px, calc(100% - 2rem));
+        margin: 0 auto;
+      }
+
+      .pdf-library {
+        padding: 3.25rem 0 4rem;
+      }
+
+      .pdf-library-header {
+        max-width: 52rem;
+      }
+
+      .pdf-library-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.25rem;
+        margin-top: 1.4rem;
+      }
+
+      .pdf-group + .pdf-group {
+        margin-top: 2.4rem;
+      }
+
+      .pdf-group-title {
+        margin: 0;
+        font-size: 1.15rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--text);
+      }
+
+      .pdf-card {
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+        padding: 1.6rem;
+        border-radius: 1.7rem;
+        border: 1px solid rgba(13, 92, 99, 0.12);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(248, 251, 250, 0.82)),
+          linear-gradient(135deg, rgba(24, 169, 153, 0.08), rgba(13, 92, 99, 0.02));
+        box-shadow: var(--shadow);
+      }
+
+      .pdf-card h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        line-height: 1.35;
+      }
+
+      .pdf-card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .pdf-card-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        margin-top: auto;
+      }
+
+      .pdf-empty {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        border-radius: 1.5rem;
+        border: 1px dashed rgba(13, 92, 99, 0.18);
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      @media (max-width: 1024px) {
+        .pdf-library-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 720px) {
+        .pdf-library-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="EnGIS 홈">
+          <img class="brand-mark" src="../assets/engis-mark.svg" alt="" aria-hidden="true" />
+          <span class="brand-lockup">
+            <span class="brand-text">EnGIS</span>
+            <span class="brand-subtext">Global Geospatial Innovations</span>
+          </span>
+          <span class="brand-mobile-inline">
+            <img class="brand-mobile-mark" src="../assets/engis-mark.svg" alt="" aria-hidden="true" />
+            <span class="brand-mobile-label">EnGIS</span>
+          </span>
+        </a>
+        <nav class="site-nav" aria-label="주요 메뉴">
+          <a href="../services.html">서비스</a>
+          <a href="../ai-solutions.html">AI 솔루션</a>
+          <a href="../projects.html">수행실적</a>
+          <a href="../services.html#contact">문의</a>
+        </nav>
+        <a class="header-cta" href="../services.html#contact">사업 문의</a>
+      </header>
+
+      <main class="pdf-library">
+        <section class="pdf-library-header">
+          <p class="section-kicker">PDF Library</p>
+          <h1>사업설명자료 PDF 자료실</h1>
+          <p class="hero-text">
+            특정 PDF 자료를 목록으로 확인하고, 브라우저에서 바로 열람할 수 있도록
+            구성한 자료실입니다.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="../services.html#service-decks">사업설명자료로 돌아가기</a>
+          </div>
+        </section>
+
+        <section>
+          <div id="pdf-library-groups" aria-live="polite"></div>
+          <div id="pdf-empty" class="pdf-empty" hidden>등록된 PDF 자료가 없습니다.</div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <svg class="footer-brand-mark" viewBox="0 0 112 112" aria-hidden="true" focusable="false">
+            <path d="M26 10h60c8.84 0 16 7.16 16 16v24c0 1.66-1.34 3-3 3H82c-1.66 0-3-1.34-3-3V32c0-4.42-3.58-8-8-8H41c-4.42 0-8 3.58-8 8v18c0 1.66-1.34 3-3 3H13c-1.66 0-3-1.34-3-3V26c0-8.84 7.16-16 16-16Z" />
+            <path d="M13 59h17c1.66 0 3 1.34 3 3v18c0 4.42 3.58 8 8 8h30c4.42 0 8-3.58 8-8V62c0-1.66 1.34-3 3-3h17c1.66 0 3 1.34 3 3v24c0 8.84-7.16 16-16 16H26c-8.84 0-16-7.16-16-16V62c0-1.66 1.34-3 3-3Z" />
+          </svg>
+          <div>
+            <span class="footer-brand-name">EnGIS</span>
+            <span class="footer-brand-sub">Global Geospatial Innovations</span>
+          </div>
+        </div>
+        <address class="footer-info">
+          <span>서울특별시 금천구 가산디지털1로 225, 1002호 (에이스가산포휴)</span>
+          <span>대표 노재덕·정진우</span>
+          <span>사업자등록번호 114-87-06944</span>
+          <span>T. <a href="tel:025973615">02-597-3615</a></span>
+          <span>E. <a href="mailto:engis@en-gis.com">engis@en-gis.com</a></span>
+        </address>
+      </div>
+      <p class="footer-copy">© 2026 EnGIS. All rights reserved.</p>
+    </footer>
+
+    <script src="../app.js"></script>
+    <script>
+      const groupsRoot = document.getElementById("pdf-library-groups");
+      const empty = document.getElementById("pdf-empty");
+
+      const renderCard = (item) => {
+        const card = document.createElement("article");
+        card.className = "pdf-card";
+
+        const category = document.createElement("p");
+        category.className = "case-type";
+        category.textContent = item.category || "PDF";
+
+        const title = document.createElement("h3");
+        title.textContent = item.title;
+
+        const description = document.createElement("p");
+        description.textContent = item.description || "PDF 자료를 열람할 수 있습니다.";
+
+        const actions = document.createElement("div");
+        actions.className = "pdf-card-actions";
+
+        const viewLink = document.createElement("a");
+        viewLink.className = "button button-secondary";
+        viewLink.href = `./pdf-viewer.html?slug=${encodeURIComponent(item.slug)}`;
+        viewLink.textContent = "브라우저에서 보기";
+
+        const fileLink = document.createElement("a");
+        fileLink.className = "button button-primary";
+        fileLink.href = item.file;
+        fileLink.target = "_blank";
+        fileLink.rel = "noreferrer";
+        fileLink.textContent = "PDF 열기";
+
+        actions.append(viewLink, fileLink);
+        card.append(category, title, description, actions);
+        return card;
+      };
+
+      const renderGroup = (groupName, items) => {
+        const section = document.createElement("section");
+        section.className = "pdf-group";
+
+        const title = document.createElement("h2");
+        title.className = "pdf-group-title";
+        title.textContent = groupName;
+
+        const grid = document.createElement("div");
+        grid.className = "pdf-library-grid";
+        items.forEach((item) => grid.appendChild(renderCard(item)));
+
+        section.append(title, grid);
+        return section;
+      };
+
+      fetch("./pdfs/pdfs.json")
+        .then((response) => response.json())
+        .then((items) => {
+          if (!Array.isArray(items) || items.length === 0) {
+            empty.hidden = false;
+            return;
+          }
+
+          const grouped = items.reduce((acc, item) => {
+            const groupName = item.group || "기타 PDF";
+            if (!acc[groupName]) {
+              acc[groupName] = [];
+            }
+            acc[groupName].push(item);
+            return acc;
+          }, {});
+
+          Object.entries(grouped).forEach(([groupName, groupItems]) => {
+            groupsRoot.appendChild(renderGroup(groupName, groupItems));
+          });
+        })
+        .catch(() => {
+          empty.hidden = false;
+          empty.textContent = "PDF 목록을 불러오지 못했습니다.";
+        });
+    </script>
+  </body>
+</html>

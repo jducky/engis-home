@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+import json
+import re
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parent.parent
+PDF_DIR = ROOT / "decks" / "pdfs"
+OUTPUT_FILE = PDF_DIR / "pdfs.json"
+META_FILE = PDF_DIR / "pdfs.meta.json"
+
+
+def slugify(name: str) -> str:
+    lowered = name.strip().lower()
+    lowered = re.sub(r"\s+", "-", lowered)
+    lowered = re.sub(r"[^0-9a-zA-Z가-힣\-_()\[\]]+", "-", lowered)
+    lowered = re.sub(r"-{2,}", "-", lowered).strip("-")
+    return lowered or "pdf"
+
+
+def display_title(stem: str) -> str:
+    cleaned = stem.replace("_", " ").strip()
+    cleaned = re.sub(r"\s+", " ", cleaned)
+    return cleaned
+
+
+def display_group(relative_path: Path) -> str:
+    parent = relative_path.parent
+    if str(parent) == ".":
+        return "기타 PDF"
+
+    return " / ".join(parent.parts)
+
+
+def load_meta() -> dict:
+    if not META_FILE.exists():
+        return {}
+
+    with META_FILE.open("r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    return data if isinstance(data, dict) else {}
+
+
+def build_items() -> list:
+    meta = load_meta()
+    items = []
+
+    for pdf in sorted(PDF_DIR.rglob("*.pdf")):
+        relative_path = pdf.relative_to(PDF_DIR)
+        relative_key = relative_path.as_posix()
+        basename_key = pdf.name
+        override = meta.get(relative_key) or meta.get(basename_key, {})
+        stem = pdf.stem
+        slug = override.get("slug") or slugify(stem)
+        title = override.get("title") or display_title(stem)
+        category = override.get("category") or "PDF"
+        group = override.get("group") or display_group(relative_path)
+        description = override.get("description") or f"{title} PDF 자료입니다."
+
+        items.append(
+            {
+                "slug": slug,
+                "title": title,
+                "group": group,
+                "category": category,
+                "description": description,
+                "file": f"./pdfs/{relative_key}",
+            }
+        )
+
+    return items
+
+
+def main() -> None:
+    items = build_items()
+    with OUTPUT_FILE.open("w", encoding="utf-8") as f:
+        json.dump(items, f, ensure_ascii=False, indent=2)
+        f.write("\n")
+
+    print(f"Wrote {len(items)} entries to {OUTPUT_FILE}")
+
+
+if __name__ == "__main__":
+    main()

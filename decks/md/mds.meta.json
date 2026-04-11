@@ -1,0 +1,9 @@
+{
+  "engis_marp.md": {
+    "slug": "engis-marp",
+    "title": "엔지스 MARP 제안 메모",
+    "category": "엔지스 자료",
+    "group": "엔지스 제안 자료",
+    "description": "데이터 플랫폼, 분석 서비스, AI 적용 시스템 관련 제안 방향을 정리한 마크다운 문서입니다."
+  }
+}

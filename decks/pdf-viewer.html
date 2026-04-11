@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF 보기 | EnGIS</title>
+    <meta name="description" content="엔지스 사업설명자료 PDF를 브라우저에서 열람하는 뷰어 페이지입니다." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Pretendard:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css?v=20260408-2" />
+    <style>
+      .pdf-viewer-shell {
+        width: min(1180px, calc(100% - 2rem));
+        margin: 0 auto;
+        padding: 3.25rem 0 4rem;
+      }
+
+      .pdf-viewer-header {
+        display: grid;
+        gap: 0.9rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .pdf-frame-wrap {
+        border-radius: 1.8rem;
+        overflow: hidden;
+        border: 1px solid rgba(13, 92, 99, 0.12);
+        background: rgba(255, 255, 255, 0.84);
+        box-shadow: var(--shadow);
+      }
+
+      .pdf-frame {
+        width: 100%;
+        height: min(78vh, 1100px);
+        border: 0;
+        display: block;
+        background: #edf3f2;
+      }
+
+      .pdf-viewer-empty {
+        padding: 1.5rem;
+        border-radius: 1.5rem;
+        border: 1px dashed rgba(13, 92, 99, 0.18);
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="EnGIS 홈">
+          <img class="brand-mark" src="../assets/engis-mark.svg" alt="" aria-hidden="true" />
+          <span class="brand-lockup">
+            <span class="brand-text">EnGIS</span>
+            <span class="brand-subtext">Global Geospatial Innovations</span>
+          </span>
+          <span class="brand-mobile-inline">
+            <img class="brand-mobile-mark" src="../assets/engis-mark.svg" alt="" aria-hidden="true" />
+            <span class="brand-mobile-label">EnGIS</span>
+          </span>
+        </a>
+        <nav class="site-nav" aria-label="주요 메뉴">
+          <a href="../services.html">서비스</a>
+          <a href="../ai-solutions.html">AI 솔루션</a>
+          <a href="../projects.html">수행실적</a>
+          <a href="../services.html#contact">문의</a>
+        </nav>
+        <a class="header-cta" href="../services.html#contact">사업 문의</a>
+      </header>
+
+      <main class="pdf-viewer-shell">
+        <section id="pdf-viewer-content" class="pdf-viewer-empty">PDF 정보를 불러오는 중입니다.</section>
+      </main>
+    </div>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <svg class="footer-brand-mark" viewBox="0 0 112 112" aria-hidden="true" focusable="false">
+            <path d="M26 10h60c8.84 0 16 7.16 16 16v24c0 1.66-1.34 3-3 3H82c-1.66 0-3-1.34-3-3V32c0-4.42-3.58-8-8-8H41c-4.42 0-8 3.58-8 8v18c0 1.66-1.34 3-3 3H13c-1.66 0-3-1.34-3-3V26c0-8.84 7.16-16 16-16Z" />
+            <path d="M13 59h17c1.66 0 3 1.34 3 3v18c0 4.42 3.58 8 8 8h30c4.42 0 8-3.58 8-8V62c0-1.66 1.34-3 3-3h17c1.66 0 3 1.34 3 3v24c0 8.84-7.16 16-16 16H26c-8.84 0-16-7.16-16-16V62c0-1.66 1.34-3 3-3Z" />
+          </svg>
+          <div>
+            <span class="footer-brand-name">EnGIS</span>
+            <span class="footer-brand-sub">Global Geospatial Innovations</span>
+          </div>
+        </div>
+        <address class="footer-info">
+          <span>서울특별시 금천구 가산디지털1로 225, 1002호 (에이스가산포휴)</span>
+          <span>대표 노재덕·정진우</span>
+          <span>사업자등록번호 114-87-06944</span>
+          <span>T. <a href="tel:025973615">02-597-3615</a></span>
+          <span>E. <a href="mailto:engis@en-gis.com">engis@en-gis.com</a></span>
+        </address>
+      </div>
+      <p class="footer-copy">© 2026 EnGIS. All rights reserved.</p>
+    </footer>
+
+    <script src="../app.js"></script>
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const slug = params.get("slug");
+      const container = document.getElementById("pdf-viewer-content");
+
+      const renderEmpty = (message) => {
+        container.className = "pdf-viewer-empty";
+        container.textContent = message;
+      };
+
+      fetch("./pdfs/pdfs.json")
+        .then((response) => response.json())
+        .then((items) => {
+          if (!slug) {
+            renderEmpty("PDF가 지정되지 않았습니다.");
+            return;
+          }
+
+          const item = Array.isArray(items) ? items.find((entry) => entry.slug === slug) : null;
+
+          if (!item) {
+            renderEmpty("요청한 PDF 정보를 찾을 수 없습니다.");
+            return;
+          }
+
+          document.title = `${item.title} | PDF 보기 | EnGIS`;
+          container.className = "";
+          container.innerHTML = `
+            <section class="pdf-viewer-header">
+              <p class="section-kicker">${item.category || "PDF"}</p>
+              <h1>${item.title}</h1>
+              <p class="hero-text">${item.description || ""}</p>
+              <div class="hero-actions">
+                <a class="button button-secondary" href="./pdf-library.html">목록으로 돌아가기</a>
+                <a class="button button-primary" href="${item.file}" target="_blank" rel="noreferrer">새 창에서 열기</a>
+              </div>
+            </section>
+            <div class="pdf-frame-wrap">
+              <iframe class="pdf-frame" src="${item.file}#view=FitH" title="${item.title}"></iframe>
+            </div>
+          `;
+        })
+        .catch(() => {
+          renderEmpty("PDF 정보를 불러오지 못했습니다.");
+        });
+    </script>
+  </body>
+</html>

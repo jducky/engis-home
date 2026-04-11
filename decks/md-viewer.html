@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Markdown 보기 | EnGIS</title>
+    <meta name="description" content="엔지스 사업설명자료 Markdown 문서를 브라우저에서 열람하는 뷰어 페이지입니다." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Pretendard:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css?v=20260408-2" />
+    <style>
+      .md-viewer-shell {
+        width: min(980px, calc(100% - 2rem));
+        margin: 0 auto;
+        padding: 3.25rem 0 4rem;
+      }
+
+      .md-viewer-header {
+        display: grid;
+        gap: 0.9rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .md-render {
+        padding: 2rem;
+        border-radius: 1.8rem;
+        border: 1px solid rgba(13, 92, 99, 0.12);
+        background: rgba(255, 255, 255, 0.86);
+        box-shadow: var(--shadow);
+      }
+
+      .md-render h1,
+      .md-render h2,
+      .md-render h3 {
+        margin: 1.8rem 0 0.8rem;
+        line-height: 1.25;
+      }
+
+      .md-render h1:first-child,
+      .md-render h2:first-child,
+      .md-render h3:first-child {
+        margin-top: 0;
+      }
+
+      .md-render p,
+      .md-render li,
+      .md-render blockquote {
+        color: var(--muted);
+        line-height: 1.8;
+      }
+
+      .md-render ul,
+      .md-render ol {
+        padding-left: 1.25rem;
+      }
+
+      .md-render code {
+        padding: 0.12rem 0.4rem;
+        border-radius: 0.4rem;
+        background: rgba(13, 92, 99, 0.08);
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.92em;
+      }
+
+      .md-render pre {
+        padding: 1rem;
+        border-radius: 1rem;
+        overflow: auto;
+        background: #0f1f2e;
+        color: #f4f7fb;
+      }
+
+      .md-render pre code {
+        padding: 0;
+        background: transparent;
+        color: inherit;
+      }
+
+      .md-render blockquote {
+        margin: 1rem 0;
+        padding: 0.1rem 0 0.1rem 1rem;
+        border-left: 3px solid rgba(13, 92, 99, 0.2);
+      }
+
+      .md-render hr {
+        border: 0;
+        border-top: 1px solid rgba(13, 92, 99, 0.12);
+        margin: 1.4rem 0;
+      }
+
+      .md-viewer-empty {
+        padding: 1.5rem;
+        border-radius: 1.5rem;
+        border: 1px dashed rgba(13, 92, 99, 0.18);
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="../index.html" aria-label="EnGIS 홈">
+          <img class="brand-mark" src="../assets/engis-mark.svg" alt="" aria-hidden="true" />
+          <span class="brand-lockup">
+            <span class="brand-text">EnGIS</span>
+            <span class="brand-subtext">Global Geospatial Innovations</span>
+          </span>
+          <span class="brand-mobile-inline">
+            <img class="brand-mobile-mark" src="../assets/engis-mark.svg" alt="" aria-hidden="true" />
+            <span class="brand-mobile-label">EnGIS</span>
+          </span>
+        </a>
+        <nav class="site-nav" aria-label="주요 메뉴">
+          <a href="../services.html">서비스</a>
+          <a href="../ai-solutions.html">AI 솔루션</a>
+          <a href="../projects.html">수행실적</a>
+          <a href="../services.html#contact">문의</a>
+        </nav>
+        <a class="header-cta" href="../services.html#contact">사업 문의</a>
+      </header>
+
+      <main class="md-viewer-shell">
+        <section id="md-viewer-content" class="md-viewer-empty">Markdown 정보를 불러오는 중입니다.</section>
+      </main>
+    </div>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <svg class="footer-brand-mark" viewBox="0 0 112 112" aria-hidden="true" focusable="false">
+            <path d="M26 10h60c8.84 0 16 7.16 16 16v24c0 1.66-1.34 3-3 3H82c-1.66 0-3-1.34-3-3V32c0-4.42-3.58-8-8-8H41c-4.42 0-8 3.58-8 8v18c0 1.66-1.34 3-3 3H13c-1.66 0-3-1.34-3-3V26c0-8.84 7.16-16 16-16Z" />
+            <path d="M13 59h17c1.66 0 3 1.34 3 3v18c0 4.42 3.58 8 8 8h30c4.42 0 8-3.58 8-8V62c0-1.66 1.34-3 3-3h17c1.66 0 3 1.34 3 3v24c0 8.84-7.16 16-16 16H26c-8.84 0-16-7.16-16-16V62c0-1.66 1.34-3 3-3Z" />
+          </svg>
+          <div>
+            <span class="footer-brand-name">EnGIS</span>
+            <span class="footer-brand-sub">Global Geospatial Innovations</span>
+          </div>
+        </div>
+        <address class="footer-info">
+          <span>서울특별시 금천구 가산디지털1로 225, 1002호 (에이스가산포휴)</span>
+          <span>대표 노재덕·정진우</span>
+          <span>사업자등록번호 114-87-06944</span>
+          <span>T. <a href="tel:025973615">02-597-3615</a></span>
+          <span>E. <a href="mailto:engis@en-gis.com">engis@en-gis.com</a></span>
+        </address>
+      </div>
+      <p class="footer-copy">© 2026 EnGIS. All rights reserved.</p>
+    </footer>
+
+    <script src="../app.js"></script>
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const slug = params.get("slug");
+      const container = document.getElementById("md-viewer-content");
+
+      const escapeHtml = (value) =>
+        value
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+
+      const inlineMarkdown = (value) => {
+        let text = escapeHtml(value);
+        text = text.replace(/`([^`]+)`/g, "<code>$1</code>");
+        text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>');
+        text = text.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+        text = text.replace(/\*([^*]+)\*/g, "<em>$1</em>");
+        return text;
+      };
+
+      const renderMarkdown = (source) => {
+        const lines = source.replace(/\r\n/g, "\n").split("\n");
+        const chunks = [];
+        let inList = false;
+        let listType = "";
+        let inCode = false;
+        let codeBuffer = [];
+        let paragraphBuffer = [];
+
+        const flushParagraph = () => {
+          if (!paragraphBuffer.length) return;
+          chunks.push(`<p>${inlineMarkdown(paragraphBuffer.join(" "))}</p>`);
+          paragraphBuffer = [];
+        };
+
+        const closeList = () => {
+          if (!inList) return;
+          chunks.push(`</${listType}>`);
+          inList = false;
+          listType = "";
+        };
+
+        const flushCode = () => {
+          if (!inCode) return;
+          chunks.push(`<pre><code>${escapeHtml(codeBuffer.join("\n"))}</code></pre>`);
+          inCode = false;
+          codeBuffer = [];
+        };
+
+        for (const rawLine of lines) {
+          const line = rawLine.trimEnd();
+
+          if (line.startsWith("```")) {
+            flushParagraph();
+            closeList();
+            if (inCode) {
+              flushCode();
+            } else {
+              inCode = true;
+              codeBuffer = [];
+            }
+            continue;
+          }
+
+          if (inCode) {
+            codeBuffer.push(rawLine);
+            continue;
+          }
+
+          const trimmed = line.trim();
+
+          if (!trimmed) {
+            flushParagraph();
+            closeList();
+            continue;
+          }
+
+          const heading = trimmed.match(/^(#{1,3})\s+(.*)$/);
+          if (heading) {
+            flushParagraph();
+            closeList();
+            const level = heading[1].length;
+            chunks.push(`<h${level}>${inlineMarkdown(heading[2])}</h${level}>`);
+            continue;
+          }
+
+          if (/^---+$/.test(trimmed) || /^___+$/.test(trimmed)) {
+            flushParagraph();
+            closeList();
+            chunks.push("<hr />");
+            continue;
+          }
+
+          const quote = trimmed.match(/^>\s?(.*)$/);
+          if (quote) {
+            flushParagraph();
+            closeList();
+            chunks.push(`<blockquote>${inlineMarkdown(quote[1])}</blockquote>`);
+            continue;
+          }
+
+          const ul = trimmed.match(/^[-*]\s+(.*)$/);
+          if (ul) {
+            flushParagraph();
+            if (!inList || listType !== "ul") {
+              closeList();
+              inList = true;
+              listType = "ul";
+              chunks.push("<ul>");
+            }
+            chunks.push(`<li>${inlineMarkdown(ul[1])}</li>`);
+            continue;
+          }
+
+          const ol = trimmed.match(/^\d+\.\s+(.*)$/);
+          if (ol) {
+            flushParagraph();
+            if (!inList || listType !== "ol") {
+              closeList();
+              inList = true;
+              listType = "ol";
+              chunks.push("<ol>");
+            }
+            chunks.push(`<li>${inlineMarkdown(ol[1])}</li>`);
+            continue;
+          }
+
+          paragraphBuffer.push(trimmed);
+        }
+
+        flushParagraph();
+        closeList();
+        flushCode();
+        return chunks.join("\n");
+      };
+
+      const renderEmpty = (message) => {
+        container.className = "md-viewer-empty";
+        container.textContent = message;
+      };
+
+      fetch("./md/mds.json")
+        .then((response) => response.json())
+        .then((items) => {
+          if (!slug) {
+            renderEmpty("Markdown 문서가 지정되지 않았습니다.");
+            return;
+          }
+
+          const item = Array.isArray(items) ? items.find((entry) => entry.slug === slug) : null;
+          if (!item) {
+            renderEmpty("요청한 Markdown 정보를 찾을 수 없습니다.");
+            return;
+          }
+
+          return fetch(item.file)
+            .then((response) => response.text())
+            .then((markdown) => {
+              document.title = `${item.title} | Markdown 보기 | EnGIS`;
+              container.className = "";
+              container.innerHTML = `
+                <section class="md-viewer-header">
+                  <p class="section-kicker">${item.category || "Markdown"}</p>
+                  <h1>${item.title}</h1>
+                  <p class="hero-text">${item.description || ""}</p>
+                  <div class="hero-actions">
+                    <a class="button button-secondary" href="./md-library.html">목록으로 돌아가기</a>
+                    <a class="button button-primary" href="${item.file}" target="_blank" rel="noreferrer">원문 열기</a>
+                  </div>
+                </section>
+                <article class="md-render">${renderMarkdown(markdown)}</article>
+              `;
+            });
+        })
+        .catch(() => {
+          renderEmpty("Markdown 정보를 불러오지 못했습니다.");
+        });
+    </script>
+  </body>
+</html>

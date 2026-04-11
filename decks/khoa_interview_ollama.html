@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>업무환경 인터뷰 — 한국해양조사협회</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --teal:#0E6E56;--teal-light:#E1F5EE;--teal-mid:#1D9E75;--navy:#0B2540;--text:#1a1a1a;--text-muted:#6b7280;--border:rgba(0,0,0,0.08);--bg:#F8F7F4;--white:#ffffff;--shadow:0 2px 16px rgba(0,0,0,0.06); }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+  .site-header{background:var(--navy);padding:1rem 2rem;display:flex;align-items:center;gap:1rem;}
+  .logo-mark{width:36px;height:36px;background:var(--teal-mid);border-radius:6px;display:flex;align-items:center;justify-content:center;}
+  .logo-mark svg{width:20px;height:20px;}
+  .org-name{font-family:'Noto Serif KR',serif;font-size:15px;font-weight:600;color:rgba(255,255,255,0.95);letter-spacing:-0.3px;}
+  .org-sub{font-size:11px;color:rgba(255,255,255,0.45);margin-top:1px;font-weight:300;}
+  .anon-badge{margin-left:auto;background:rgba(29,158,117,0.2);border:1px solid rgba(29,158,117,0.4);color:#5DCAA5;font-size:11px;padding:4px 10px;border-radius:20px;}
+  main{flex:1;display:flex;flex-direction:column;max-width:680px;width:100%;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  #intro-screen{display:flex;flex-direction:column;gap:2rem;animation:fadeUp 0.5s ease both;}
+  .intro-top{padding:2.5rem 2rem;background:var(--white);border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow);}
+  .eyebrow{font-size:11px;font-weight:500;letter-spacing:1.2px;text-transform:uppercase;color:var(--teal);margin-bottom:0.75rem;}
+  .intro-top h1{font-family:'Noto Serif KR',serif;font-size:24px;font-weight:600;line-height:1.4;color:var(--navy);margin-bottom:1rem;}
+  .intro-top p{font-size:14px;line-height:1.8;color:var(--text-muted);}
+  .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .info-card{background:var(--white);border-radius:12px;padding:1.25rem 1rem;border:1px solid var(--border);text-align:center;}
+  .info-card .icon{width:36px;height:36px;background:var(--teal-light);border-radius:8px;display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;}
+  .info-card .icon svg{width:18px;height:18px;}
+  .info-card strong{display:block;font-size:13px;font-weight:500;color:var(--navy);margin-bottom:4px;}
+  .info-card span{font-size:12px;color:var(--text-muted);line-height:1.5;}
+  .start-btn{width:100%;padding:16px;background:var(--teal);color:white;border:none;border-radius:12px;font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:background 0.2s,transform 0.1s;}
+  .start-btn:hover{background:#0a5a44;}
+  .start-btn:active{transform:scale(0.99);}
+  #chat-screen{display:none;flex-direction:column;gap:0;animation:fadeUp 0.4s ease both;}
+  .progress-wrap{background:var(--white);border-radius:12px;border:1px solid var(--border);padding:1rem 1.25rem;margin-bottom:1rem;display:flex;align-items:center;gap:1rem;}
+  .progress-bar-bg{flex:1;height:4px;background:#e5e7eb;border-radius:2px;overflow:hidden;}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--teal-mid),var(--teal));border-radius:2px;transition:width 0.6s cubic-bezier(0.4,0,0.2,1);width:0%;}
+  .progress-text{font-size:12px;color:var(--text-muted);white-space:nowrap;min-width:60px;text-align:right;}
+  .progress-step{font-size:13px;font-weight:500;color:var(--navy);min-width:90px;}
+  .chat-window{background:var(--white);border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;}
+  .chat-messages{padding:1.5rem;display:flex;flex-direction:column;gap:1rem;min-height:340px;max-height:420px;overflow-y:auto;scroll-behavior:smooth;}
+  .chat-messages::-webkit-scrollbar{width:4px;}
+  .chat-messages::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:2px;}
+  .msg-row{display:flex;gap:10px;align-items:flex-end;}
+  .msg-row.user{flex-direction:row-reverse;}
+  .avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0;}
+  .avatar.ai{background:var(--navy);color:rgba(255,255,255,0.9);}
+  .avatar.user{background:#e5e7eb;color:var(--text-muted);}
+  .bubble{max-width:78%;padding:11px 15px;border-radius:16px;font-size:14px;line-height:1.7;white-space:pre-wrap;}
+  .bubble.ai{background:#F1F5F9;color:var(--text);border-bottom-left-radius:4px;}
+  .bubble.user{background:var(--teal);color:white;border-bottom-right-radius:4px;}
+  .typing-bubble{background:#F1F5F9;padding:12px 16px;border-radius:16px;border-bottom-left-radius:4px;display:flex;gap:5px;align-items:center;}
+  .dot{width:7px;height:7px;border-radius:50%;background:#9ca3af;animation:pulse 1.3s infinite;}
+  .dot:nth-child(2){animation-delay:0.18s;}
+  .dot:nth-child(3){animation-delay:0.36s;}
+  @keyframes pulse{0%,80%,100%{transform:scale(0.7);opacity:0.4}40%{transform:scale(1);opacity:1}}
+  .chat-input-area{padding:1rem 1.25rem;border-top:1px solid var(--border);display:flex;gap:8px;align-items:flex-end;}
+  .chat-input-area textarea{flex:1;border:1px solid #e5e7eb;border-radius:10px;padding:10px 14px;font-family:'Noto Sans KR',sans-serif;font-size:14px;resize:none;line-height:1.5;color:var(--text);background:var(--bg);outline:none;transition:border-color 0.15s;min-height:42px;max-height:120px;}
+  .chat-input-area textarea:focus{border-color:var(--teal-mid);background:var(--white);}
+  .chat-input-area textarea::placeholder{color:#9ca3af;}
+  .chat-input-area textarea:disabled{opacity:0.5;}
+  .send-btn{width:42px;height:42px;border-radius:10px;border:none;background:var(--teal);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s,transform 0.1s;}
+  .send-btn:hover{background:#0a5a44;}
+  .send-btn:active{transform:scale(0.96);}
+  .send-btn:disabled{background:#d1d5db;cursor:default;}
+  .send-btn svg{width:18px;height:18px;}
+  #done-screen{display:none;text-align:center;padding:3rem 2rem;background:var(--white);border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow);animation:fadeUp 0.5s ease both;}
+  .done-icon{width:56px;height:56px;background:var(--teal-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;}
+  .done-icon svg{width:26px;height:26px;}
+  #done-screen h2{font-family:'Noto Serif KR',serif;font-size:22px;font-weight:600;color:var(--navy);margin-bottom:0.75rem;}
+  #done-screen p{font-size:14px;color:var(--text-muted);line-height:1.8;}
+  footer{text-align:center;padding:1.5rem;font-size:11px;color:#9ca3af;border-top:1px solid var(--border);}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  @media(max-width:480px){.info-grid{grid-template-columns:1fr;}main{padding:1.25rem 1rem 3rem;}.chat-messages{max-height:320px;}}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo-mark">
+    <svg viewBox="0 0 20 20" fill="none">
+      <path d="M3 14 Q6 8 10 10 Q14 12 17 6" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+      <circle cx="10" cy="16" r="1.5" fill="rgba(255,255,255,0.6)"/>
+    </svg>
+  </div>
+  <div>
+    <div class="org-name">한국해양조사협회</div>
+    <div class="org-sub">Korea Hydrographic Association</div>
+  </div>
+  <span class="anon-badge">🔒 익명 보장</span>
+</header>
+
+<main>
+  <div id="intro-screen">
+    <div class="intro-top">
+      <div class="eyebrow">내부 의견 수렴</div>
+      <h1>업무환경 개선을 위한<br>익명 AI 인터뷰</h1>
+      <p>협회의 업무 효율과 서비스 품질 향상을 위해 여러분의 솔직한 의견을 듣고자 합니다. AI가 대화를 이끌며 여러분의 답변에 맞춰 질문을 조율합니다. 모든 응답은 완전히 익명으로 처리됩니다.</p>
+    </div>
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="icon"><svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7.5" stroke="#0E6E56" stroke-width="1.3"/><path d="M9 5.5V9.5L11.5 12" stroke="#0E6E56" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <strong>약 10~15분</strong><span>자유로운 대화형<br>인터뷰</span>
+      </div>
+      <div class="info-card">
+        <div class="icon"><svg viewBox="0 0 18 18" fill="none"><path d="M9 2c3.9 0 7 3.1 7 7s-3.1 7-7 7-7-3.1-7-7 3.1-7 7-7z" stroke="#0E6E56" stroke-width="1.3"/><path d="M6 9l2 2 4-4" stroke="#0E6E56" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <strong>AI 주도 대화</strong><span>답변에 따라<br>질문이 달라짐</span>
+      </div>
+      <div class="info-card">
+        <div class="icon"><svg viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="12" rx="2" stroke="#0E6E56" stroke-width="1.3"/><path d="M6 9h6M6 6h6M6 12h3" stroke="#0E6E56" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <strong>완전 익명</strong><span>개인정보<br>수집 없음</span>
+      </div>
+    </div>
+    <button class="start-btn" onclick="startInterview()">인터뷰 시작하기 →</button>
+  </div>
+
+  <div id="chat-screen">
+    <div class="progress-wrap">
+      <div class="progress-step" id="progress-step">대화 시작 전</div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill"></div></div>
+      <div class="progress-text" id="progress-pct">0%</div>
+    </div>
+    <div class="chat-window">
+      <div class="chat-messages" id="chat-messages"></div>
+      <div class="chat-input-area">
+        <textarea id="user-input" placeholder="자유롭게 입력하세요..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+        <button class="send-btn" id="send-btn" onclick="handleSend()" disabled>
+          <svg viewBox="0 0 18 18" fill="none"><path d="M9 14V4M4 9l5-5 5 5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="done-screen">
+    <div class="done-icon"><svg viewBox="0 0 26 26" fill="none"><path d="M5 13l5.5 5.5L21 8" stroke="#0E6E56" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <h2>인터뷰가 완료되었습니다</h2>
+    <p>소중한 의견을 주셔서 감사합니다.<br>응답 내용은 협회 사업 개선에 반영될 예정입니다.<br><br>이 창을 닫으셔도 됩니다.</p>
+  </div>
+</main>
+
+<footer>본 인터뷰는 익명으로 진행되며 개인 식별 정보는 수집하지 않습니다 &nbsp;·&nbsp; 한국해양조사협회</footer>
+
+<script>
+// ── Ollama 내부망 설정 ──────────────────────────────
+const OLLAMA_HOST = "http://192.168.0.144:11434";
+const OLLAMA_MODEL = "exaone3.5:2.4b";
+const API = OLLAMA_HOST + "/api/chat";
+// ────────────────────────────────────────────────────
+const COMPLETE_TOKEN = "[INTERVIEW_COMPLETE]";
+const MIN_TURNS_BEFORE_COMPLETE = 8;
+
+const SYSTEM_PROMPT = `당신은 한국해양조사협회 직원 대상 업무환경 개선 컨설팅 인터뷰어 AI입니다.
+사전에 정해진 질문 목록이 없습니다. 직원의 답변을 들으며 당신이 직접 다음 질문을 결정합니다.
+
+인터뷰 목표: 협회의 진짜 문제와 개선 기회 발굴. 표면적 답변 뒤에 숨겨진 불편함과 비효율을 끌어내세요.
+
+탐색 주제 (순서와 방식은 당신이 자유롭게 판단):
+- 담당 업무와 일상적인 업무 루틴
+- 가장 시간/에너지를 소모하는 업무
+- 반복적인 수작업 / 자동화 가능 업무
+- 내부 시스템·프로세스·소통의 불편함
+- 외부 기관, 민간, 국민으로부터 오는 반복적 요청·민원 패턴
+- 알면서도 미루거나 회피하는 업무
+- 이상적인 변화 (마법봉이 있다면 없애고 싶은 것)
+
+대화 원칙:
+- 반드시 한국어로만 대화하세요
+- 한 번에 질문 1개만 하세요. 절대로 2개 이상 금지
+- 답변이 모호하면 구체적 사례를 요청하며 심화
+- 답변이 충분하면 짧게 공감하고 다음 주제로 전환
+- 판단하지 않고 공감하며 따뜻하게
+- 전체 대화 10~15턴 목표
+- 불필요하게 긴 답변 금지. 2~4문장 이내로 간결하게
+
+종료 규칙:
+모든 주제를 충분히 탐색했다 판단되면 반드시 아래 형식으로 끝내세요.
+마무리 인사 문장. [INTERVIEW_COMPLETE]
+예시: "오늘 인터뷰에 성실하게 참여해 주셔서 감사합니다. [INTERVIEW_COMPLETE]"
+[INTERVIEW_COMPLETE] 는 반드시 응답 맨 끝에, 다른 텍스트 없이 붙이세요.
+
+시작: 사용자가 "시작"이라 하면 자기소개 1문장 후 첫 질문(담당 업무)을 하세요.`;
+
+let history = [];
+let turns = 0;
+let busy = false;
+let interviewStarted = false;
+let inputBound = false;
+
+const PHASES = ['대화 시작', '초반 탐색 중', '심층 탐색 중', '마무리 단계'];
+
+function updateProgress(t) {
+  const pct = Math.min(Math.round((t / 13) * 100), 95);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-step').textContent = t === 0 ? '대화 시작 전' : PHASES[Math.min(Math.floor(t / 4), 3)];
+}
+
+function scrollDown() {
+  const el = document.getElementById('chat-messages');
+  setTimeout(() => el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }), 60);
+}
+
+function appendMsg(role, text) {
+  const wrap = document.getElementById('chat-messages');
+  const row = document.createElement('div');
+  row.className = 'msg-row ' + role;
+  const av = document.createElement('div');
+  av.className = 'avatar ' + role;
+  av.textContent = role === 'ai' ? 'AI' : '나';
+  const bub = document.createElement('div');
+  bub.className = 'bubble ' + role;
+  bub.textContent = text;
+  row.appendChild(av);
+  row.appendChild(bub);
+  wrap.appendChild(row);
+  scrollDown();
+}
+
+function showTyping() {
+  if (document.getElementById('typing-row')) return;
+  const wrap = document.getElementById('chat-messages');
+  const row = document.createElement('div');
+  row.className = 'msg-row ai'; row.id = 'typing-row';
+  const av = document.createElement('div');
+  av.className = 'avatar ai'; av.textContent = 'AI';
+  const bub = document.createElement('div');
+  bub.className = 'typing-bubble';
+  bub.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+  row.appendChild(av); row.appendChild(bub);
+  wrap.appendChild(row); scrollDown();
+}
+
+function removeTyping() { const t = document.getElementById('typing-row'); if (t) t.remove(); }
+
+function setInput(on) {
+  const inp = document.getElementById('user-input');
+  const btn = document.getElementById('send-btn');
+  inp.disabled = !on;
+  btn.disabled = !on || !inp.value.trim();
+  if (on) inp.focus();
+}
+
+function bindInputState() {
+  if (inputBound) return;
+  inputBound = true;
+
+  document.getElementById('user-input').addEventListener('input', () => {
+    document.getElementById('send-btn').disabled = busy || !document.getElementById('user-input').value.trim();
+  });
+}
+
+function startInterview() {
+  if (interviewStarted || busy) return;
+  interviewStarted = true;
+  document.getElementById('intro-screen').style.display = 'none';
+  const cs = document.getElementById('chat-screen');
+  cs.style.display = 'flex'; cs.style.flexDirection = 'column';
+  bindInputState();
+  callAI('시작');
+}
+
+async function callAI(userText) {
+  busy = true; setInput(false); showTyping();
+
+  if (userText !== '시작') {
+    history.push({ role: 'user', content: userText });
+    turns++;
+    updateProgress(turns);
+  }
+
+  // Ollama messages: system은 별도 role로 맨 앞에 추가
+  const messages = [
+    { role: 'system', content: SYSTEM_PROMPT },
+    ...(userText === '시작'
+      ? [{ role: 'user', content: '시작' }]
+      : history)
+  ];
+
+  try {
+    const res = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: OLLAMA_MODEL,
+        stream: false,          // 스트리밍 off — 단순 JSON 응답
+        options: {
+          temperature: 0.7,
+          num_predict: 300       // 최대 토큰 (2.4b 과부하 방지)
+        },
+        messages
+      })
+    });
+
+    if (!res.ok) {
+      let detail = '';
+      try {
+        detail = await res.text();
+      } catch (_) {
+        detail = '';
+      }
+
+      const preview = detail ? `\n상세: ${detail.slice(0, 160)}` : '';
+      throw new Error(`HTTP ${res.status}${preview}`);
+    }
+
+    const data = await res.json();
+    // Ollama 응답 구조: data.message.content
+    let reply = data.message?.content || '네, 계속 말씀해 주세요.';
+    const endsWithCompleteToken = new RegExp(`${COMPLETE_TOKEN.replace(/[[\]]/g, '\\$&')}\\s*$`).test(reply);
+    const canComplete = turns >= MIN_TURNS_BEFORE_COMPLETE;
+    const done = endsWithCompleteToken && canComplete;
+    const clean = reply.replaceAll(COMPLETE_TOKEN, '').trim();
+
+    removeTyping();
+    appendMsg('ai', clean);
+    history.push({ role: 'assistant', content: clean });
+
+    if (done) {
+      document.getElementById('progress-fill').style.width = '100%';
+      document.getElementById('progress-pct').textContent = '100%';
+      document.getElementById('progress-step').textContent = '인터뷰 완료';
+      setTimeout(() => {
+        document.getElementById('chat-screen').style.display = 'none';
+        document.getElementById('done-screen').style.display = 'block';
+      }, 2800);
+    } else {
+      if (endsWithCompleteToken && !canComplete) {
+        appendMsg('ai', '아직 충분히 듣지 못한 부분이 있어요. 조금만 더 이어가 볼게요.');
+        history.push({ role: 'assistant', content: '아직 충분히 듣지 못한 부분이 있어요. 조금만 더 이어가 볼게요.' });
+      }
+      busy = false;
+      setInput(true);
+    }
+  } catch(e) {
+    removeTyping();
+    const message = String(e?.message || '');
+    const msg = message.includes('HTTP ')
+      ? `Ollama 서버에서 응답 오류가 발생했습니다.\n${message}`
+      : message.includes('fetch') || message.includes('Failed')
+        ? `Ollama 서버(${OLLAMA_HOST})에 연결할 수 없습니다.\n서버 실행 여부와 네트워크 연결을 확인해 주세요.`
+        : '일시적인 오류가 발생했습니다. 다시 시도해 주세요.';
+    appendMsg('ai', msg);
+    busy = false;
+    setInput(true);
+  }
+}
+
+async function handleSend() {
+  const inp = document.getElementById('user-input');
+  const text = inp.value.trim();
+  if (!text || busy) return;
+  inp.value = ''; inp.style.height = 'auto';
+  appendMsg('user', text);
+  await callAI(text);
+}
+
+function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }
+function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
+</script>
+</body>
+</html>

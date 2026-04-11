@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>업무환경 인터뷰 — 한국해양조사협회</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #0E6E56;
+    --teal-light: #E1F5EE;
+    --teal-mid: #1D9E75;
+    --navy: #0B2540;
+    --navy-mid: #1A3A5C;
+    --text: #1a1a1a;
+    --text-muted: #6b7280;
+    --border: rgba(0,0,0,0.08);
+    --bg: #F8F7F4;
+    --white: #ffffff;
+    --shadow: 0 2px 16px rgba(0,0,0,0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header */
+  .site-header {
+    background: var(--navy);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .site-header .logo-mark {
+    width: 36px;
+    height: 36px;
+    background: var(--teal-mid);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .site-header .logo-mark svg { width: 20px; height: 20px; }
+  .site-header .org-name {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.95);
+    letter-spacing: -0.3px;
+  }
+  .site-header .org-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+    margin-top: 1px;
+    font-weight: 300;
+  }
+  .anon-badge {
+    margin-left: auto;
+    background: rgba(29,158,117,0.2);
+    border: 1px solid rgba(29,158,117,0.4);
+    color: #5DCAA5;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+  }
+
+  /* Main layout */
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 680px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* Intro screen */
+  #intro-screen {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    animation: fadeUp 0.5s ease both;
+  }
+  .intro-top {
+    padding: 2.5rem 2rem;
+    background: var(--white);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .intro-top .eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 0.75rem;
+  }
+  .intro-top h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--navy);
+    margin-bottom: 1rem;
+  }
+  .intro-top p {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text-muted);
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .info-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 1.25rem 1rem;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .info-card .icon {
+    width: 36px;
+    height: 36px;
+    background: var(--teal-light);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.75rem;
+  }
+  .info-card .icon svg { width: 18px; height: 18px; }
+  .info-card strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .info-card span {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .start-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--teal);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: -0.2px;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .start-btn:hover { background: #0a5a44; }
+  .start-btn:active { transform: scale(0.99); }
+
+  /* Chat screen */
+  #chat-screen { display: none; flex-direction: column; gap: 0; animation: fadeUp 0.4s ease both; }
+
+  .progress-wrap {
+    background: var(--white);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .progress-bar-bg {
+    flex: 1;
+    height: 4px;
+    background: #e5e7eb;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal-mid), var(--teal));
+    border-radius: 2px;
+    transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+    width: 0%;
+  }
+  .progress-text {
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    min-width: 60px;
+    text-align: right;
+  }
+  .progress-step {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--navy);
+    min-width: 80px;
+  }
+
+  .chat-window {
+    background: var(--white);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .chat-messages {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-height: 340px;
+    max-height: 400px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+  }
+  .chat-messages::-webkit-scrollbar { width: 4px; }
+  .chat-messages::-webkit-scrollbar-track { background: transparent; }
+  .chat-messages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 2px; }
+
+  .msg-row { display: flex; gap: 10px; align-items: flex-end; }
+  .msg-row.user { flex-direction: row-reverse; }
+
+  .avatar {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 500;
+    flex-shrink: 0;
+  }
+  .avatar.ai { background: var(--navy); color: rgba(255,255,255,0.9); }
+  .avatar.user { background: #e5e7eb; color: var(--text-muted); }
+
+  .bubble {
+    max-width: 78%;
+    padding: 11px 15px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+  }
+  .bubble.ai {
+    background: #F1F5F9;
+    color: var(--text);
+    border-bottom-left-radius: 4px;
+  }
+  .bubble.user {
+    background: var(--teal);
+    color: white;
+    border-bottom-right-radius: 4px;
+  }
+
+  .typing-bubble {
+    background: #F1F5F9;
+    padding: 12px 16px;
+    border-radius: 16px;
+    border-bottom-left-radius: 4px;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: #9ca3af; animation: pulse 1.3s infinite; }
+  .dot:nth-child(2) { animation-delay: 0.18s; }
+  .dot:nth-child(3) { animation-delay: 0.36s; }
+  @keyframes pulse { 0%,80%,100%{transform:scale(0.7);opacity:0.4} 40%{transform:scale(1);opacity:1} }
+
+  .quick-suggestions {
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    border-top: 1px solid var(--border);
+  }
+  .suggest-btn {
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif;
+    transition: all 0.15s;
+  }
+  .suggest-btn:hover { background: var(--teal-light); color: var(--teal); border-color: var(--teal-mid); }
+
+  .chat-input-area {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+  }
+  .chat-input-area textarea {
+    flex: 1;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    resize: none;
+    line-height: 1.5;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.15s;
+    min-height: 42px;
+    max-height: 120px;
+  }
+  .chat-input-area textarea:focus { border-color: var(--teal-mid); background: var(--white); }
+  .chat-input-area textarea::placeholder { color: #9ca3af; }
+  .chat-input-area textarea:disabled { opacity: 0.5; }
+
+  .send-btn {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    border: none;
+    background: var(--teal);
+    color: white;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .send-btn:hover { background: #0a5a44; }
+  .send-btn:active { transform: scale(0.96); }
+  .send-btn:disabled { background: #d1d5db; cursor: default; }
+  .send-btn svg { width: 18px; height: 18px; }
+
+  /* Done screen */
+  #done-screen {
+    display: none;
+    text-align: center;
+    padding: 3rem 2rem;
+    background: var(--white);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    animation: fadeUp 0.5s ease both;
+  }
+  .done-icon {
+    width: 56px; height: 56px;
+    background: var(--teal-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+  }
+  .done-icon svg { width: 26px; height: 26px; }
+  #done-screen h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 0.75rem;
+  }
+  #done-screen p { font-size: 14px; color: var(--text-muted); line-height: 1.8; }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 11px;
+    color: #9ca3af;
+    border-top: 1px solid var(--border);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .info-grid { grid-template-columns: 1fr; }
+    .site-header { padding: 0.75rem 1rem; }
+    main { padding: 1.25rem 1rem 3rem; }
+    .intro-top h1 { font-size: 20px; }
+    .chat-messages { max-height: 340px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo-mark">
+    <svg viewBox="0 0 20 20" fill="none">
+      <path d="M3 14 Q6 8 10 10 Q14 12 17 6" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+      <circle cx="10" cy="16" r="1.5" fill="rgba(255,255,255,0.6)"/>
+    </svg>
+  </div>
+  <div>
+    <div class="org-name">한국해양조사협회</div>
+    <div class="org-sub">Korea Hydrographic Association</div>
+  </div>
+  <span class="anon-badge">🔒 익명 보장</span>
+</header>
+
+<main>
+
+  <!-- Intro -->
+  <div id="intro-screen">
+    <div class="intro-top">
+      <div class="eyebrow">내부 의견 수렴</div>
+      <h1>업무환경 개선을 위한<br>익명 인터뷰</h1>
+      <p>협회의 업무 효율과 서비스 품질 향상을 위해 여러분의 솔직한 의견을 듣고자 합니다. 모든 응답은 완전히 익명으로 처리되며, 오직 내부 개선 사업 기획에만 활용됩니다.</p>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="icon">
+          <svg viewBox="0 0 18 18" fill="none">
+            <circle cx="9" cy="9" r="7.5" stroke="#0E6E56" stroke-width="1.3"/>
+            <path d="M9 5.5V9.5L11.5 12" stroke="#0E6E56" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <strong>약 7~10분</strong>
+        <span>짧은 대화형<br>인터뷰</span>
+      </div>
+      <div class="info-card">
+        <div class="icon">
+          <svg viewBox="0 0 18 18" fill="none">
+            <rect x="2.5" y="2.5" width="13" height="13" rx="3" stroke="#0E6E56" stroke-width="1.3"/>
+            <path d="M5.5 9h7M5.5 6h7M5.5 12h4" stroke="#0E6E56" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <strong>7개 질문</strong>
+        <span>업무·불편사항<br>중심</span>
+      </div>
+      <div class="info-card">
+        <div class="icon">
+          <svg viewBox="0 0 18 18" fill="none">
+            <path d="M9 2L11.47 7.03L17 7.64L12.97 11.56L14.09 17L9 14.27L3.91 17L5.03 11.56L1 7.64L6.53 7.03L9 2Z" stroke="#0E6E56" stroke-width="1.3" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <strong>AI 진행</strong>
+        <span>꼬리 질문<br>자동 생성</span>
+      </div>
+    </div>
+
+    <button class="start-btn" onclick="startInterview()">인터뷰 시작하기 →</button>
+  </div>
+
+  <!-- Chat -->
+  <div id="chat-screen">
+    <div class="progress-wrap">
+      <div class="progress-step" id="progress-step">질문 0 / 7</div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-text" id="progress-pct">0%</div>
+    </div>
+    <div class="chat-window">
+      <div class="chat-messages" id="chat-messages"></div>
+      <div class="quick-suggestions" id="quick-suggestions" style="display:none"></div>
+      <div class="chat-input-area">
+        <textarea id="user-input" placeholder="자유롭게 입력하세요..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+        <button class="send-btn" id="send-btn" onclick="handleSend()" disabled>
+          <svg viewBox="0 0 18 18" fill="none">
+            <path d="M9 14V4M4 9l5-5 5 5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Done -->
+  <div id="done-screen">
+    <div class="done-icon">
+      <svg viewBox="0 0 26 26" fill="none">
+        <path d="M5 13l5.5 5.5L21 8" stroke="#0E6E56" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h2>인터뷰가 완료되었습니다</h2>
+    <p>소중한 의견을 주셔서 감사합니다.<br>응답 내용은 협회 사업 개선에 반영될 예정입니다.<br><br>이 창을 닫으셔도 됩니다.</p>
+  </div>
+
+</main>
+
+<footer>
+  본 인터뷰는 익명으로 진행되며 개인 식별 정보는 수집하지 않습니다 &nbsp;·&nbsp; 한국해양조사협회
+</footer>
+
+<script>
+const ANTHROPIC_API = "https://api.anthropic.com/v1/messages";
+
+const QUESTIONS = [
+  { text: "안녕하세요! 참여해 주셔서 감사합니다.\n\n먼저 현재 담당하시는 주요 업무를 간단히 소개해 주시겠어요? (예: 측량·조사, 행정, 데이터 관리, 대외협력 등)", tag: "업무소개", hints: [] },
+  { text: "일주일 중에서 가장 시간이 많이 걸리는 업무는 무엇인가요?\n그 이유도 함께 말씀해 주시면 좋겠습니다.", tag: "시간소요", hints: ["보고서 작성이 많아요", "회의/조율이 많아요", "데이터 정리에 시간이 많이 걸려요"] },
+  { text: "반복적으로 수작업이나 엑셀로 처리하는 업무가 있나요?\n있다면 어떤 작업인지 구체적으로 말씀해 주세요.", tag: "수작업반복", hints: ["있어요 — 여러 개", "한두 가지 있어요", "딱히 없어요"] },
+  { text: "업무 중 가장 불편하거나 개선이 필요하다고 느끼는 점은 무엇인가요?\n시스템, 프로세스, 협업 방식 어떤 것이든 괜찮습니다.", tag: "불편사항", hints: ["시스템이 불편해요", "내부 소통이 어려워요", "외부 기관과 협력이 힘들어요"] },
+  { text: "외부(정부기관, 민간업체, 일반 국민 등)로부터 자주 받는 문의나 불만이 있나요?\n반복되는 패턴이 있다면 말씀해 주세요.", tag: "외부요구", hints: ["자료/정보 요청이 많아요", "제도·기준 문의가 많아요", "민원은 별로 없어요"] },
+  { text: "'원래 해야 하는데 자꾸 미루게 되는 업무'가 있다면 어떤 건가요?\n이유도 함께 말씀해 주시면 도움이 됩니다.", tag: "미루는업무", hints: ["귀찮아서 미루는 업무 있어요", "방법을 잘 몰라서 미뤄요", "딱히 없어요"] },
+  { text: "마지막 질문입니다!\n\n만약 마법봉이 있다면, 협회 업무에서 당장 없애거나 자동화하고 싶은 것 한 가지는 무엇인가요?", tag: "이상향", hints: [] }
+];
+
+const SYSTEM_PROMPT = `당신은 한국해양조사협회 업무환경 개선을 위한 익명 인터뷰 AI입니다.
+직원의 답변에 공감하며, 필요시 업무 효율·불편함·개선 가능성에 집중한 꼬리 질문을 1개만 짧게 합니다.
+답변이 구체적이고 충분하면 "감사합니다, 잘 이해했습니다." 만 답하세요.
+절대 2개 이상의 질문을 하지 마세요. 한국어로 2-3문장 이내로만 답하세요.
+공감 표현은 짧게, 업무 맥락에 맞게 자연스럽게 하세요.`;
+
+let step = 0;
+let history = [];
+let allAnswers = [];
+let busy = false;
+
+function startInterview() {
+  document.getElementById('intro-screen').style.display = 'none';
+  document.getElementById('chat-screen').style.display = 'flex';
+  document.getElementById('chat-screen').style.flexDirection = 'column';
+  document.getElementById('user-input').addEventListener('input', () => {
+    document.getElementById('send-btn').disabled = !document.getElementById('user-input').value.trim();
+  });
+  setTimeout(() => askQuestion(0), 400);
+}
+
+function updateProgress(s) {
+  const pct = Math.round((s / QUESTIONS.length) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-step').textContent = `질문 ${s} / ${QUESTIONS.length}`;
+}
+
+function scrollDown() {
+  const el = document.getElementById('chat-messages');
+  setTimeout(() => el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }), 60);
+}
+
+function appendMsg(role, text) {
+  const wrap = document.getElementById('chat-messages');
+  const row = document.createElement('div');
+  row.className = 'msg-row ' + role;
+  const av = document.createElement('div');
+  av.className = 'avatar ' + role;
+  av.textContent = role === 'ai' ? 'AI' : '나';
+  const bub = document.createElement('div');
+  bub.className = 'bubble ' + role;
+  bub.textContent = text;
+  row.appendChild(av);
+  row.appendChild(bub);
+  wrap.appendChild(row);
+  scrollDown();
+}
+
+function showTyping() {
+  const wrap = document.getElementById('chat-messages');
+  const row = document.createElement('div');
+  row.className = 'msg-row ai';
+  row.id = 'typing-row';
+  const av = document.createElement('div');
+  av.className = 'avatar ai';
+  av.textContent = 'AI';
+  const bub = document.createElement('div');
+  bub.className = 'typing-bubble';
+  bub.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+  row.appendChild(av);
+  row.appendChild(bub);
+  wrap.appendChild(row);
+  scrollDown();
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing-row');
+  if (t) t.remove();
+}
+
+function showHints(hints) {
+  const el = document.getElementById('quick-suggestions');
+  el.innerHTML = '';
+  if (!hints || hints.length === 0) { el.style.display = 'none'; return; }
+  el.style.display = 'flex';
+  hints.forEach(h => {
+    const b = document.createElement('button');
+    b.className = 'suggest-btn';
+    b.textContent = h;
+    b.onclick = () => {
+      document.getElementById('user-input').value = h;
+      document.getElementById('send-btn').disabled = false;
+      document.getElementById('user-input').focus();
+    };
+    el.appendChild(b);
+  });
+}
+
+function askQuestion(idx) {
+  if (idx >= QUESTIONS.length) return;
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    appendMsg('ai', QUESTIONS[idx].text);
+    history.push({ role: 'assistant', content: QUESTIONS[idx].text });
+    showHints(QUESTIONS[idx].hints);
+    document.getElementById('user-input').disabled = false;
+    document.getElementById('user-input').focus();
+    busy = false;
+    updateProgress(idx);
+  }, 700 + Math.random() * 400);
+}
+
+async function handleSend() {
+  const input = document.getElementById('user-input');
+  const text = input.value.trim();
+  if (!text || busy) return;
+  busy = true;
+  input.value = '';
+  input.style.height = 'auto';
+  document.getElementById('send-btn').disabled = true;
+  document.getElementById('quick-suggestions').style.display = 'none';
+  input.disabled = true;
+
+  appendMsg('user', text);
+  allAnswers.push({ tag: QUESTIONS[step].tag, q: QUESTIONS[step].text, a: text });
+  history.push({ role: 'user', content: text });
+
+  const currentStep = step;
+  step++;
+
+  showTyping();
+
+  try {
+    const res = await fetch(ANTHROPIC_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 200,
+        system: SYSTEM_PROMPT,
+        messages: history
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || '감사합니다, 잘 이해했습니다.';
+    removeTyping();
+
+    const needsFollowUp = !(reply.includes('감사합니다') && reply.length < 30);
+    if (needsFollowUp) {
+      appendMsg('ai', reply);
+      history.push({ role: 'assistant', content: reply });
+      await delay(900);
+    }
+
+    if (step < QUESTIONS.length) {
+      askQuestion(step);
+      updateProgress(step);
+    } else {
+      updateProgress(QUESTIONS.length);
+      showTyping();
+      await delay(800);
+      removeTyping();
+      appendMsg('ai', '모든 질문이 완료되었습니다. 소중한 의견 감사드립니다!\n\n잠시 후 완료 화면으로 이동합니다.');
+      history.push({ role: 'assistant', content: '완료' });
+      input.disabled = true;
+      await delay(2200);
+      document.getElementById('chat-screen').style.display = 'none';
+      document.getElementById('done-screen').style.display = 'block';
+    }
+  } catch (e) {
+    removeTyping();
+    appendMsg('ai', '네, 감사합니다. 다음 질문으로 넘어가겠습니다.');
+    if (step < QUESTIONS.length) askQuestion(step);
+    else {
+      document.getElementById('chat-screen').style.display = 'none';
+      document.getElementById('done-screen').style.display = 'block';
+    }
+  }
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+</script>
+</body>
+</html>

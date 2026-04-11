@@ -1,0 +1,26 @@
+[
+  {
+    "slug": "engis-marp",
+    "title": "엔지스 MARP 제안 메모",
+    "group": "엔지스 제안 자료",
+    "category": "엔지스 자료",
+    "description": "데이터 플랫폼, 분석 서비스, AI 적용 시스템 관련 제안 방향을 정리한 마크다운 문서입니다.",
+    "file": "./md/engis_marp.md"
+  },
+  {
+    "slug": "khra_projects",
+    "title": "khra projects",
+    "group": "기타 Markdown",
+    "category": "Markdown",
+    "description": "khra projects 문서입니다.",
+    "file": "./md/khra_projects.md"
+  },
+  {
+    "slug": "khra_projects2",
+    "title": "khra projects2",
+    "group": "기타 Markdown",
+    "category": "Markdown",
+    "description": "khra projects2 문서입니다.",
+    "file": "./md/khra_projects2.md"
+  }
+]

@@ -97,6 +97,47 @@ python3 -m http.server 8080
 - 필요할 때만 메인 `서비스` 영역이나 관련 페이지에서 링크를 노출합니다.
 - 더 이상 노출이 필요 없으면 링크만 제거하고 파일은 보관할 수 있습니다.
 
+### PDF 자료실 운영
+
+- PDF 파일은 `decks/pdfs/` 폴더에 넣습니다.
+- 하위 폴더를 만들어도 인덱스에 함께 반영됩니다.
+- 목록 데이터는 `decks/pdfs/pdfs.json` 파일로 관리되며, 이는 스크립트로 자동 생성합니다.
+- 목록 페이지에서는 하위 폴더 기준으로 그룹핑해서 표시합니다.
+- 제목, 카테고리, 설명, 그룹명을 직접 지정하려면 `decks/pdfs/pdfs.meta.json`에 같은 파일명을 키로 추가합니다.
+
+PDF 추가 후 인덱스 갱신:
+
+```bash
+python3 scripts/generate_pdf_index.py
+```
+
+예시 메타데이터:
+
+```json
+{
+  "khoa/sample.pdf": {
+    "title": "샘플 PDF 자료",
+    "category": "제안 자료",
+    "group": "한국해양조사협회 / 인터뷰",
+    "description": "설명 문구를 직접 지정할 수 있습니다."
+  }
+}
+```
+
+### Markdown 자료실 운영
+
+- Markdown 파일은 `decks/md/` 폴더에 넣습니다.
+- 하위 폴더를 만들어도 인덱스에 함께 반영됩니다.
+- 목록 데이터는 `decks/md/mds.json` 파일로 관리되며, 이는 스크립트로 자동 생성합니다.
+- 목록 페이지에서는 하위 폴더 기준으로 그룹핑해서 표시합니다.
+- 제목, 카테고리, 설명, 그룹명을 직접 지정하려면 `decks/md/mds.meta.json`에 같은 파일명을 키로 추가합니다.
+
+Markdown 추가 후 인덱스 갱신:
+
+```bash
+python3 scripts/generate_md_index.py
+```
+
 ### CSS 캐시 버전 관리
 
 `styles.css`는 캐시 방지를 위해 쿼리 문자열 버전을 붙여 참조합니다.
