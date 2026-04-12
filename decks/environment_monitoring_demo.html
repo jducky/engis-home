@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>환경 모니터링 AI 플랫폼 데모</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: rgba(16, 24, 48, 0.88);
+      --panel-2: rgba(24, 34, 66, 0.95);
+      --line: rgba(255, 255, 255, 0.08);
+      --text: #eef3ff;
+      --muted: #9fb0d4;
+      --accent: #63a4ff;
+      --green: #1ecb8b;
+      --yellow: #f8c94a;
+      --red: #ff6b7a;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; font-family: Inter, Pretendard, "Noto Sans KR", sans-serif; background: radial-gradient(circle at top left, #15254f, #0b1020 48%, #070b16 100%); color: var(--text); }
+    body { min-height: 100vh; }
+
+    .app {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 20px 20px 28px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #6cb7ff, #5d7cff 55%, #7d5cff);
+      box-shadow: 0 10px 24px rgba(93, 124, 255, 0.4);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.1;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .pill, .ghost-btn, .primary-btn, .nav-btn {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .pill { cursor: default; }
+    .ghost-btn:hover, .primary-btn:hover, .nav-btn:hover { transform: translateY(-1px); }
+    .primary-btn {
+      background: linear-gradient(135deg, #6cb7ff, #5d7cff);
+      border: none;
+      box-shadow: 0 10px 24px rgba(93, 124, 255, 0.35);
+      color: white;
+      font-weight: 700;
+    }
+
+    .nav {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .nav-btn {
+      border-radius: 16px;
+      padding: 14px 12px;
+      text-align: left;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .nav-btn small { display: block; color: var(--muted); margin-top: 4px; font-size: 12px; }
+    .nav-btn.active {
+      background: linear-gradient(135deg, rgba(108,183,255,0.18), rgba(93,124,255,0.22));
+      border-color: rgba(108,183,255,0.35);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 12px 28px rgba(0,0,0,0.22);
+    }
+
+    .screen {
+      display: none;
+      animation: fade 0.25s ease;
+    }
+    .screen.active { display: block; }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.55fr 1fr;
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 18px 20px 0;
+    }
+
+    .card-header h2, .card-header h3 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .sub {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .kpi {
+      padding: 16px;
+      border-radius: 18px;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+    }
+
+    .kpi .label { color: var(--muted); font-size: 12px; }
+    .kpi .value { margin-top: 8px; font-size: 28px; font-weight: 800; }
+    .kpi .delta { margin-top: 6px; font-size: 12px; }
+    .up { color: var(--red); }
+    .down { color: var(--green); }
+    .warn { color: var(--yellow); }
+
+    .map-wrap { padding: 0 18px 18px; }
+    .map {
+      position: relative;
+      height: 500px;
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background:
+        radial-gradient(circle at 25% 30%, rgba(37, 105, 193, 0.38), transparent 18%),
+        radial-gradient(circle at 72% 56%, rgba(26, 203, 139, 0.22), transparent 16%),
+        linear-gradient(180deg, #132346, #0e1731 60%, #0c1224 100%);
+    }
+
+    .map::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.35;
+    }
+
+    .river, .coast {
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(0.2px);
+    }
+
+    .river {
+      left: 20%; top: 15%; width: 56%; height: 18px;
+      background: linear-gradient(90deg, rgba(85, 188, 255, 0.12), rgba(85,188,255,0.5), rgba(85, 188, 255, 0.14));
+      transform: rotate(24deg);
+    }
+
+    .coast {
+      right: -8%; bottom: -8%; width: 40%; height: 180px;
+      background: radial-gradient(circle at 40% 40%, rgba(122, 178, 255, 0.22), rgba(122, 178, 255, 0.06), transparent 70%);
+      transform: rotate(-8deg);
+    }
+
+    .region {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(8px);
+      opacity: 0.9;
+    }
+
+    .r-green { background: rgba(30, 203, 139, 0.28); }
+    .r-yellow { background: rgba(248, 201, 74, 0.24); }
+    .r-red { background: rgba(255, 107, 122, 0.28); }
+
+    .sensor {
+      position: absolute;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,0.88);
+      box-shadow: 0 0 0 8px rgba(255,255,255,0.06);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    .sensor:hover { transform: scale(1.1); }
+    .sensor.green { background: var(--green); }
+    .sensor.yellow { background: var(--yellow); }
+    .sensor.red { background: var(--red); }
+
+    .sensor-label {
+      position: absolute;
+      transform: translate(14px, -8px);
+      padding: 6px 10px;
+      font-size: 12px;
+      border-radius: 999px;
+      background: rgba(8, 13, 26, 0.82);
+      border: 1px solid var(--line);
+      white-space: nowrap;
+    }
+
+    .legend {
+      position: absolute;
+      left: 16px;
+      bottom: 16px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(8, 13, 26, 0.76);
+      border: 1px solid var(--line);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .dot.green { background: var(--green); }
+    .dot.yellow { background: var(--yellow); }
+    .dot.red { background: var(--red); }
+
+    .side { padding: 18px; }
+
+    .event-list { display: grid; gap: 12px; margin-top: 14px; }
+
+    .event-item {
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    .event-item:hover, .event-item.active {
+      background: rgba(108,183,255,0.10);
+      border-color: rgba(108,183,255,0.28);
+    }
+
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .title { font-weight: 700; }
+    .meta { color: var(--muted); font-size: 12px; margin-top: 6px; line-height: 1.5; }
+    .badge {
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid transparent;
+    }
+    .badge.red { background: rgba(255,107,122,0.14); color: #ffb8c0; border-color: rgba(255,107,122,0.22); }
+    .badge.yellow { background: rgba(248,201,74,0.12); color: #ffe69a; border-color: rgba(248,201,74,0.22); }
+    .badge.green { background: rgba(30,203,139,0.10); color: #8ff1c8; border-color: rgba(30,203,139,0.22); }
+
+    .panel-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 18px;
+    }
+
+    .chart-card, .info-card, .report-card, .cause-card, .action-card {
+      padding: 18px;
+    }
+
+    .chart-box {
+      margin-top: 16px;
+      height: 300px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .grid-lines {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+      background-size: 100% 52px;
+      opacity: 0.55;
+    }
+
+    svg { width: 100%; height: 100%; display: block; }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .mini {
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+    }
+
+    .mini b { display: block; font-size: 20px; margin-top: 8px; }
+    .mini span { color: var(--muted); font-size: 12px; }
+
+    .reason-bars {
+      margin-top: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .bar-row { display: grid; gap: 8px; }
+    .bar-head { display: flex; justify-content: space-between; font-size: 13px; }
+    .bar-track {
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #71c7ff, #7d7cff);
+    }
+
+    .factors {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .factor {
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+    }
+
+    .steps { display: grid; gap: 12px; margin-top: 18px; }
+
+    .step {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: start;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .step-num {
+      width: 34px; height: 34px; border-radius: 12px;
+      background: linear-gradient(135deg, rgba(108,183,255,0.22), rgba(93,124,255,0.26));
+      display: grid; place-items: center; font-weight: 800;
+    }
+
+    .check {
+      appearance: none;
+      width: 24px; height: 24px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.03);
+      cursor: pointer;
+      margin-top: 4px;
+      position: relative;
+    }
+
+    .check:checked {
+      background: linear-gradient(135deg, #6cb7ff, #5d7cff);
+      border-color: transparent;
+    }
+
+    .check:checked::after {
+      content: "✓";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 14px;
+      color: white;
+    }
+
+    .report-box {
+      margin-top: 16px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      background: #f4f7ff;
+      color: #1a2540;
+    }
+
+    .report-head {
+      padding: 20px 22px;
+      background: linear-gradient(135deg, #dbe8ff, #edf3ff);
+      border-bottom: 1px solid rgba(26,37,64,0.08);
+    }
+
+    .report-body {
+      padding: 20px 22px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .report-section {
+      border: 1px solid rgba(26,37,64,0.08);
+      border-radius: 16px;
+      padding: 14px;
+      background: white;
+    }
+
+    .report-section h4 { margin: 0 0 10px; font-size: 14px; }
+    .report-list { margin: 0; padding-left: 18px; line-height: 1.7; color: #3d4a68; }
+
+    .footer-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background: rgba(12, 18, 36, 0.95);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: var(--shadow);
+      border-radius: 16px;
+      padding: 14px 16px;
+      min-width: 240px;
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: 0.2s ease;
+      z-index: 20;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .highlight {
+      color: #9fd0ff;
+      font-weight: 700;
+    }
+
+    @media (max-width: 1180px) {
+      .layout, .panel-grid { grid-template-columns: 1fr; }
+      .nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .kpis, .mini-stats, .factors { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 760px) {
+      .app { padding: 14px; }
+      .topbar { flex-direction: column; align-items: stretch; }
+      .nav { grid-template-columns: 1fr; }
+      .kpis, .mini-stats, .factors { grid-template-columns: 1fr; }
+      .map { height: 360px; }
+      .brand h1 { font-size: 20px; }
+      .panel-grid { gap: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">AI</div>
+        <div>
+          <h1>환경 모니터링 AI 플랫폼</h1>
+          <p>이상 감지 · 원인 분석 · 대응 가이드 · 자동 보고서 데모</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <div class="pill">실시간 상태: <span class="highlight">주의 2 / 심각 1</span></div>
+        <button class="ghost-btn" onclick="simulateEvent()">이상 상황 재생</button>
+        <button class="primary-btn" onclick="goToScreen(4)">보고서 보기</button>
+      </div>
+    </div>
+
+    <div class="nav" id="nav"></div>
+
+    <section class="screen active" id="screen-0">
+      <div class="layout">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>통합 모니터링 대시보드</h2>
+              <p class="sub">센서, 공공 API, 기상 정보, 현장 이벤트를 통합해 현재 위험 지역을 한눈에 보여줍니다.</p>
+            </div>
+            <div class="badge red">실시간 경보 3건</div>
+          </div>
+          <div class="map-wrap">
+            <div class="kpis">
+              <div class="kpi"><div class="label">운영 센서</div><div class="value">128</div><div class="delta down">정상 가동 97.6%</div></div>
+              <div class="kpi"><div class="label">이상 이벤트</div><div class="value">7</div><div class="delta up">전일 대비 +2</div></div>
+              <div class="kpi"><div class="label">위험 구역</div><div class="value">3</div><div class="delta warn">집중 모니터링 필요</div></div>
+              <div class="kpi"><div class="label">자동 보고서</div><div class="value">12</div><div class="delta down">오늘 발행 완료</div></div>
+            </div>
+            <div class="map">
+              <div class="river"></div>
+              <div class="coast"></div>
+              <div class="region r-green" style="left:13%;top:21%;width:150px;height:110px"></div>
+              <div class="region r-yellow" style="left:51%;top:29%;width:180px;height:130px"></div>
+              <div class="region r-red" style="left:63%;top:55%;width:220px;height:160px"></div>
+              <div class="region r-yellow" style="left:24%;top:59%;width:150px;height:110px"></div>
+
+              <div class="sensor green" style="left:15%;top:26%"><div class="sensor-label">북부 수질 A</div></div>
+              <div class="sensor green" style="left:28%;top:35%"><div class="sensor-label">도심 대기 B</div></div>
+              <div class="sensor yellow" style="left:52%;top:32%" onclick="selectEvent(1)"><div class="sensor-label">하천 유입 C</div></div>
+              <div class="sensor red" style="left:69%;top:59%" onclick="selectEvent(0)"><div class="sensor-label">산단 배출 D</div></div>
+              <div class="sensor yellow" style="left:26%;top:63%" onclick="selectEvent(2)"><div class="sensor-label">연안 관측 E</div></div>
+              <div class="sensor green" style="left:77%;top:24%"><div class="sensor-label">배경측정 F</div></div>
+
+              <div class="legend">
+                <span><i class="dot green"></i>정상</span>
+                <span><i class="dot yellow"></i>주의</span>
+                <span><i class="dot red"></i>심각</span>
+                <span>기준: 법정 기준치 + 이상 패턴 탐지</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card side">
+          <div class="row">
+            <div>
+              <h3 style="margin:0;">최근 이상 이벤트</h3>
+              <div class="sub">클릭하면 상세 분석으로 이동합니다.</div>
+            </div>
+            <button class="ghost-btn" onclick="goToScreen(1)">상세 분석</button>
+          </div>
+          <div class="event-list" id="eventList"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-1">
+      <div class="panel-grid">
+        <div class="card chart-card">
+          <div class="row">
+            <div>
+              <h2 style="margin:0;">이상 이벤트 상세</h2>
+              <p class="sub" id="detailSub">시간대별 측정값과 기준 초과 수준을 보여줍니다.</p>
+            </div>
+            <div class="badge red" id="detailBadge">심각</div>
+          </div>
+          <div class="chart-box">
+            <div class="grid-lines"></div>
+            <svg viewBox="0 0 700 300" preserveAspectRatio="none">
+              <polyline id="baselineLine" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2" points="0,160 700,160"></polyline>
+              <polyline id="chartLine" fill="none" stroke="#6cb7ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></polyline>
+              <polyline id="thresholdLine" fill="none" stroke="#ff6b7a" stroke-width="2.5" stroke-dasharray="8 8" points="0,110 700,110"></polyline>
+              <circle id="peakDot" r="7" fill="#ff6b7a"></circle>
+              <text id="peakText" x="0" y="0" fill="#eef3ff" font-size="12">피크</text>
+            </svg>
+          </div>
+          <div class="mini-stats">
+            <div class="mini"><span>현재 측정값</span><b id="statCurrent">18.2</b></div>
+            <div class="mini"><span>기준 초과율</span><b id="statExcess">+35%</b></div>
+            <div class="mini"><span>급변 시작</span><b id="statStart">13:20</b></div>
+          </div>
+        </div>
+
+        <div class="card info-card">
+          <h3 style="margin:0;">운영 요약</h3>
+          <p class="sub">운영자가 바로 판단할 수 있도록 핵심 수치만 요약합니다.</p>
+          <div class="event-list" style="margin-top:16px;">
+            <div class="event-item active">
+              <div class="row"><div class="title">위치</div><div class="badge yellow" id="infoLocationBadge">현장</div></div>
+              <div class="meta" id="infoLocation">남부 산업단지 배출구 #D</div>
+            </div>
+            <div class="event-item active">
+              <div class="row"><div class="title">판정</div><div class="badge red">자동 탐지</div></div>
+              <div class="meta" id="infoDecision">법정 기준 초과 + 비정상 상승 패턴 동시 발생</div>
+            </div>
+            <div class="event-item active">
+              <div class="row"><div class="title">영향 범위</div><div class="badge red">확산 가능</div></div>
+              <div class="meta" id="infoImpact">하류 3.2km, 인근 취수 구역 주의 필요</div>
+            </div>
+          </div>
+          <div class="footer-actions">
+            <button class="ghost-btn" onclick="goToScreen(0)">지도 보기</button>
+            <button class="primary-btn" onclick="goToScreen(2)">원인 분석 보기</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-2">
+      <div class="panel-grid">
+        <div class="card cause-card">
+          <div class="row">
+            <div>
+              <h2 style="margin:0;">원인 분석 / 설명 가능한 AI</h2>
+              <p class="sub">복잡한 모델 설명 대신, 운영자가 이해할 수 있는 원인 기여도로 제시합니다.</p>
+            </div>
+            <div class="badge yellow">SHAP 스타일 설명</div>
+          </div>
+          <div class="reason-bars" id="reasonBars"></div>
+          <div class="factors" id="factorCards"></div>
+        </div>
+
+        <div class="card info-card">
+          <h3 style="margin:0;">AI 해석 결과</h3>
+          <p class="sub" id="analysisSummary">강수와 유입 오염원이 결합되며 급격한 탁도 상승이 발생한 것으로 추정됩니다.</p>
+          <div class="event-list" style="margin-top:16px;">
+            <div class="event-item active">
+              <div class="row"><div class="title">모델 신뢰도</div><div class="badge green" id="confidenceBadge">89%</div></div>
+              <div class="meta">유사 패턴 학습 사례 및 기준 초과 조합 기반</div>
+            </div>
+            <div class="event-item active">
+              <div class="row"><div class="title">권장 판단</div><div class="badge red">즉시 조치</div></div>
+              <div class="meta" id="analysisDecision">단순 모니터링이 아닌 현장 확인과 추가 채수 필요</div>
+            </div>
+          </div>
+          <div class="footer-actions">
+            <button class="ghost-btn" onclick="goToScreen(1)">이벤트 상세</button>
+            <button class="primary-btn" onclick="goToScreen(3)">대응 가이드</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-3">
+      <div class="panel-grid">
+        <div class="card action-card">
+          <div class="row">
+            <div>
+              <h2 style="margin:0;">운영 대응 가이드</h2>
+              <p class="sub">이상 감지에서 끝나지 않고, SOP 기반 조치 순서를 즉시 제시합니다.</p>
+            </div>
+            <div class="badge red" id="responseUrgency">즉시 대응</div>
+          </div>
+          <div class="steps" id="responseSteps"></div>
+          <div class="footer-actions">
+            <button class="ghost-btn" onclick="markAllSteps()">전체 완료 체크</button>
+            <button class="primary-btn" onclick="goToScreen(4)">자동 보고서 생성</button>
+          </div>
+        </div>
+
+        <div class="card info-card">
+          <h3 style="margin:0;">알림 및 협업</h3>
+          <p class="sub">담당자 통지, 현장 점검 요청, 외부 기관 보고를 연계합니다.</p>
+          <div class="event-list" style="margin-top:16px;">
+            <div class="event-item active">
+              <div class="row"><div class="title">담당자 알림</div><div class="badge green">발송 완료</div></div>
+              <div class="meta">상황실, 현장 점검반, 품질 담당자에게 앱/메일 전송</div>
+            </div>
+            <div class="event-item active">
+              <div class="row"><div class="title">추가 채수 요청</div><div class="badge yellow">대기</div></div>
+              <div class="meta">현장 확인 후 자동으로 시료 채취 작업지시 생성</div>
+            </div>
+            <div class="event-item active">
+              <div class="row"><div class="title">기관 보고 상태</div><div class="badge yellow">검토 중</div></div>
+              <div class="meta">임계치 초과 시 지자체/관계기관 보고서 자동 작성 가능</div>
+            </div>
+          </div>
+          <div class="footer-actions">
+            <button class="ghost-btn" onclick="notifyTeam()">담당자 재알림</button>
+            <button class="primary-btn" onclick="generateReport()">보고서 갱신</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-4">
+      <div class="panel-grid">
+        <div class="card report-card">
+          <div class="row">
+            <div>
+              <h2 style="margin:0;">자동 생성 보고서</h2>
+              <p class="sub">이벤트 요약, 원인 분석, 대응 내역을 보고서 형식으로 자동 정리합니다.</p>
+            </div>
+            <div class="badge green">PDF / 이메일 가능</div>
+          </div>
+          <div class="report-box">
+            <div class="report-head">
+              <div style="font-size:12px; color:#55627f;">환경 모니터링 상황 보고서</div>
+              <div style="font-size:24px; font-weight:800; margin-top:6px;" id="reportTitle">남부 산업단지 배출구 이상 감지 보고</div>
+              <div style="margin-top:8px; font-size:13px; color:#55627f;" id="reportMeta">보고시각 2026-04-12 14:30 · 시스템 자동 생성</div>
+            </div>
+            <div class="report-body">
+              <div class="report-section">
+                <h4>1. 이벤트 요약</h4>
+                <ul class="report-list" id="reportSummary"></ul>
+              </div>
+              <div class="report-section">
+                <h4>2. 원인 분석</h4>
+                <ul class="report-list" id="reportCauses"></ul>
+              </div>
+              <div class="report-section">
+                <h4>3. 대응 조치</h4>
+                <ul class="report-list" id="reportActions"></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card info-card">
+          <h3 style="margin:0;">활용 포인트</h3>
+          <p class="sub">이 화면은 신속 상용화 과제의 제품화 이미지를 보여주는 핵심 화면입니다.</p>
+          <div class="event-list" style="margin-top:16px;">
+            <div class="event-item active">
+              <div class="row"><div class="title">즉시 납품 가능</div><div class="badge green">제품형</div></div>
+              <div class="meta">대시보드 + 경보 + 리포트까지 하나의 운영 도구로 구성</div>
+            </div>
+            <div class="event-item active">
+              <div class="row"><div class="title">확장 가능</div><div class="badge yellow">API 연계</div></div>
+              <div class="meta">지자체, 산업단지, 수질/대기, 해양 관측으로 확장 가능</div>
+            </div>
+            <div class="event-item active">
+              <div class="row"><div class="title">심사 포인트</div><div class="badge red">제품화</div></div>
+              <div class="meta">연구보다 빠른 실증, 실제 사용자 화면, 보고 체계 자동화</div>
+            </div>
+          </div>
+          <div class="footer-actions">
+            <button class="ghost-btn" onclick="downloadDemo()">PDF 다운로드 연출</button>
+            <button class="primary-btn" onclick="sendEmail()">이메일 전송 연출</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const screens = [
+      { title: '01 대시보드', sub: '현재 상황 한눈에' },
+      { title: '02 이상 상세', sub: '그래프 기반 확인' },
+      { title: '03 원인 분석', sub: '설명 가능한 AI' },
+      { title: '04 대응 가이드', sub: '운영 체크리스트' },
+      { title: '05 자동 보고서', sub: 'PDF/이메일 연계' }
+    ];
+
+    const events = [
+      {
+        id: 0,
+        title: '남부 산업단지 배출구 이상',
+        location: '산단 배출구 #D',
+        level: 'red',
+        levelText: '심각',
+        time: '14:20',
+        metric: 'COD / 탁도',
+        current: '18.2 mg/L',
+        excess: '+35%',
+        start: '13:20',
+        impact: '하류 3.2km, 인근 취수 구역 주의 필요',
+        decision: '법정 기준 초과 + 비정상 상승 패턴 동시 발생',
+        summary: '배출구 인근에서 급격한 오염도 상승이 감지되었습니다.',
+        analysisSummary: '배출 증가와 강우 후 유입수가 겹치며 오염 농도가 비정상적으로 상승한 것으로 추정됩니다.',
+        analysisDecision: '현장 확인, 추가 채수, 배출량 점검을 즉시 권고합니다.',
+        confidence: '89%',
+        chart: [168,166,164,162,160,158,156,152,148,144,135,124,110,92],
+        peak: { x: 650, y: 92, label: '14:20 피크' },
+        reasons: [
+          { name: '배출 유량 증가', value: 42 },
+          { name: '강우 후 유입수 증가', value: 28 },
+          { name: '수온 변화', value: 17 },
+          { name: '센서 주변 체류', value: 13 }
+        ],
+        factors: [
+          { title: '주요 원인', body: '배출 유량 증가가 가장 큰 원인으로 추정됩니다.' },
+          { title: '보조 원인', body: '강우 이후 상류 유입이 동시에 증가했습니다.' },
+          { title: '운영 해석', body: '단순 일시 노이즈가 아닌 실제 환경 변화 가능성이 높습니다.' },
+          { title: '권장 조치', body: '현장 점검 및 시료 채취를 즉시 병행해야 합니다.' }
+        ],
+        steps: [
+          '현장 점검반에게 즉시 출동 요청',
+          '배출 설비 운전 상태와 최근 로그 확인',
+          '추가 채수 및 1시간 간격 재측정 실시',
+          '필요 시 취수구역 주의 알림 발송'
+        ],
+        reportSummary: [
+          '남부 산업단지 배출구 #D에서 2026-04-12 14:20 기준 이상 이벤트 발생',
+          'COD 및 탁도 수치가 기준 대비 35% 초과',
+          '하류 3.2km 구간에 영향 가능성 존재'
+        ],
+        reportCauses: [
+          '배출 유량 증가가 주요 원인으로 분석됨 (기여도 42%)',
+          '강우 이후 유입수 증가가 보조 원인으로 작용',
+          '실제 환경 변화 패턴과 유사도가 높아 신뢰도 89% 판단'
+        ],
+        reportActions: [
+          '현장 점검 요청 및 추가 채수 지시 발송',
+          '배출 설비 로그 확인 요청',
+          '필요 시 관계기관 보고용 문안 자동 생성 준비'
+        ]
+      },
+      {
+        id: 1,
+        title: '하천 유입구 탁도 상승',
+        location: '하천 유입 C',
+        level: 'yellow',
+        levelText: '주의',
+        time: '12:50',
+        metric: '탁도',
+        current: '9.6 NTU',
+        excess: '+12%',
+        start: '12:10',
+        impact: '도심 하천 1.4km 구간 모니터링 강화 필요',
+        decision: '기준치 근접 + 짧은 시간 상승 패턴 감지',
+        summary: '집중호우 이후 탁도 수치가 빠르게 증가했습니다.',
+        analysisSummary: '강수량 증가와 토사 유입 영향이 주요 요인으로 판단됩니다.',
+        analysisDecision: '즉시 경보보다는 모니터링 강화와 추가 관측이 적절합니다.',
+        confidence: '83%',
+        chart: [178,176,175,173,171,170,168,166,160,154,149,142,138,134],
+        peak: { x: 650, y: 134, label: '12:50 상승' },
+        reasons: [
+          { name: '강수량 증가', value: 46 },
+          { name: '토사 유입', value: 31 },
+          { name: '유량 증가', value: 15 },
+          { name: '기기 편차', value: 8 }
+        ],
+        factors: [
+          { title: '주요 원인', body: '집중호우에 따른 토사 유입이 핵심 원인입니다.' },
+          { title: '해석 포인트', body: '비정상 배출보다는 자연 유입 패턴에 가깝습니다.' },
+          { title: '운영 해석', body: '즉시 대응보다 관측 빈도 상향이 적절합니다.' },
+          { title: '권장 조치', body: '30분 간격 재측정, 현장 탁도 확인을 권장합니다.' }
+        ],
+        steps: [
+          '30분 간격 재측정 설정',
+          '강우 레이더 및 상류 유량 데이터 동시 확인',
+          '현장 육안 확인 및 사진 기록',
+          '상태 악화 시 경보 단계 상향'
+        ],
+        reportSummary: [
+          '하천 유입 C 지점에서 탁도 수치 상승 감지',
+          '기준 대비 12% 초과 수준으로 주의 단계 판정',
+          '집중호우 영향 가능성 높음'
+        ],
+        reportCauses: [
+          '강수량 증가가 주요 원인 (46%)',
+          '토사 유입 및 유량 증가가 보조 원인',
+          '기기 편차 가능성은 낮음 (8%)'
+        ],
+        reportActions: [
+          '관측 주기 단축',
+          '상류 유량과 기상자료 동시 점검',
+          '상황 악화 시 경보 단계 상향 준비'
+        ]
+      },
+      {
+        id: 2,
+        title: '연안 관측소 용존산소 감소',
+        location: '연안 관측 E',
+        level: 'yellow',
+        levelText: '주의',
+        time: '10:40',
+        metric: 'DO',
+        current: '4.8 mg/L',
+        excess: '-14%',
+        start: '09:50',
+        impact: '연안 양식 구역 주의 관찰 필요',
+        decision: '용존산소 감소 패턴 감지 + 수온 상승 동반',
+        summary: '연안 관측소에서 DO 감소가 관측되었습니다.',
+        analysisSummary: '수온 상승과 정체 수역 형성 가능성이 복합적으로 작용한 것으로 보입니다.',
+        analysisDecision: '양식장 및 인근 해역 예찰 강화가 필요합니다.',
+        confidence: '81%',
+        chart: [146,147,146,145,144,143,141,139,136,132,128,125,122,118],
+        peak: { x: 650, y: 118, label: '10:40 저점' },
+        reasons: [
+          { name: '수온 상승', value: 37 },
+          { name: '정체 수역 형성', value: 29 },
+          { name: '조류 약화', value: 21 },
+          { name: '측정 편차', value: 13 }
+        ],
+        factors: [
+          { title: '주요 원인', body: '수온 상승이 용존산소 감소에 직접 영향을 주었습니다.' },
+          { title: '보조 원인', body: '정체 수역과 조류 약화가 복합적으로 작용했습니다.' },
+          { title: '운영 해석', body: '지속 시 양식장 피해 가능성이 있습니다.' },
+          { title: '권장 조치', body: '현장 예찰 강화와 단기 예측 연계를 권장합니다.' }
+        ],
+        steps: [
+          '연안 양식 구역 예찰 강화',
+          '수온·조류 관측 데이터 연계 확인',
+          '2시간 간격 재측정',
+          '양식장 운영자 사전 주의 알림'
+        ],
+        reportSummary: [
+          '연안 관측 E 지점에서 용존산소 감소 감지',
+          '수온 상승과 동반되어 주의 단계 판정',
+          '양식 구역 영향 가능성 검토 필요'
+        ],
+        reportCauses: [
+          '수온 상승 기여도 37%',
+          '정체 수역 형성 및 조류 약화 동반',
+          '측정 편차 가능성은 제한적'
+        ],
+        reportActions: [
+          '양식장 예찰 강화',
+          '수온·조류 데이터 추가 확인',
+          '운영자 대상 사전 주의 알림'
+        ]
+      }
+    ];
+
+    let currentScreen = 0;
+    let selectedEvent = 0;
+
+    function initNav() {
+      const nav = document.getElementById('nav');
+      nav.innerHTML = screens.map((s, i) => `
+        <button class="nav-btn ${i === 0 ? 'active' : ''}" data-index="${i}" onclick="goToScreen(${i})">
+          <strong>${s.title}</strong>
+          <small>${s.sub}</small>
+        </button>
+      `).join('');
+    }
+
+    function initEvents() {
+      const list = document.getElementById('eventList');
+      list.innerHTML = events.map((e, i) => `
+        <div class="event-item ${i === selectedEvent ? 'active' : ''}" onclick="selectEvent(${i})">
+          <div class="row">
+            <div class="title">${e.title}</div>
+            <div class="badge ${e.level}">${e.levelText}</div>
+          </div>
+          <div class="meta">${e.location} · ${e.time}<br>${e.summary}</div>
+        </div>
+      `).join('');
+    }
+
+    function goToScreen(index) {
+      currentScreen = index;
+      document.querySelectorAll('.screen').forEach((el, i) => el.classList.toggle('active', i === index));
+      document.querySelectorAll('.nav-btn').forEach((el, i) => el.classList.toggle('active', i === index));
+    }
+
+    function selectEvent(index) {
+      selectedEvent = index;
+      initEvents();
+      renderSelectedEvent();
+      goToScreen(1);
+      showToast(`선택 이벤트: ${events[index].title}`);
+    }
+
+    function renderSelectedEvent() {
+      const e = events[selectedEvent];
+      document.getElementById('detailSub').textContent = `${e.location} · ${e.metric} · ${e.time}`;
+      const badge = document.getElementById('detailBadge');
+      badge.textContent = e.levelText;
+      badge.className = `badge ${e.level}`;
+      document.getElementById('statCurrent').textContent = e.current;
+      document.getElementById('statExcess').textContent = e.excess;
+      document.getElementById('statStart').textContent = e.start;
+      document.getElementById('infoLocation').textContent = e.location;
+      document.getElementById('infoDecision').textContent = e.decision;
+      document.getElementById('infoImpact').textContent = e.impact;
+
+      const points = e.chart.map((v, i) => `${(i / (e.chart.length - 1)) * 700},${v}`).join(' ');
+      document.getElementById('chartLine').setAttribute('points', points);
+      document.getElementById('peakDot').setAttribute('cx', e.peak.x);
+      document.getElementById('peakDot').setAttribute('cy', e.peak.y);
+      document.getElementById('peakText').setAttribute('x', e.peak.x - 30);
+      document.getElementById('peakText').setAttribute('y', e.peak.y - 12);
+      document.getElementById('peakText').textContent = e.peak.label;
+
+      document.getElementById('analysisSummary').textContent = e.analysisSummary;
+      document.getElementById('analysisDecision').textContent = e.analysisDecision;
+      document.getElementById('confidenceBadge').textContent = e.confidence;
+
+      document.getElementById('reasonBars').innerHTML = e.reasons.map(r => `
+        <div class="bar-row">
+          <div class="bar-head"><span>${r.name}</span><strong>${r.value}%</strong></div>
+          <div class="bar-track"><div class="bar-fill" style="width:${r.value}%"></div></div>
+        </div>
+      `).join('');
+
+      document.getElementById('factorCards').innerHTML = e.factors.map(f => `
+        <div class="factor">
+          <div class="title">${f.title}</div>
+          <div class="meta">${f.body}</div>
+        </div>
+      `).join('');
+
+      document.getElementById('responseUrgency').textContent = e.level === 'red' ? '즉시 대응' : '주의 대응';
+      document.getElementById('responseUrgency').className = `badge ${e.level}`;
+      document.getElementById('responseSteps').innerHTML = e.steps.map((s, i) => `
+        <div class="step">
+          <div class="step-num">${i + 1}</div>
+          <div>
+            <div class="title">${s}</div>
+            <div class="meta">SOP 기반 추천 조치입니다.</div>
+          </div>
+          <input class="check response-check" type="checkbox" />
+        </div>
+      `).join('');
+
+      document.getElementById('reportTitle').textContent = `${e.title} 보고`;
+      document.getElementById('reportMeta').textContent = `보고시각 2026-04-12 ${e.time} · 시스템 자동 생성`;
+      document.getElementById('reportSummary').innerHTML = e.reportSummary.map(x => `<li>${x}</li>`).join('');
+      document.getElementById('reportCauses').innerHTML = e.reportCauses.map(x => `<li>${x}</li>`).join('');
+      document.getElementById('reportActions').innerHTML = e.reportActions.map(x => `<li>${x}</li>`).join('');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => toast.classList.remove('show'), 1800);
+    }
+
+    function markAllSteps() {
+      document.querySelectorAll('.response-check').forEach(el => el.checked = true);
+      showToast('모든 대응 항목을 완료 처리했습니다.');
+    }
+
+    function notifyTeam() {
+      showToast('상황실 / 현장 점검반 / 품질 담당자에게 재알림을 전송했습니다.');
+    }
+
+    function generateReport() {
+      goToScreen(4);
+      showToast('최신 분석 결과로 보고서를 갱신했습니다.');
+    }
+
+    function downloadDemo() {
+      showToast('PDF 다운로드가 시작된 것처럼 연출했습니다.');
+    }
+
+    function sendEmail() {
+      showToast('보고서를 관계자 이메일로 전송한 것처럼 연출했습니다.');
+    }
+
+    function simulateEvent() {
+      selectedEvent = (selectedEvent + 1) % events.length;
+      initEvents();
+      renderSelectedEvent();
+      goToScreen(0);
+      showToast(`실시간 이벤트 갱신: ${events[selectedEvent].title}`);
+    }
+
+    initNav();
+    initEvents();
+    renderSelectedEvent();
+  </script>
+</body>
+</html>
