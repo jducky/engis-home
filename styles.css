@@ -1661,6 +1661,65 @@ a {
   margin-top: 0.15rem;
 }
 
+.service-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.2rem;
+}
+
+.service-summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+  padding: 1.7rem;
+  border-radius: 1.8rem;
+  border: 1px solid rgba(13, 92, 99, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(246, 250, 249, 0.82)),
+    linear-gradient(135deg, rgba(24, 169, 153, 0.08), rgba(13, 92, 99, 0.02));
+  box-shadow: var(--shadow);
+}
+
+.service-summary-card h3 {
+  margin: 0;
+  font-size: 1.35rem;
+  line-height: 1.35;
+}
+
+.service-summary-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.service-summary-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.service-summary-tags span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.95rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(13, 92, 99, 0.08);
+  color: var(--brand);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.service-summary-card .button {
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+.service-detail-page .overview-card {
+  padding: 1.6rem;
+}
+
 .card-index {
   display: inline-block;
   margin-bottom: 1rem;
@@ -1890,6 +1949,10 @@ a {
 @media (max-width: 720px) {
   :root {
     --header-height: 110px;
+  }
+
+  .service-summary-grid {
+    grid-template-columns: 1fr;
   }
 
   .site-header {
