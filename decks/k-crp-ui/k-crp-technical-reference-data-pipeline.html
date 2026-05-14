@@ -1,0 +1,408 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0B1220;--bg2:#111827;--line:#ffffff14;
+  --txt:#E8EDF5;--txt2:#94A3B8;--txt3:#64748B;
+  --accent:#38BDF8;--mono:Consolas,monospace;
+}
+body{background:#12182a;display:flex;align-items:center;justify-content:center;min-height:100vh}
+.shell{width:1280px;height:720px;display:flex;flex-direction:column;background:var(--bg);font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;color:var(--txt);overflow:hidden}
+
+/* TOPBAR */
+.topbar{height:42px;background:var(--bg2);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 18px;gap:12px;flex-shrink:0}
+.logo-badge{background:linear-gradient(135deg,#0EA5E9,#3B82F6);border-radius:5px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+.logo-text{font-size:13px;font-weight:700;color:#E8EDF5}
+.logo-sub{font-size:9px;color:var(--txt3);letter-spacing:.6px}
+.nav-tabs{display:flex;gap:2px;margin-left:16px}
+.tab{height:28px;padding:0 12px;border-radius:5px;font-size:10px;color:var(--txt3);cursor:pointer;display:flex;align-items:center;border:1px solid transparent}
+.tab.active{background:#0EA5E920;border-color:#0EA5E940;color:var(--accent);font-weight:600}
+
+/* BODY */
+.body{flex:1;display:flex;flex-direction:column;min-height:0;padding:0}
+
+/* STAGE LABELS */
+.stage-bar{height:34px;display:flex;border-bottom:1px solid var(--line);background:var(--bg2);flex-shrink:0}
+.stage{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;border-right:1px solid var(--line);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px}
+.stage:last-child{border-right:none}
+.s-dot{width:7px;height:7px;border-radius:50%}
+
+/* MAIN PIPELINE AREA */
+.pipeline{flex:1;display:flex;min-height:0}
+.col{flex:1;border-right:1px solid var(--line);display:flex;flex-direction:column;padding:12px 10px;gap:8px;overflow:hidden}
+.col:last-child{border-right:none}
+
+/* NODE CARD */
+.node{background:var(--bg2);border-radius:7px;border:1px solid var(--line);padding:8px 10px;flex-shrink:0}
+.node-head{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.node-icon{width:24px;height:24px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.node-title{font-size:10px;font-weight:700;color:var(--txt);flex:1}
+.node-badge{font-size:7px;font-weight:700;padding:1px 6px;border-radius:6px}
+.nb-live{background:#10B98120;color:#6EE7B7;border:1px solid #10B98140}
+.nb-3h{background:#0EA5E918;color:#7DD3FC;border:1px solid #0EA5E938}
+.nb-daily{background:#8B5CF618;color:#C4B5FD;border:1px solid #8B5CF635}
+.nb-rt{background:#F59E0B18;color:#FDE68A;border:1px solid #F59E0B35}
+.node-desc{font-size:8px;color:var(--txt3);line-height:1.55}
+.node-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px}
+.tag{font-size:7px;padding:1px 5px;border-radius:4px;background:#ffffff08;color:var(--txt3);border:1px solid var(--line);font-family:var(--mono)}
+
+/* STATUS ROW inside node */
+.stat-mini{display:flex;align-items:center;gap:6px;margin-top:5px;padding-top:5px;border-top:1px solid var(--line)}
+.sm-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.sm-label{font-size:7.5px;color:var(--txt3);flex:1}
+.sm-val{font-size:7.5px;font-family:var(--mono);color:var(--txt2)}
+
+/* ARROW COLUMN */
+.arrow-col{width:28px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:12px 0;border-right:1px solid var(--line)}
+.arrow-wrap{flex:1;display:flex;align-items:center;justify-content:center}
+
+/* BOTTOM STATUS BAR */
+.statusbar{height:36px;background:var(--bg2);border-top:1px solid var(--line);display:flex;align-items:center;padding:0 18px;gap:20px;flex-shrink:0}
+.sb-item{display:flex;align-items:center;gap:6px;font-size:8.5px;color:var(--txt3)}
+.sb-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+</style>
+
+<div class="shell">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo-badge">K</div>
+  <div><div class="logo-text">K-CRP</div><div class="logo-sub">COASTAL RISK PLATFORM</div></div>
+  <div style="width:1px;height:22px;background:var(--line)"></div>
+  <div class="nav-tabs">
+    <div class="tab">대시보드</div>
+    <div class="tab">XAI 분석</div>
+    <div class="tab">모바일 경보</div>
+    <div class="tab active">데이터 파이프라인</div>
+  </div>
+  <div style="flex:1"></div>
+  <span style="font-size:9px;color:var(--txt3)">GOCI-II · Sentinel · ROMS · KMA → XGBoost/LSTM → CRI API</span>
+  <div style="width:1px;height:18px;background:var(--line);margin:0 8px"></div>
+  <span style="font-size:9px;color:var(--txt3);font-family:var(--mono)" id="clk">2026-04-27 14:32 KST</span>
+</div>
+
+<!-- STAGE BAR -->
+<div class="stage-bar">
+  <div class="stage" style="color:#38BDF8"><div class="s-dot" style="background:#38BDF8"></div>① 데이터 수집</div>
+  <div class="stage" style="color:#8B5CF6"><div class="s-dot" style="background:#8B5CF6"></div>② 전처리 / 융합</div>
+  <div class="stage" style="color:#F59E0B"><div class="s-dot" style="background:#F59E0B"></div>③ ML 모델링</div>
+  <div class="stage" style="color:#10B981"><div class="s-dot" style="background:#10B981"></div>④ CRI 산출</div>
+  <div class="stage" style="color:#EF4444"><div class="s-dot" style="background:#EF4444"></div>⑤ 서비스 / 배포</div>
+</div>
+
+<!-- PIPELINE BODY -->
+<div class="pipeline">
+
+  <!-- ① 데이터 수집 -->
+  <div class="col">
+
+    <div class="node" style="border-color:#38BDF830">
+      <div class="node-head">
+        <div class="node-icon" style="background:#0EA5E918;border:1px solid #0EA5E935">🛰</div>
+        <div class="node-title">GOCI-II</div>
+        <div class="node-badge nb-live">LIVE</div>
+      </div>
+      <div class="node-desc">정지궤도 해양색 위성. 한반도 해역 시간당 관측. Chl-a·부유물·해수면온도 L2 산출.</div>
+      <div class="node-tags"><span class="tag">Chl-a</span><span class="tag">SST</span><span class="tag">TSS</span><span class="tag">1h 갱신</span></div>
+      <div class="stat-mini"><div class="sm-dot" style="background:#10B981"></div><div class="sm-label">수신 상태</div><div class="sm-val" style="color:#6EE7B7">정상</div></div>
+    </div>
+
+    <div class="node" style="border-color:#38BDF828">
+      <div class="node-head">
+        <div class="node-icon" style="background:#0EA5E914;border:1px solid #0EA5E930">🛰</div>
+        <div class="node-title">Sentinel-2/3</div>
+        <div class="node-badge nb-daily">Daily</div>
+      </div>
+      <div class="node-desc">ESA 다중분광 위성. 10m 고해상도 해안선·식생·부유물 분석. 구름 마스킹 후 활용.</div>
+      <div class="node-tags"><span class="tag">10m 해상도</span><span class="tag">NDVI</span><span class="tag">탁도</span></div>
+      <div class="stat-mini"><div class="sm-dot" style="background:#10B981"></div><div class="sm-label">수신 상태</div><div class="sm-val" style="color:#6EE7B7">정상</div></div>
+    </div>
+
+    <div class="node" style="border-color:#38BDF822">
+      <div class="node-head">
+        <div class="node-icon" style="background:#0EA5E910;border:1px solid #0EA5E928">🌊</div>
+        <div class="node-title">ROMS / HYCOM</div>
+        <div class="node-badge nb-3h">3h</div>
+      </div>
+      <div class="node-desc">수치 해양 순환모델. 수온·염분·유속·DO 3차원 예측. 국수과 ROMS 도메인 적용.</div>
+      <div class="node-tags"><span class="tag">수온</span><span class="tag">염분</span><span class="tag">유속</span><span class="tag">DO</span></div>
+      <div class="stat-mini"><div class="sm-dot" style="background:#10B981"></div><div class="sm-label">모델 구동</div><div class="sm-val" style="color:#6EE7B7">정상</div></div>
+    </div>
+
+    <div class="node" style="border-color:#38BDF81e">
+      <div class="node-head">
+        <div class="node-icon" style="background:#0EA5E90c;border:1px solid #0EA5E922">☁</div>
+        <div class="node-title">KMA 기상 예보</div>
+        <div class="node-badge nb-3h">3h</div>
+      </div>
+      <div class="node-desc">기상청 수치예보 API. 풍속·기온·강수·파고 격자 데이터 수집.</div>
+      <div class="node-tags"><span class="tag">풍속</span><span class="tag">기온</span><span class="tag">파고</span></div>
+      <div class="stat-mini"><div class="sm-dot" style="background:#FDE68A"></div><div class="sm-label">지연 감지</div><div class="sm-val" style="color:#FDE68A">+12min</div></div>
+    </div>
+
+    <div class="node" style="border-color:#38BDF81a">
+      <div class="node-head">
+        <div class="node-icon" style="background:#0EA5E908;border:1px solid #0EA5E91e">📡</div>
+        <div class="node-title">KHOA 해양관측</div>
+        <div class="node-badge nb-live">LIVE</div>
+      </div>
+      <div class="node-desc">한국해양조사원 부이·조위관측소. 실시간 수온·파고·조류 현장 관측값.</div>
+      <div class="node-tags"><span class="tag">부이</span><span class="tag">조위</span><span class="tag">조류</span></div>
+      <div class="stat-mini"><div class="sm-dot" style="background:#10B981"></div><div class="sm-label">관측소</div><div class="sm-val" style="color:#6EE7B7">42개소</div></div>
+    </div>
+
+  </div>
+
+  <!-- ARROW 1 -->
+  <div class="arrow-col">
+    <div class="arrow-wrap">
+      <svg width="22" height="200" viewBox="0 0 22 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="11" y1="10" x2="11" y2="185" stroke="#38BDF840" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <polygon points="5,180 11,195 17,180" fill="#38BDF860"/>
+        <text x="11" y="105" fill="#38BDF870" font-size="7" font-family="var(--mono)" text-anchor="middle" transform="rotate(-90,11,105)">INGEST</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ② 전처리 / 융합 -->
+  <div class="col">
+
+    <div class="node" style="border-color:#8B5CF640">
+      <div class="node-head">
+        <div class="node-icon" style="background:#8B5CF618;border:1px solid #8B5CF638">🗄</div>
+        <div class="node-title">원시 데이터 레이크</div>
+        <div class="node-badge" style="background:#8B5CF618;color:#C4B5FD;border:1px solid #8B5CF635">PostGIS</div>
+      </div>
+      <div class="node-desc">NetCDF·GeoTIFF·JSON 원시 파일 저장. 시공간 인덱싱으로 빠른 슬라이싱.</div>
+      <div class="node-tags"><span class="tag">NetCDF</span><span class="tag">GeoTIFF</span><span class="tag">PostGIS</span></div>
+    </div>
+
+    <div class="node" style="border-color:#8B5CF635">
+      <div class="node-head">
+        <div class="node-icon" style="background:#8B5CF614;border:1px solid #8B5CF630">⚙</div>
+        <div class="node-title">품질 관리 (QC)</div>
+      </div>
+      <div class="node-desc">이상값 탐지·결측 보간·범위 체크. IMOS/QARTOD 기준 적용. 자동 플래그 부여.</div>
+      <div class="node-tags"><span class="tag">QARTOD</span><span class="tag">Spike 제거</span><span class="tag">결측 보간</span></div>
+      <div class="stat-mini"><div class="sm-dot" style="background:#10B981"></div><div class="sm-label">오늘 처리</div><div class="sm-val" style="color:#6EE7B7">24,180건</div></div>
+    </div>
+
+    <div class="node" style="border-color:#8B5CF630">
+      <div class="node-head">
+        <div class="node-icon" style="background:#8B5CF610;border:1px solid #8B5CF628">🔗</div>
+        <div class="node-title">공간 격자 융합</div>
+      </div>
+      <div class="node-desc">위성·모델·현장 관측 데이터를 0.05° 격자로 리샘플링. Bilinear 보간 적용.</div>
+      <div class="node-tags"><span class="tag">0.05° 격자</span><span class="tag">Bilinear</span><span class="tag">xarray</span></div>
+    </div>
+
+    <div class="node" style="border-color:#8B5CF628">
+      <div class="node-head">
+        <div class="node-icon" style="background:#8B5CF60c;border:1px solid #8B5CF622">📊</div>
+        <div class="node-title">피처 엔지니어링</div>
+      </div>
+      <div class="node-desc">이동평균·차분·계절 인코딩·공간 라플라시안 등 ML 입력 피처 생성. 정규화 포함.</div>
+      <div class="node-tags"><span class="tag">이동평균</span><span class="tag">차분</span><span class="tag">정규화</span></div>
+      <div class="stat-mini"><div class="sm-dot" style="background:#10B981"></div><div class="sm-label">최종 피처</div><div class="sm-val" style="color:#6EE7B7">42개</div></div>
+    </div>
+
+    <div class="node" style="border-color:#8B5CF622">
+      <div class="node-head">
+        <div class="node-icon" style="background:#8B5CF608;border:1px solid #8B5CF61e">💾</div>
+        <div class="node-title">피처 스토어</div>
+        <div class="node-badge" style="background:#8B5CF618;color:#C4B5FD;border:1px solid #8B5CF635">Redis</div>
+      </div>
+      <div class="node-desc">전처리 완료 피처 캐싱. 모델 추론 시 실시간 조회. TTL 3h 설정.</div>
+      <div class="node-tags"><span class="tag">Redis</span><span class="tag">TTL 3h</span><span class="tag">벡터 캐시</span></div>
+    </div>
+
+  </div>
+
+  <!-- ARROW 2 -->
+  <div class="arrow-col">
+    <div class="arrow-wrap">
+      <svg width="22" height="200" viewBox="0 0 22 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="11" y1="10" x2="11" y2="185" stroke="#8B5CF650" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <polygon points="5,180 11,195 17,180" fill="#8B5CF670"/>
+        <text x="11" y="105" fill="#8B5CF670" font-size="7" font-family="var(--mono)" text-anchor="middle" transform="rotate(-90,11,105)">TRANSFORM</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ③ ML 모델링 -->
+  <div class="col">
+
+    <div class="node" style="border-color:#F59E0B40">
+      <div class="node-head">
+        <div class="node-icon" style="background:#F59E0B18;border:1px solid #F59E0B38">🌲</div>
+        <div class="node-title">XGBoost (1·2단계)</div>
+        <div class="node-badge nb-rt">현재 운용</div>
+      </div>
+      <div class="node-desc">가중합 → XGBoost 단계적 전환. SHAP 기반 설명가능성 확보. 격자별 CRI 0–1 산출.</div>
+      <div class="node-tags"><span class="tag">XGBoost</span><span class="tag">SHAP</span><span class="tag">42 features</span></div>
+      <div class="stat-mini"><div class="sm-dot" style="background:#10B981"></div><div class="sm-label">RMSE</div><div class="sm-val" style="color:#6EE7B7">0.042</div>
+      <div style="width:1px;height:12px;background:var(--line);margin:0 4px"></div>
+      <div class="sm-label">정탐률</div><div class="sm-val" style="color:#6EE7B7">83.2%</div></div>
+    </div>
+
+    <div class="node" style="border-color:#F59E0B32">
+      <div class="node-head">
+        <div class="node-icon" style="background:#F59E0B14;border:1px solid #F59E0B30">🔮</div>
+        <div class="node-title">LSTM / Transformer (3단계)</div>
+        <div class="node-badge" style="background:#8B5CF618;color:#C4B5FD;border:1px solid #8B5CF635">개발 중</div>
+      </div>
+      <div class="node-desc">시계열 시퀀스 학습으로 72h 예측. Attention으로 계절·조류 패턴 포착. XGBoost 앙상블.</div>
+      <div class="node-tags"><span class="tag">LSTM</span><span class="tag">Transformer</span><span class="tag">72h 예측</span></div>
+      <div class="stat-mini"><div class="sm-dot" style="background:#8B5CF6"></div><div class="sm-label">목표 RMSE</div><div class="sm-val" style="color:#C4B5FD">≤ 0.030</div></div>
+    </div>
+
+    <div class="node" style="border-color:#F59E0B28">
+      <div class="node-head">
+        <div class="node-icon" style="background:#F59E0B10;border:1px solid #F59E0B28">📐</div>
+        <div class="node-title">모델 검증 / MLOps</div>
+      </div>
+      <div class="node-desc">K-fold CV · 시간 분리 검증. 드리프트 감지 후 자동 재학습 트리거. 모델 레지스트리 관리.</div>
+      <div class="node-tags"><span class="tag">K-fold</span><span class="tag">드리프트 감지</span><span class="tag">Auto-retrain</span></div>
+      <div class="stat-mini"><div class="sm-dot" style="background:#10B981"></div><div class="sm-label">마지막 재학습</div><div class="sm-val" style="color:#6EE7B7">2026-03-15</div></div>
+    </div>
+
+    <div class="node" style="border-color:#F59E0B20">
+      <div class="node-head">
+        <div class="node-icon" style="background:#F59E0B0c;border:1px solid #F59E0B20">🎯</div>
+        <div class="node-title">임계값 판정</div>
+      </div>
+      <div class="node-desc">CRI ≥ 0.65 경계 / ≥ 0.40 주의 / ≥ 0.20 보통 / 미만 안전. 격자→해역 집계 후 경보 판정.</div>
+      <div class="node-tags"><span class="tag">4등급</span><span class="tag">해역 집계</span><span class="tag">경보 판정</span></div>
+    </div>
+
+  </div>
+
+  <!-- ARROW 3 -->
+  <div class="arrow-col">
+    <div class="arrow-wrap">
+      <svg width="22" height="200" viewBox="0 0 22 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="11" y1="10" x2="11" y2="185" stroke="#F59E0B50" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <polygon points="5,180 11,195 17,180" fill="#F59E0B70"/>
+        <text x="11" y="105" fill="#F59E0B70" font-size="7" font-family="var(--mono)" text-anchor="middle" transform="rotate(-90,11,105)">PREDICT</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ④ CRI 산출 -->
+  <div class="col">
+
+    <div class="node" style="border-color:#10B98145">
+      <div class="node-head">
+        <div class="node-icon" style="background:#10B98118;border:1px solid #10B98138">📦</div>
+        <div class="node-title">CRI 결과 DB</div>
+        <div class="node-badge" style="background:#10B98118;color:#6EE7B7;border:1px solid #10B98138">PostGIS</div>
+      </div>
+      <div class="node-desc">격자별 CRI·SHAP·예측값 저장. 시계열 파티셔닝. 공간 쿼리 최적화.</div>
+      <div class="node-tags"><span class="tag">TimescaleDB</span><span class="tag">공간 인덱스</span><span class="tag">파티셔닝</span></div>
+      <div class="stat-mini"><div class="sm-dot" style="background:#10B981"></div><div class="sm-label">오늘 레코드</div><div class="sm-val" style="color:#6EE7B7">1.2M건</div></div>
+    </div>
+
+    <div class="node" style="border-color:#10B98138">
+      <div class="node-head">
+        <div class="node-icon" style="background:#10B98114;border:1px solid #10B98130">🗺</div>
+        <div class="node-title">타일 서버</div>
+        <div class="node-badge nb-live">LIVE</div>
+      </div>
+      <div class="node-desc">CRI 격자를 MVT(MapboxVectorTile)로 변환. 줌 레벨별 캐싱. MapLibre 렌더링 지원.</div>
+      <div class="node-tags"><span class="tag">MVT</span><span class="tag">Martin</span><span class="tag">MapLibre</span></div>
+      <div class="stat-mini"><div class="sm-dot" style="background:#10B981"></div><div class="sm-label">응답 지연</div><div class="sm-val" style="color:#6EE7B7">42ms</div></div>
+    </div>
+
+    <div class="node" style="border-color:#10B98130">
+      <div class="node-head">
+        <div class="node-icon" style="background:#10B98110;border:1px solid #10B98128">⚡</div>
+        <div class="node-title">경보 엔진</div>
+      </div>
+      <div class="node-desc">임계값 초과 시 경보 생성. 이전 경보 상태 비교 후 신규/해제 판단. 중복 발송 방지.</div>
+      <div class="node-tags"><span class="tag">상태머신</span><span class="tag">중복 방지</span><span class="tag">이력 관리</span></div>
+      <div class="stat-mini"><div class="sm-dot" style="background:#EF4444"></div><div class="sm-label">활성 경보</div><div class="sm-val" style="color:#FCA5A5">2건</div></div>
+    </div>
+
+  </div>
+
+  <!-- ARROW 4 -->
+  <div class="arrow-col">
+    <div class="arrow-wrap">
+      <svg width="22" height="200" viewBox="0 0 22 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="11" y1="10" x2="11" y2="185" stroke="#10B98150" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <polygon points="5,180 11,195 17,180" fill="#10B98170"/>
+        <text x="11" y="105" fill="#10B98170" font-size="7" font-family="var(--mono)" text-anchor="middle" transform="rotate(-90,11,105)">OUTPUT</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ⑤ 서비스 / 배포 -->
+  <div class="col">
+
+    <div class="node" style="border-color:#EF444445">
+      <div class="node-head">
+        <div class="node-icon" style="background:#EF444418;border:1px solid #EF444438">🔌</div>
+        <div class="node-title">REST API</div>
+        <div class="node-badge nb-live">LIVE</div>
+      </div>
+      <div class="node-desc">FastAPI 기반. /risk-index · /alert · /forecast · /shap 엔드포인트. OAuth2 인증.</div>
+      <div class="node-tags"><span class="tag">FastAPI</span><span class="tag">/risk-index</span><span class="tag">/forecast</span><span class="tag">OAuth2</span></div>
+      <div class="stat-mini"><div class="sm-dot" style="background:#10B981"></div><div class="sm-label">응답</div><div class="sm-val" style="color:#6EE7B7">68ms avg</div></div>
+    </div>
+
+    <div class="node" style="border-color:#EF444438">
+      <div class="node-head">
+        <div class="node-icon" style="background:#EF444414;border:1px solid #EF444430">🖥</div>
+        <div class="node-title">웹 GIS 대시보드</div>
+        <div class="node-badge nb-live">LIVE</div>
+      </div>
+      <div class="node-desc">정책 담당자·연구자용. CRI 지도·SHAP 분석·시계열·경보 관리 통합 제공.</div>
+      <div class="node-tags"><span class="tag">React</span><span class="tag">MapLibre</span><span class="tag">Recharts</span></div>
+    </div>
+
+    <div class="node" style="border-color:#EF444430">
+      <div class="node-head">
+        <div class="node-icon" style="background:#EF444410;border:1px solid #EF444428">📱</div>
+        <div class="node-title">모바일 경보 앱</div>
+        <div class="node-badge nb-live">LIVE</div>
+      </div>
+      <div class="node-desc">어업인 대상 위치기반 경보. 푸시·SMS·카카오 알림톡 다채널 발송.</div>
+      <div class="node-tags"><span class="tag">FCM</span><span class="tag">SMS</span><span class="tag">카카오</span></div>
+      <div class="stat-mini"><div class="sm-dot" style="background:#10B981"></div><div class="sm-label">발송 지연</div><div class="sm-val" style="color:#6EE7B7">&lt; 90sec</div></div>
+    </div>
+
+    <div class="node" style="border-color:#EF444428">
+      <div class="node-head">
+        <div class="node-icon" style="background:#EF44440c;border:1px solid #EF444420">🏛</div>
+        <div class="node-title">외부 연계 API</div>
+      </div>
+      <div class="node-desc">지자체 재난망·해수부 MOIS 연동. 표준 JSON/GeoJSON 포맷. SLA 99.5%.</div>
+      <div class="node-tags"><span class="tag">GeoJSON</span><span class="tag">재난망</span><span class="tag">SLA 99.5%</span></div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- STATUS BAR -->
+<div class="statusbar">
+  <div class="sb-item"><div class="sb-dot" style="background:#10B981"></div>파이프라인 전체 정상</div>
+  <div style="width:1px;height:16px;background:var(--line)"></div>
+  <div class="sb-item"><div class="sb-dot" style="background:#FDE68A"></div>KMA 수신 지연 +12min (자동 재시도 중)</div>
+  <div style="width:1px;height:16px;background:var(--line)"></div>
+  <div class="sb-item">처리량 <span style="color:var(--accent);font-family:var(--mono);margin:0 3px">24,180</span> 건/일</div>
+  <div class="sb-item">API 응답 <span style="color:var(--accent);font-family:var(--mono);margin:0 3px">68ms</span></div>
+  <div class="sb-item">경보 발송 지연 <span style="color:#6EE7B7;font-family:var(--mono);margin:0 3px">&lt; 90sec</span></div>
+  <div style="flex:1"></div>
+  <div class="sb-item" style="font-family:var(--mono);font-size:8px;color:var(--txt3)">갱신 3h · 마지막: 14:00 KST</div>
+</div>
+
+</div>
+
+<script>
+function tick(){
+  const n=new Date(),el=document.getElementById('clk');
+  if(el) el.textContent=n.toISOString().slice(0,10)+' '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+' KST';
+}
+tick();setInterval(tick,30000);
+</script>

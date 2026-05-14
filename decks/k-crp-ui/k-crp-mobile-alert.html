@@ -1,0 +1,547 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0B1220;--bg2:#111827;--bg3:#1E293B;--line:#ffffff14;
+  --txt:#E8EDF5;--txt2:#94A3B8;--txt3:#64748B;
+  --accent:#38BDF8;--mono:Consolas,monospace;
+}
+body{background:#12182a;display:flex;align-items:center;justify-content:center;min-height:100vh}
+.shell{width:1280px;height:720px;display:flex;flex-direction:column;background:var(--bg);font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;color:var(--txt);overflow:hidden}
+
+/* TOPBAR */
+.topbar{height:42px;background:var(--bg2);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 18px;gap:12px;flex-shrink:0}
+.logo-badge{background:linear-gradient(135deg,#0EA5E9,#3B82F6);border-radius:5px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+.logo-text{font-size:13px;font-weight:700;color:#E8EDF5}
+.logo-sub{font-size:9px;color:var(--txt3);letter-spacing:.6px}
+.nav-tabs{display:flex;gap:2px;margin-left:16px}
+.tab{height:28px;padding:0 12px;border-radius:5px;font-size:10px;color:var(--txt3);cursor:pointer;display:flex;align-items:center;border:1px solid transparent}
+.tab.active{background:#0EA5E920;border-color:#0EA5E940;color:var(--accent);font-weight:600}
+
+/* LAYOUT */
+.body{flex:1;display:flex;min-height:0}
+
+/* LEFT — 서비스 개요 */
+.panel-left{width:260px;flex-shrink:0;display:flex;flex-direction:column;border-right:1px solid var(--line);background:var(--bg2)}
+.ph{height:32px;display:flex;align-items:center;padding:0 14px;border-bottom:1px solid var(--line);flex-shrink:0}
+.pt{font-size:10px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.8px}
+
+.overview-body{padding:14px;display:flex;flex-direction:column;gap:10px;flex:1}
+.ov-title{font-size:13px;font-weight:700;color:var(--txt);line-height:1.4;margin-bottom:2px}
+.ov-sub{font-size:9px;color:var(--txt3);line-height:1.6}
+.ov-divider{height:1px;background:var(--line)}
+
+.user-row{display:flex;align-items:center;gap:8px;padding:6px 0}
+.user-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.user-info{flex:1}
+.user-name{font-size:10px;font-weight:600;color:var(--txt)}
+.user-desc{font-size:8px;color:var(--txt3);line-height:1.4}
+
+.channel-block{background:#0EA5E90a;border:1px solid #0EA5E920;border-radius:6px;padding:10px}
+.ch-title{font-size:8px;color:var(--txt3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:7px}
+.ch-row{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.ch-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.ch-label{font-size:9px;color:var(--txt2);flex:1}
+.ch-badge{font-size:7px;padding:1px 6px;border-radius:6px;font-weight:700}
+.cb-live{background:#10B98120;color:#6EE7B7;border:1px solid #10B98140}
+.cb-beta{background:#F59E0B20;color:#FDE68A;border:1px solid #F59E0B40}
+
+.stat-row{display:flex;gap:8px}
+.stat-box{flex:1;background:#ffffff05;border:1px solid var(--line);border-radius:6px;padding:8px;text-align:center}
+.stat-n{font-size:18px;font-weight:700;color:var(--accent);font-family:var(--mono);line-height:1}
+.stat-l{font-size:7.5px;color:var(--txt3);margin-top:2px}
+
+/* CENTER — 폰 목업 3개 */
+.panel-center{flex:1;display:flex;flex-direction:column;min-width:0;border-right:1px solid var(--line)}
+.phones-wrap{flex:1;display:flex;align-items:center;justify-content:center;gap:28px;padding:20px 24px;background:var(--bg)}
+
+/* 폰 공통 */
+.phone{width:178px;height:356px;background:#0f172a;border-radius:28px;border:2px solid #334155;position:relative;display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;box-shadow:0 0 0 1px #0f172a}
+.phone-notch{height:24px;background:#0f172a;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
+.notch-pill{width:50px;height:10px;background:#1e293b;border-radius:8px}
+.phone-screen{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.phone-label{font-size:9px;color:var(--txt3);text-align:center;margin-top:8px;letter-spacing:.5px}
+
+/* ── 폰 1: 메인 대시보드 ── */
+.p1-header{background:#EF4444;padding:10px 12px 8px;flex-shrink:0}
+.p1-app-name{font-size:8px;color:#FCA5A5;font-weight:600;letter-spacing:.5px;margin-bottom:2px}
+.p1-title{font-size:11px;font-weight:700;color:#fff}
+.p1-sub{font-size:7.5px;color:#FCA5A5;margin-top:1px}
+.p1-body{flex:1;background:#0f172a;padding:10px;display:flex;flex-direction:column;gap:7px;overflow:hidden}
+
+.alert-card{border-radius:8px;padding:8px 10px;flex-shrink:0}
+.ac-red{background:#EF444418;border:1px solid #EF444450}
+.ac-org{background:#F59E0B14;border:1px solid #F59E0B40}
+.ac-grn{background:#10B98112;border:1px solid #10B98135}
+.ac-head{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.ac-lvbadge{font-size:7px;font-weight:700;padding:1px 6px;border-radius:6px}
+.bl-red{background:#EF444430;color:#FCA5A5}
+.bl-org{background:#F59E0B28;color:#FDE68A}
+.bl-grn{background:#10B98120;color:#6EE7B7}
+.ac-name{font-size:9px;font-weight:600;color:var(--txt)}
+.ac-desc{font-size:7.5px;color:var(--txt2);line-height:1.4}
+.ac-cri{font-size:10px;font-weight:700;font-family:var(--mono);margin-top:2px}
+
+.mini-map{flex:1;background:#0B1220;border-radius:6px;border:1px solid var(--line);overflow:hidden;position:relative;min-height:60px}
+
+.p1-bottom{height:36px;background:#111827;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-around;flex-shrink:0}
+.tab-icon{display:flex;flex-direction:column;align-items:center;gap:1px;opacity:.4;cursor:pointer}
+.tab-icon.act{opacity:1;color:var(--accent)}
+.tab-icon svg{width:14px;height:14px}
+.tab-icon span{font-size:6px}
+
+/* ── 폰 2: 경보 상세 ── */
+.p2-header{background:#111827;padding:8px 12px 6px;border-bottom:1px solid var(--line);flex-shrink:0}
+.p2-back{font-size:8px;color:var(--accent);margin-bottom:4px}
+.p2-title{font-size:11px;font-weight:700;color:#fff}
+.p2-sub{font-size:7.5px;color:var(--txt3);margin-top:1px}
+.p2-body{flex:1;padding:10px;display:flex;flex-direction:column;gap:8px;overflow:hidden;background:#0f172a}
+
+.cri-big{text-align:center;padding:10px 0 6px;flex-shrink:0}
+.cri-num{font-size:42px;font-weight:700;font-family:var(--mono);color:#F59E0B;line-height:1}
+.cri-lbl{font-size:8px;color:#FDE68A;background:#F59E0B20;border:1px solid #F59E0B40;border-radius:8px;padding:2px 10px;display:inline-block;margin-top:3px}
+
+.shap-mini{flex-shrink:0}
+.shap-t{font-size:8px;color:var(--txt3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px}
+.shap-r{display:flex;align-items:center;gap:5px;margin-bottom:3px}
+.shap-n{font-size:8px;color:var(--txt2);width:36px;flex-shrink:0}
+.shap-bg{flex:1;height:7px;background:#ffffff0a;border-radius:2px;overflow:hidden}
+.shap-fill{height:100%;border-radius:2px}
+.shap-p{font-size:8px;font-family:var(--mono);color:var(--txt2);width:22px;text-align:right;flex-shrink:0}
+
+.ai-mini{background:#0EA5E90c;border:1px solid #0EA5E930;border-radius:5px;padding:7px 9px;flex-shrink:0}
+.ai-mb{font-size:7px;font-weight:700;color:#38BDF8;letter-spacing:.7px;margin-bottom:2px}
+.ai-mt{font-size:8px;color:#BAE6FD;line-height:1.5}
+
+.action-btns{display:flex;gap:6px;flex-shrink:0}
+.abtn{flex:1;border-radius:7px;padding:7px 4px;font-size:8px;font-weight:700;text-align:center;cursor:pointer}
+.abtn-red{background:#EF444425;border:1px solid #EF444455;color:#FCA5A5}
+.abtn-blue{background:#0EA5E920;border:1px solid #0EA5E950;color:#7DD3FC}
+
+/* ── 폰 3: 양식장 현황 ── */
+.p3-header{background:#111827;padding:8px 12px 6px;border-bottom:1px solid var(--line);flex-shrink:0}
+.p3-title{font-size:11px;font-weight:700;color:#fff}
+.p3-sub{font-size:7.5px;color:var(--txt3);margin-top:1px}
+.p3-body{flex:1;padding:10px;display:flex;flex-direction:column;gap:7px;overflow:hidden;background:#0f172a}
+
+.farm-card{background:#111827;border-radius:7px;border:1px solid var(--line);padding:7px 9px;flex-shrink:0}
+.farm-head{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.farm-icon{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.farm-name{font-size:9px;font-weight:600;color:var(--txt);flex:1}
+.farm-cri{font-size:11px;font-weight:700;font-family:var(--mono)}
+.farm-row{display:flex;gap:6px}
+.farm-stat{flex:1;background:#ffffff05;border-radius:4px;padding:4px 5px;text-align:center}
+.farm-sl{font-size:6.5px;color:var(--txt3)}
+.farm-sv{font-size:9px;font-weight:700;font-family:var(--mono);color:var(--txt2)}
+
+.guide-box{background:#F59E0B0c;border:1px solid #F59E0B25;border-radius:5px;padding:7px 9px;flex-shrink:0}
+.guide-t{font-size:7.5px;font-weight:600;color:#FDE68A;margin-bottom:3px}
+.guide-item{font-size:7.5px;color:#FEF3C7;line-height:1.6;padding-left:8px;position:relative}
+.guide-item::before{content:"·";position:absolute;left:0;color:#F59E0B}
+
+.p3-bottom{height:36px;background:#111827;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-around;flex-shrink:0}
+
+/* RIGHT — 확산 전략 */
+.panel-right{width:220px;flex-shrink:0;display:flex;flex-direction:column;background:var(--bg2)}
+
+.strategy-body{flex:1;padding:14px;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.str-block{flex-shrink:0}
+.str-title{font-size:8.5px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.7px;margin-bottom:7px;padding-bottom:5px;border-bottom:1px solid var(--line)}
+.str-row{display:flex;align-items:flex-start;gap:7px;margin-bottom:5px}
+.str-num{width:16px;height:16px;border-radius:50%;background:#0EA5E920;border:1px solid #0EA5E940;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:var(--accent);flex-shrink:0;margin-top:1px}
+.str-text{font-size:8.5px;color:var(--txt2);line-height:1.5;flex:1}
+.str-em{color:var(--txt);font-weight:600}
+
+.noti-demo{background:#0f172a;border-radius:8px;border:1px solid var(--line);overflow:hidden;flex-shrink:0}
+.noti-header{background:#111827;padding:5px 10px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--line)}
+.noti-app{font-size:7.5px;color:var(--txt3);font-weight:600}
+.noti-time{font-size:7px;color:var(--txt3);margin-left:auto;font-family:var(--mono)}
+.noti-body{padding:8px 10px}
+.noti-title{font-size:9px;font-weight:700;color:#FCA5A5;margin-bottom:2px}
+.noti-msg{font-size:8px;color:var(--txt2);line-height:1.5}
+.noti-actions{display:flex;gap:5px;padding:0 10px 8px}
+.nact{flex:1;border-radius:4px;padding:4px;font-size:7.5px;font-weight:600;text-align:center;cursor:pointer}
+.nact-red{background:#EF444420;color:#FCA5A5;border:1px solid #EF444440}
+.nact-blu{background:#0EA5E915;color:#7DD3FC;border:1px solid #0EA5E935}
+
+.roadmap{background:#ffffff04;border-radius:6px;border:1px solid var(--line);padding:9px;flex-shrink:0}
+.rm-title{font-size:8px;color:var(--txt3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px}
+.rm-row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.rm-phase{font-size:7px;font-weight:700;padding:1px 6px;border-radius:5px;flex-shrink:0;font-family:var(--mono)}
+.ph1{background:#0EA5E920;color:#7DD3FC;border:1px solid #0EA5E940}
+.ph2{background:#8B5CF620;color:#C4B5FD;border:1px solid #8B5CF640}
+.ph3{background:#10B98118;color:#6EE7B7;border:1px solid #10B98135}
+.rm-desc{font-size:8px;color:var(--txt2);flex:1}
+</style>
+
+<div class="shell">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo-badge">K</div>
+  <div><div class="logo-text">K-CRP</div><div class="logo-sub">COASTAL RISK PLATFORM</div></div>
+  <div style="width:1px;height:22px;background:var(--line)"></div>
+  <div class="nav-tabs">
+    <div class="tab">대시보드</div>
+    <div class="tab">XAI 분석</div>
+    <div class="tab active">모바일 경보 서비스</div>
+    <div class="tab">데이터 파이프라인</div>
+  </div>
+  <div style="flex:1"></div>
+  <span style="font-size:9px;color:var(--txt3)">어업인 대상 실시간 위험 알림 · 위치기반 맞춤형 서비스</span>
+  <div style="width:1px;height:18px;background:var(--line);margin:0 8px"></div>
+  <span style="font-size:9px;color:var(--txt3);font-family:var(--mono)" id="clk">2026-04-27 14:32 KST</span>
+</div>
+
+<!-- BODY -->
+<div class="body">
+
+  <!-- LEFT — 서비스 개요 -->
+  <div class="panel-left">
+    <div class="ph"><div class="pt">서비스 개요</div></div>
+    <div class="overview-body">
+      <div>
+        <div class="ov-title">K-CRP 어업인<br>모바일 경보 앱</div>
+        <div class="ov-sub" style="margin-top:5px">CRI 기반 실시간 위험 정보를 어업인·양식업자에게 직접 전달하는 위치기반 맞춤형 알림 서비스</div>
+      </div>
+
+      <div class="ov-divider"></div>
+
+      <div>
+        <div style="font-size:8px;color:var(--txt3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px">대상 사용자</div>
+        <div class="user-row">
+          <div class="user-icon" style="background:#0EA5E920;border:1px solid #0EA5E940">🎣</div>
+          <div class="user-info"><div class="user-name">연안 어업인</div><div class="user-desc">출어 전 위험도 확인<br>실시간 경보 수신</div></div>
+        </div>
+        <div class="user-row">
+          <div class="user-icon" style="background:#10B98115;border:1px solid #10B98135">🐟</div>
+          <div class="user-info"><div class="user-name">양식업자</div><div class="user-desc">양식장별 CRI 모니터링<br>대응 가이드 자동 제공</div></div>
+        </div>
+        <div class="user-row">
+          <div class="user-icon" style="background:#8B5CF618;border:1px solid #8B5CF635">🏛</div>
+          <div class="user-info"><div class="user-name">지자체 담당자</div><div class="user-desc">관할 해역 경보 현황<br>행정 조치 의사결정</div></div>
+        </div>
+      </div>
+
+      <div class="ov-divider"></div>
+
+      <div class="channel-block">
+        <div class="ch-title">알림 채널</div>
+        <div class="ch-row"><div class="ch-dot" style="background:#38BDF8"></div><div class="ch-label">앱 푸시 알림</div><div class="ch-badge cb-live">LIVE</div></div>
+        <div class="ch-row"><div class="ch-dot" style="background:#10B981"></div><div class="ch-label">SMS 문자 발송</div><div class="ch-badge cb-live">LIVE</div></div>
+        <div class="ch-row"><div class="ch-dot" style="background:#F59E0B"></div><div class="ch-label">카카오 알림톡</div><div class="ch-badge cb-live">LIVE</div></div>
+        <div class="ch-row"><div class="ch-dot" style="background:#8B5CF6"></div><div class="ch-label">AIS 선박 단말</div><div class="ch-badge cb-beta">BETA</div></div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-box"><div class="stat-n">3h</div><div class="stat-l">갱신 주기</div></div>
+        <div class="stat-box"><div class="stat-n">GPS</div><div class="stat-l">위치 기반</div></div>
+        <div class="stat-box"><div class="stat-n">4등급</div><div class="stat-l">경보 체계</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER — 폰 목업 3개 -->
+  <div class="panel-center">
+    <div class="ph">
+      <div class="pt">앱 화면 구성</div>
+      <div style="margin-left:auto;display:flex;gap:16px">
+        <span style="font-size:9px;color:var(--txt3)">① 경보 홈</span>
+        <span style="font-size:9px;color:var(--txt3)">② 경보 상세 / XAI 설명</span>
+        <span style="font-size:9px;color:var(--txt3)">③ 양식장 현황</span>
+      </div>
+    </div>
+    <div class="phones-wrap">
+
+      <!-- 폰 1: 경보 홈 -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+        <div class="phone">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-screen">
+            <div class="p1-header">
+              <div class="p1-app-name">K-CRP 어업인 경보</div>
+              <div class="p1-title">⚠ 경보 2건 활성</div>
+              <div class="p1-sub">서해 목포 · 남해 여수 해역</div>
+            </div>
+            <div class="p1-body">
+              <!-- 내 위치 배지 -->
+              <div style="display:flex;align-items:center;gap:5px;padding:4px 7px;background:#0EA5E910;border:1px solid #0EA5E930;border-radius:5px;flex-shrink:0">
+                <span style="font-size:9px">📍</span>
+                <span style="font-size:8px;color:#7DD3FC">현재 위치: 목포 달리도 인근 (5.2km)</span>
+              </div>
+
+              <!-- 경계 카드 -->
+              <div class="alert-card ac-red">
+                <div class="ac-head">
+                  <div class="ac-lvbadge bl-red">경 계</div>
+                  <div class="ac-name">서해 목포 해역</div>
+                </div>
+                <div class="ac-desc">적조 발생 경보 · 고수온·고엽록소 복합</div>
+                <div class="ac-cri" style="color:#EF4444">CRI 0.71 <span style="font-size:7px;color:#FCA5A5">▲ +0.08</span></div>
+              </div>
+
+              <!-- 주의 카드 -->
+              <div class="alert-card ac-org">
+                <div class="ac-head">
+                  <div class="ac-lvbadge bl-org">주 의</div>
+                  <div class="ac-name">남해 여수 해역</div>
+                </div>
+                <div class="ac-desc">빈산소 주의보 · DO 5.2 mg/L</div>
+                <div class="ac-cri" style="color:#F59E0B">CRI 0.52 <span style="font-size:7px;color:#FDE68A">▲ +0.04</span></div>
+              </div>
+
+              <!-- 안전 카드 -->
+              <div class="alert-card ac-grn">
+                <div class="ac-head">
+                  <div class="ac-lvbadge bl-grn">안 전</div>
+                  <div class="ac-name">동해 전 해역</div>
+                </div>
+                <div class="ac-desc">전 지표 정상 범위</div>
+                <div class="ac-cri" style="color:#10B981">CRI 0.21</div>
+              </div>
+
+              <!-- 미니맵 -->
+              <div class="mini-map">
+                <svg width="100%" height="100%" viewBox="0 0 150 70" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="150" height="70" fill="#0B1220"/>
+                  <path d="M68 5 L78 3 L86 8 L89 18 L87 30 L90 44 L88 56 L82 63 L78 68 L74 67 L72 60 L75 50 L70 40 L67 30 L69 18 L64 10 Z" fill="#1a2a3a" stroke="#2a3f55" stroke-width="0.6"/>
+                  <rect x="8" y="18" width="30" height="22" fill="#EF4444" fill-opacity="0.35" rx="1"/>
+                  <rect x="38" y="25" width="24" height="18" fill="#F59E0B" fill-opacity="0.28" rx="1"/>
+                  <rect x="100" y="14" width="32" height="22" fill="#0EA5E9" fill-opacity="0.14" rx="1"/>
+                  <circle cx="22" cy="28" r="7" fill="none" stroke="#EF4444" stroke-width="1.2" stroke-dasharray="2 1.5"/>
+                  <circle cx="22" cy="28" r="3" fill="#EF4444" opacity=".8"/>
+                  <circle cx="74" cy="10" r="3" fill="#38BDF8"/>
+                  <text x="76" y="9" fill="#38BDF8" font-size="5" font-family="Segoe UI,sans-serif">내 위치</text>
+                  <text x="20" y="56" fill="#60A5FA" font-size="6" font-family="Segoe UI,sans-serif" text-anchor="middle">서해</text>
+                  <text x="118" y="40" fill="#60A5FA" font-size="6" font-family="Segoe UI,sans-serif" text-anchor="middle">동해</text>
+                </svg>
+              </div>
+            </div>
+            <div class="p1-bottom">
+              <div class="tab-icon act">
+                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5L2 6v8h4v-4h4v4h4V6L8 1.5z"/></svg>
+                <span>홈</span>
+              </div>
+              <div class="tab-icon">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="7" r="4"/><path d="M8 11v4" stroke-linecap="round"/></svg>
+                <span>지도</span>
+              </div>
+              <div class="tab-icon">
+                <svg viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+                <span>양식장</span>
+              </div>
+              <div class="tab-icon">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5" stroke-linecap="round"/></svg>
+                <span>설정</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-label">① 경보 홈</div>
+      </div>
+
+      <!-- 폰 2: 경보 상세 + XAI -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+        <div class="phone">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-screen">
+            <div class="p2-header">
+              <div class="p2-back">← 경보 목록</div>
+              <div class="p2-title">서해 목포 해역</div>
+              <div class="p2-sub">2026-04-27 11:40 발령 · 국립수산과학원</div>
+            </div>
+            <div class="p2-body">
+              <!-- CRI big -->
+              <div class="cri-big">
+                <div class="cri-num">0.71</div>
+                <div class="cri-lbl">경 계</div>
+                <div style="font-size:7.5px;color:var(--txt3);margin-top:5px">48h 내 0.83 도달 가능 · 확률 68%</div>
+              </div>
+
+              <!-- SHAP mini -->
+              <div class="shap-mini">
+                <div class="shap-t">위험 원인 분석 (SHAP)</div>
+                <div class="shap-r"><div class="shap-n">수온</div><div class="shap-bg"><div class="shap-fill" style="width:40%;background:#EF4444"></div></div><div class="shap-p" style="color:#FCA5A5">40%</div></div>
+                <div class="shap-r"><div class="shap-n">Chl-a</div><div class="shap-bg"><div class="shap-fill" style="width:35%;background:#F59E0B"></div></div><div class="shap-p" style="color:#FDE68A">35%</div></div>
+                <div class="shap-r"><div class="shap-n">DO</div><div class="shap-bg"><div class="shap-fill" style="width:15%;background:#0EA5E9"></div></div><div class="shap-p" style="color:#7DD3FC">15%</div></div>
+                <div class="shap-r"><div class="shap-n">염분</div><div class="shap-bg"><div class="shap-fill" style="width:10%;background:#8B5CF6"></div></div><div class="shap-p" style="color:#C4B5FD">10%</div></div>
+              </div>
+
+              <!-- AI 설명 -->
+              <div class="ai-mini">
+                <div class="ai-mb">AI 쉬운 설명</div>
+                <div class="ai-mt">바닷물이 뜨거워지고 녹조가 급증해 적조가 생길 위험이 높습니다. 향후 48시간 내 상황이 악화될 수 있습니다.</div>
+              </div>
+
+              <!-- 행동 버튼 -->
+              <div class="action-btns">
+                <div class="abtn abtn-red">📵 조업 자제 구역 확인</div>
+                <div class="abtn abtn-blue">📋 대응 가이드</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-label">② 경보 상세 / XAI 설명</div>
+      </div>
+
+      <!-- 폰 3: 양식장 현황 -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+        <div class="phone">
+          <div class="phone-notch"><div class="notch-pill"></div></div>
+          <div class="phone-screen">
+            <div class="p3-header">
+              <div class="p3-title">내 양식장 현황</div>
+              <div class="p3-sub">목포 달리도 · 실시간 모니터링</div>
+            </div>
+            <div class="p3-body">
+
+              <!-- 양식장 A -->
+              <div class="farm-card" style="border-color:#EF444440">
+                <div class="farm-head">
+                  <div class="farm-icon" style="background:#EF444418;border:1px solid #EF444440">🦪</div>
+                  <div class="farm-name">달리도 1구역 (굴)</div>
+                  <div class="farm-cri" style="color:#EF4444">0.71</div>
+                </div>
+                <div class="farm-row">
+                  <div class="farm-stat"><div class="farm-sl">수온</div><div class="farm-sv" style="color:#EF4444">28.3°</div></div>
+                  <div class="farm-stat"><div class="farm-sl">Chl-a</div><div class="farm-sv" style="color:#F59E0B">18.4</div></div>
+                  <div class="farm-stat"><div class="farm-sl">DO</div><div class="farm-sv" style="color:#F59E0B">5.2</div></div>
+                  <div class="farm-stat"><div class="farm-sl">상태</div><div class="farm-sv" style="color:#FCA5A5;font-size:7px">경계</div></div>
+                </div>
+              </div>
+
+              <!-- 양식장 B -->
+              <div class="farm-card" style="border-color:#F59E0B35">
+                <div class="farm-head">
+                  <div class="farm-icon" style="background:#F59E0B15;border:1px solid #F59E0B35">🐟</div>
+                  <div class="farm-name">달리도 2구역 (넙치)</div>
+                  <div class="farm-cri" style="color:#F59E0B">0.48</div>
+                </div>
+                <div class="farm-row">
+                  <div class="farm-stat"><div class="farm-sl">수온</div><div class="farm-sv">26.1°</div></div>
+                  <div class="farm-stat"><div class="farm-sl">Chl-a</div><div class="farm-sv">11.2</div></div>
+                  <div class="farm-stat"><div class="farm-sl">DO</div><div class="farm-sv">6.1</div></div>
+                  <div class="farm-stat"><div class="farm-sl">상태</div><div class="farm-sv" style="color:#FDE68A;font-size:7px">주의</div></div>
+                </div>
+              </div>
+
+              <!-- 대응 가이드 -->
+              <div class="guide-box">
+                <div class="guide-t">⚠ 달리도 1구역 대응 가이드</div>
+                <div class="guide-item">산소 공급 장치 가동 즉시 확인</div>
+                <div class="guide-item">밀도 조절 — 수용량 30% 감소 권고</div>
+                <div class="guide-item">출하 시점 48h 이내 앞당기기 검토</div>
+                <div class="guide-item">국수과 긴급 연락: 1588-XXXX</div>
+              </div>
+
+              <!-- 예보 미니 -->
+              <div style="background:#111827;border-radius:6px;border:1px solid var(--line);padding:7px 9px;flex-shrink:0">
+                <div style="font-size:7.5px;color:var(--txt3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px">CRI 48h 예보</div>
+                <svg width="100%" height="30" viewBox="0 0 148 30" xmlns="http://www.w3.org/2000/svg">
+                  <polyline points="4,26 24,23 44,19 64,14 84,9 104,6 124,4 144,2" fill="none" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="4 2"/>
+                  <line x1="4" y1="14" x2="148" y2="14" stroke="#F59E0B" stroke-width="0.7" stroke-dasharray="3 2" opacity=".5"/>
+                  <text x="106" y="12" fill="#F59E0B" font-size="6" font-family="var(--mono)" opacity=".7">0.65</text>
+                  <circle cx="4" cy="26" r="2.5" fill="#F59E0B"/>
+                  <circle cx="144" cy="2" r="2.5" fill="#EF4444" fill-opacity=".7"/>
+                  <text x="2" y="29" fill="#94A3B8" font-size="6" font-family="var(--mono)">NOW</text>
+                  <text x="118" y="29" fill="#94A3B8" font-size="6" font-family="var(--mono)">+48h</text>
+                </svg>
+              </div>
+
+            </div>
+            <div class="p3-bottom">
+              <div class="tab-icon">
+                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5L2 6v8h4v-4h4v4h4V6L8 1.5z"/></svg>
+                <span>홈</span>
+              </div>
+              <div class="tab-icon">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="7" r="4"/><path d="M8 11v4" stroke-linecap="round"/></svg>
+                <span>지도</span>
+              </div>
+              <div class="tab-icon act">
+                <svg viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+                <span>양식장</span>
+              </div>
+              <div class="tab-icon">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5" stroke-linecap="round"/></svg>
+                <span>설정</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-label">③ 양식장 현황</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT — 확산 전략 -->
+  <div class="panel-right">
+    <div class="ph"><div class="pt">확산 전략</div></div>
+    <div class="strategy-body">
+
+      <!-- 알림 데모 -->
+      <div class="str-block">
+        <div class="str-title">푸시 알림 예시</div>
+        <div class="noti-demo">
+          <div class="noti-header">
+            <div style="width:14px;height:14px;background:linear-gradient(135deg,#0EA5E9,#3B82F6);border-radius:3px;flex-shrink:0"></div>
+            <div class="noti-app">K-CRP 어업인경보</div>
+            <div class="noti-time">방금 전</div>
+          </div>
+          <div class="noti-body">
+            <div class="noti-title">⚠ 경계 경보 — 서해 목포</div>
+            <div class="noti-msg">CRI 0.71 · 적조 발생 위험. 반경 30km 조업 자제 권고. 자세한 내용을 확인하세요.</div>
+          </div>
+          <div class="noti-actions">
+            <div class="nact nact-red">지금 확인</div>
+            <div class="nact nact-blu">대응 가이드</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 단계별 보급 계획 -->
+      <div class="str-block">
+        <div class="str-title">단계별 보급 계획</div>
+        <div class="roadmap">
+          <div class="rm-title">보급 로드맵</div>
+          <div class="rm-row"><div class="rm-phase ph1">1단계</div><div class="rm-desc"><span style="color:var(--txt);font-weight:600">파일럿</span> · 목포·여수 어협 500명</div></div>
+          <div class="rm-row"><div class="rm-phase ph2">2단계</div><div class="rm-desc"><span style="color:var(--txt);font-weight:600">확산</span> · 서·남해 전체 어협</div></div>
+          <div class="rm-row"><div class="rm-phase ph3">3단계</div><div class="rm-desc"><span style="color:var(--txt);font-weight:600">전국</span> · AIS 선박 단말 연동</div></div>
+        </div>
+      </div>
+
+      <!-- 핵심 전략 -->
+      <div class="str-block">
+        <div class="str-title">핵심 설계 원칙</div>
+        <div class="str-row">
+          <div class="str-num">1</div>
+          <div class="str-text"><span class="str-em">쉬운 언어</span> — AI 진단 결과를 전문용어 없이 어업인 눈높이로 번역 제공</div>
+        </div>
+        <div class="str-row">
+          <div class="str-num">2</div>
+          <div class="str-text"><span class="str-em">위치 기반</span> — GPS로 내 양식장·출어 해역에 맞는 정보만 선별 알림</div>
+        </div>
+        <div class="str-row">
+          <div class="str-num">3</div>
+          <div class="str-text"><span class="str-em">행동 유도</span> — 경보에서 대응 가이드까지 2탭 이내 도달 설계</div>
+        </div>
+        <div class="str-row">
+          <div class="str-num">4</div>
+          <div class="str-text"><span class="str-em">다채널</span> — 앱·SMS·카카오·AIS 단말 동시 발송으로 미수신 최소화</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+function tick(){
+  const n=new Date(),el=document.getElementById('clk');
+  if(el) el.textContent=n.toISOString().slice(0,10)+' '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+' KST';
+}
+tick();setInterval(tick,30000);
+</script>

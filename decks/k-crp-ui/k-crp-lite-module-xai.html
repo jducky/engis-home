@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K-CRP | XAI 설명형 위험 리포트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #F0F4F8;
+  --navy2: #EDF2F7;
+  --navy3: #FFFFFF;
+  --panel: #F7FAFC;
+  --border: #CBD5E1;
+  --teal:   #0D9488;
+  --teal2:  #14B8A6;
+  --teal3:  #5EEAD4;
+  --blue:   #0E5FA1;
+  --sky:    #38BDF8;
+  --amber:  #F59E0B;
+  --orange: #EA580C;
+  --red:    #EF4444;
+  --green:  #10B981;
+  --purple: #8B5CF6;
+  --text: #1E3A5F;
+  --text2: #3D6B8E;
+  --text3: #7A9DB5;
+  --white: #FFFFFF;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; }
+body {
+  font-family:'Noto Sans KR',sans-serif;
+  background:var(--navy);
+  color:var(--text);
+  display:flex; flex-direction:column;
+  overflow:hidden; height:100vh;
+}
+
+/* ── 헤더 ── */
+.header {
+  background:var(--panel);
+  border-bottom:1px solid var(--border);
+  height:54px; flex-shrink:0;
+  display:flex; align-items:center;
+  padding:0 20px; gap:16px;
+  position:relative; z-index:100;
+}
+.logo { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:3px; color:var(--teal2); text-shadow:0 0 20px rgba(20,184,166,.4); }
+.logo span { color:var(--text); opacity:.5; margin:0 5px; }
+.header-title { font-size:13px; color:var(--text2); }
+.header-badge {
+  margin-left:auto; display:flex; align-items:center; gap:8px;
+}
+.hbadge {
+  font-size:11px; padding:3px 10px; border-radius:12px; font-weight:600;
+  background:rgba(139,92,246,.1); border:1px solid rgba(139,92,246,.3); color:var(--purple);
+}
+.live-badge {
+  display:flex; align-items:center; gap:5px;
+  background:rgba(16,185,129,.08); border:1px solid rgba(16,185,129,.25);
+  border-radius:12px; padding:3px 10px; font-size:11px; color:var(--green); font-weight:600;
+}
+.live-dot { width:5px; height:5px; border-radius:50%; background:var(--green); animation:pg 1.5s infinite; }
+@keyframes pg { 0%,100%{opacity:1} 50%{opacity:.3} }
+.time-d { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text3); }
+
+/* ── 레이아웃 ── */
+.layout { display:flex; flex:1; overflow:hidden; }
+
+/* ── 왼쪽: 케이스 선택 ── */
+.case-panel {
+  width:240px; flex-shrink:0;
+  background:var(--panel);
+  border-right:1px solid var(--border);
+  display:flex; flex-direction:column;
+  overflow:hidden;
+}
+.cp-header {
+  padding:14px 14px 10px;
+  border-bottom:1px solid var(--border);
+  font-size:10px; font-weight:600; color:var(--text3);
+  letter-spacing:1.5px; text-transform:uppercase;
+}
+.cp-filters { display:flex; gap:4px; padding:10px 14px; border-bottom:1px solid var(--border); }
+.cf-btn {
+  flex:1; padding:5px 0; border-radius:4px; border:1px solid var(--border);
+  font-size:10px; color:var(--text3); cursor:pointer; background:transparent;
+  font-family:'Noto Sans KR',sans-serif; transition:all .2s; text-align:center;
+}
+.cf-btn.on { background:rgba(13,148,136,.12); border-color:var(--teal); color:var(--teal2); }
+.case-list { flex:1; overflow-y:auto; padding:8px; }
+.case-list::-webkit-scrollbar { width:3px; }
+.case-list::-webkit-scrollbar-thumb { background:var(--border); }
+.case-item {
+  padding:10px 12px; border-radius:6px; border:1px solid transparent;
+  cursor:pointer; transition:all .2s; margin-bottom:4px;
+}
+.case-item:hover { background:rgba(255,255,255,.03); border-color:var(--border); }
+.case-item.active { background:rgba(13,148,136,.08); border-color:var(--teal); }
+.ci-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
+.ci-name { font-size:11px; font-weight:600; color:var(--text); }
+.ci-badge { font-size:9px; font-weight:700; padding:1px 6px; border-radius:8px; }
+.b4 { background:rgba(239,68,68,.08); color:var(--red); border:1px solid rgba(239,68,68,.25); }
+.b3 { background:rgba(234,88,12,.15); color:var(--orange); border:1px solid rgba(234,88,12,.25); }
+.b2 { background:rgba(245,158,11,.08); color:var(--amber); border:1px solid rgba(245,158,11,.25); }
+.ci-sub { font-size:10px; color:var(--text3); margin-bottom:3px; }
+.ci-time { font-size:9px; color:var(--text3); font-family:'JetBrains Mono',monospace; }
+
+/* ── 중앙: 메인 리포트 ── */
+.report-area {
+  flex:1; overflow-y:auto;
+  padding:20px 24px;
+}
+.report-area::-webkit-scrollbar { width:4px; }
+.report-area::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+/* 리포트 헤더 */
+.rpt-header {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:18px 20px;
+  margin-bottom:16px;
+  position:relative;
+  overflow:hidden;
+}
+.rpt-header::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg, var(--red), var(--orange));
+}
+.rpt-htop { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; }
+.rpt-title-block {}
+.rpt-label { font-size:10px; color:var(--purple); font-weight:600; letter-spacing:1.5px; margin-bottom:4px; }
+.rpt-title { font-size:17px; font-weight:700; color:var(--text); margin-bottom:3px; }
+.rpt-subtitle { font-size:11px; color:var(--text3); }
+.rpt-level {
+  text-align:right;
+}
+.rpt-cri-val { font-family:'JetBrains Mono',monospace; font-size:32px; font-weight:600; color:var(--red); line-height:1; }
+.rpt-cri-label { font-size:10px; color:var(--text3); margin-top:2px; }
+.rpt-meta { display:flex; gap:20px; padding-top:12px; border-top:1px solid var(--border); }
+.rpt-meta-item { }
+.rmi-label { font-size:9px; color:var(--text3); margin-bottom:2px; letter-spacing:.5px; }
+.rmi-val { font-size:11px; color:var(--text2); font-weight:500; }
+.rmi-val.warn { color:var(--red); font-weight:600; }
+
+/* 섹션 공통 */
+.section { margin-bottom:16px; }
+.sec-title {
+  font-size:11px; font-weight:600; color:var(--text3);
+  letter-spacing:1.5px; text-transform:uppercase;
+  margin-bottom:10px; display:flex; align-items:center; gap:8px;
+}
+.sec-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* SHAP 워터폴 */
+.waterfall { background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:16px; }
+.wf-baseline { display:flex; align-items:center; gap:10px; margin-bottom:14px; font-size:11px; }
+.wf-bl-bar { flex:1; height:28px; background:var(--navy3); border-radius:4px; position:relative; overflow:hidden; }
+.wf-bl-line { position:absolute; top:0; bottom:0; width:2px; background:rgba(30,58,95,.28); left:30%; }
+.wf-bl-label { font-size:10px; color:var(--text3); white-space:nowrap; }
+
+.wf-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; cursor:pointer; }
+.wf-row:hover .wf-varname { color:var(--text); }
+.wf-varname { width:130px; font-size:10px; color:var(--text2); flex-shrink:0; text-align:right; line-height:1.3; }
+.wf-barwrap { flex:1; height:26px; position:relative; background:rgba(0,0,0,.04); border-radius:4px; overflow:visible; }
+.wf-bar {
+  position:absolute; top:3px; height:20px; border-radius:3px;
+  display:flex; align-items:center; padding:0 6px;
+  font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:600;
+  white-space:nowrap; transition:width .7s cubic-bezier(.4,0,.2,1), left .7s;
+  min-width:36px;
+}
+.wf-bar.pos { background:linear-gradient(90deg,rgba(239,68,68,.7),rgba(239,68,68,.5)); color:var(--white); }
+.wf-bar.neg { background:linear-gradient(90deg,rgba(56,189,248,.5),rgba(56,189,248,.3)); color:var(--white); }
+.wf-arrow { width:16px; font-size:12px; flex-shrink:0; }
+.wf-total { display:flex; align-items:center; gap:10px; margin-top:10px; padding-top:10px; border-top:1px solid var(--border); }
+.wf-total .wf-varname { color:var(--text); font-weight:600; font-size:11px; }
+.wf-result-bar {
+  flex:1; height:28px; border-radius:4px;
+  background:linear-gradient(90deg, rgba(239,68,68,.6), rgba(239,68,68,.4));
+  display:flex; align-items:center; padding:0 10px;
+  font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; color:var(--white);
+  position:relative;
+}
+.wf-result-bar::after {
+  content:'4단계 경보'; position:absolute; right:10px;
+  font-size:10px; color:rgba(255,255,255,.7); font-family:'Noto Sans KR',sans-serif; font-weight:600;
+}
+
+/* 반사실 분석 */
+.counterfactual {
+  background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:16px;
+}
+.cf-scenario { display:flex; gap:10px; margin-bottom:10px; }
+.cf-chip {
+  padding:5px 12px; border-radius:20px; border:1px solid var(--border);
+  font-size:10px; color:var(--text3); cursor:pointer; transition:all .2s;
+}
+.cf-chip.on { background:rgba(139,92,246,.1); border-color:var(--purple); color:var(--purple); }
+.cf-compare {
+  display:grid; grid-template-columns:1fr auto 1fr; gap:12px; align-items:center;
+  background:var(--navy3); border-radius:8px; padding:14px;
+}
+.cf-box { }
+.cf-box-label { font-size:9px; color:var(--text3); margin-bottom:6px; letter-spacing:1px; text-transform:uppercase; }
+.cf-box-cri { font-family:'JetBrains Mono',monospace; font-size:28px; font-weight:700; line-height:1; margin-bottom:4px; }
+.cf-box-desc { font-size:10px; color:var(--text3); line-height:1.5; }
+.cf-arrow { text-align:center; font-size:20px; color:var(--purple); }
+.cf-insight {
+  margin-top:12px; padding:10px 14px;
+  background:rgba(139,92,246,.07); border:1px solid rgba(139,92,246,.2);
+  border-left:3px solid var(--purple); border-radius:6px;
+  font-size:11px; color:var(--text2); line-height:1.6;
+}
+.cf-insight strong { color:var(--purple); }
+
+/* 불확실성 */
+.uncertainty-wrap { background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:16px; }
+.unc-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.unc-label { width:90px; font-size:10px; color:var(--text2); flex-shrink:0; }
+.unc-bar-bg { flex:1; height:8px; background:rgba(0,0,0,.05); border-radius:4px; overflow:hidden; position:relative; }
+.unc-bar { height:8px; border-radius:4px; }
+.unc-range { width:60px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text3); text-align:right; }
+
+/* 자동 리포트 생성 */
+.auto-report {
+  background:var(--panel); border:1px solid var(--border); border-radius:8px; overflow:hidden;
+}
+.ar-toolbar {
+  background:var(--navy3); padding:10px 14px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--border);
+}
+.ar-toolbar-left { display:flex; gap:6px; }
+.ar-tab {
+  font-size:10px; padding:4px 10px; border-radius:4px; cursor:pointer;
+  color:var(--text3); transition:all .2s;
+}
+.ar-tab.on { background:rgba(13,148,136,.12); color:var(--teal2); }
+.ar-actions { display:flex; gap:6px; }
+.ar-btn {
+  font-size:10px; padding:4px 12px; border-radius:4px;
+  border:1px solid var(--border); cursor:pointer;
+  font-family:'Noto Sans KR',sans-serif; transition:all .2s;
+}
+.ar-btn.primary { background:var(--teal); border-color:var(--teal); color:var(--white); font-weight:600; }
+.ar-btn.secondary { background:transparent; color:var(--text3); }
+.ar-btn:hover { opacity:.8; }
+.ar-body {
+  padding:16px;
+  font-size:11px; color:var(--text2); line-height:1.9;
+  font-family:'Noto Sans KR',sans-serif;
+  min-height:160px;
+}
+.ar-body .hl-red { color:var(--red); font-weight:600; }
+.ar-body .hl-amber { color:var(--amber); font-weight:600; }
+.ar-body .hl-teal { color:var(--teal2); font-weight:600; }
+.ar-body .hl-purple { color:var(--purple); font-weight:600; }
+.typing-cursor { display:inline-block; width:2px; height:12px; background:var(--teal2); margin-left:2px; animation:blink .7s infinite; vertical-align:middle; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.ar-footer {
+  padding:8px 14px; background:var(--navy3);
+  border-top:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:10px; color:var(--text3);
+}
+.gen-progress { display:flex; align-items:center; gap:8px; }
+.gp-bar-bg { width:80px; height:4px; background:rgba(0,0,0,.06); border-radius:2px; overflow:hidden; }
+.gp-bar { height:4px; background:var(--teal2); border-radius:2px; transition:width .3s; }
+
+/* ── 오른쪽: 맥락 패널 ── */
+.context-panel {
+  width:260px; flex-shrink:0;
+  background:var(--panel);
+  border-left:1px solid var(--border);
+  display:flex; flex-direction:column;
+  overflow-y:auto;
+}
+.context-panel::-webkit-scrollbar { width:3px; }
+.context-panel::-webkit-scrollbar-thumb { background:var(--border); }
+.ctx-section { padding:14px; border-bottom:1px solid var(--border); }
+.ctx-label { font-size:10px; font-weight:600; color:var(--text3); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:10px; }
+
+/* 미니 차트 */
+.mini-chart { height:64px; position:relative; }
+.mini-chart svg { width:100%; height:100%; }
+
+/* 수치 그리드 */
+.ctx-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.ctx-card {
+  background:var(--navy3); border:1px solid var(--border);
+  border-radius:6px; padding:8px;
+}
+.ctx-card-label { font-size:9px; color:var(--text3); margin-bottom:3px; }
+.ctx-card-val { font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:600; }
+.ctx-card-unit { font-size:8px; color:var(--text3); font-family:'Noto Sans KR',sans-serif; margin-left:2px; }
+
+/* 유사 사례 */
+.similar-case {
+  background:var(--navy3); border:1px solid var(--border);
+  border-radius:6px; padding:10px 12px; margin-bottom:6px;
+  cursor:pointer; transition:border-color .2s;
+}
+.similar-case:hover { border-color:var(--teal); }
+.sc-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
+.sc-name { font-size:10px; font-weight:600; color:var(--text); }
+.sc-match { font-size:9px; color:var(--teal2); font-family:'JetBrains Mono',monospace; }
+.sc-desc { font-size:9px; color:var(--text3); line-height:1.4; }
+.sc-outcome { font-size:9px; margin-top:4px; padding:3px 6px; border-radius:3px; display:inline-block; }
+.sco-bad { background:rgba(239,68,68,.08); color:var(--red); }
+.sco-ok { background:rgba(16,185,129,.08); color:var(--green); }
+
+/* 하단 상태바 */
+.statusbar {
+  height:26px; background:rgba(240,244,248,.97); border-top:1px solid var(--border);
+  display:flex; align-items:center; padding:0 16px; gap:20px; flex-shrink:0;
+}
+.sb-item { display:flex; align-items:center; gap:5px; font-size:10px; color:var(--text3); }
+.sb-dot { width:5px; height:5px; border-radius:50%; background:var(--green); }
+
+/* 토스트 */
+#toast {
+  position:fixed; bottom:40px; right:20px;
+  background:rgba(13,148,136,.95); border:1px solid var(--teal2);
+  border-radius:8px; padding:9px 16px;
+  font-size:11px; color:var(--white);
+  transform:translateY(60px); opacity:0;
+  transition:all .3s; z-index:9999; max-width:280px;
+}
+</style>
+</head>
+<body>
+
+<!-- ── 헤더 ── -->
+<header class="header">
+  <div class="logo">K<span>|</span>CRP</div>
+  <div class="header-title">XAI 설명형 위험 리포트 — Geo-Physical AI 예측 분해 및 자동 보고서 생성</div>
+  <div class="header-badge">
+    <span class="hbadge">③ XAI 리포트 모듈</span>
+    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+    <div class="time-d" id="clock">2025-08-03 14:32</div>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- ── 왼쪽: 케이스 목록 ── -->
+  <div class="case-panel">
+    <div class="cp-header">분석 케이스 목록</div>
+    <div class="cp-filters">
+      <div class="cf-btn on" onclick="filterCase(this,'all')">전체</div>
+      <div class="cf-btn" onclick="filterCase(this,'4')">4단계</div>
+      <div class="cf-btn" onclick="filterCase(this,'3')">3단계</div>
+    </div>
+    <div class="case-list">
+
+      <div class="case-item active" onclick="selectCase(this,0)">
+        <div class="ci-top">
+          <span class="ci-name">통영·거제 고수온+빈산소</span>
+          <span class="ci-badge b4">4단계</span>
+        </div>
+        <div class="ci-sub">CRI 0.74 | 복합위험 동시 발생</div>
+        <div class="ci-time">14:18 발령 · 예측신뢰도 89%</div>
+      </div>
+
+      <div class="case-item" onclick="selectCase(this,1)">
+        <div class="ci-top">
+          <span class="ci-name">여수 적조 확산</span>
+          <span class="ci-badge b3">3단계</span>
+        </div>
+        <div class="ci-sub">CRI 0.61 | Cochlodinium 급증</div>
+        <div class="ci-time">13:45 발령 · 예측신뢰도 82%</div>
+      </div>
+
+      <div class="case-item" onclick="selectCase(this,2)">
+        <div class="ci-top">
+          <span class="ci-name">천수만 부유사 확산</span>
+          <span class="ci-badge b2">2단계</span>
+        </div>
+        <div class="ci-sub">CRI 0.48 | 준설 공사 영향</div>
+        <div class="ci-time">12:30 발령 · 예측신뢰도 76%</div>
+      </div>
+
+      <div class="case-item" onclick="selectCase(this,3)">
+        <div class="ci-top">
+          <span class="ci-name">거제 빈산소 단독</span>
+          <span class="ci-badge b3">3단계</span>
+        </div>
+        <div class="ci-sub">CRI 0.55 | 저층 DO 3.2mg/L</div>
+        <div class="ci-time">11:55 발령 · 예측신뢰도 85%</div>
+      </div>
+
+      <div class="case-item" onclick="selectCase(this,4)">
+        <div class="ci-top">
+          <span class="ci-name">고흥 고수온 단독</span>
+          <span class="ci-badge b2">2단계</span>
+        </div>
+        <div class="ci-sub">CRI 0.38 | SST 28.4°C</div>
+        <div class="ci-time">10:20 발령 · 예측신뢰도 79%</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── 중앙: 리포트 ── -->
+  <div class="report-area" id="reportArea">
+
+    <!-- 리포트 헤더 -->
+    <div class="rpt-header">
+      <div class="rpt-htop">
+        <div class="rpt-title-block">
+          <div class="rpt-label">XAI RISK REPORT · AUTO-GENERATED</div>
+          <div class="rpt-title" id="rptTitle">남해 통영·거제권 — 고수온 + 빈산소 복합위험</div>
+          <div class="rpt-subtitle" id="rptSub">기준시각: 2025-08-03 14:00 KST &nbsp;|&nbsp; GPA 엔진 v2.1 &nbsp;|&nbsp; SHAP TreeExplainer</div>
+        </div>
+        <div class="rpt-level">
+          <div class="rpt-cri-val" id="rptCRI">0.74</div>
+          <div class="rpt-cri-label">복합위험지수 (CRI)</div>
+          <div style="margin-top:4px">
+            <span class="ci-badge b4" id="rptBadge" style="font-size:10px;padding:3px 10px">4단계 경보</span>
+          </div>
+        </div>
+      </div>
+      <div class="rpt-meta">
+        <div class="rpt-meta-item">
+          <div class="rmi-label">표층 수온 (SST)</div>
+          <div class="rmi-val warn" id="m1">29.2°C (+1.2°C 이상)</div>
+        </div>
+        <div class="rpt-meta-item">
+          <div class="rmi-label">저층 DO</div>
+          <div class="rmi-val warn" id="m2">3.8 mg/L (기준: 4.0)</div>
+        </div>
+        <div class="rpt-meta-item">
+          <div class="rmi-label">혼합층 깊이</div>
+          <div class="rmi-val warn" id="m3">MLD 4.2m (↓ 전일比)</div>
+        </div>
+        <div class="rpt-meta-item">
+          <div class="rmi-label">예측 신뢰도</div>
+          <div class="rmi-val" id="m4" style="color:var(--teal2)">89%</div>
+        </div>
+        <div class="rpt-meta-item">
+          <div class="rmi-label">리드타임</div>
+          <div class="rmi-val" id="m5">72시간</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHAP 워터폴 -->
+    <div class="section">
+      <div class="sec-title">SHAP 워터폴 — 변수별 CRI 기여도 분해</div>
+      <div class="waterfall">
+        <!-- 기준값 -->
+        <div class="wf-row" style="margin-bottom:16px">
+          <div class="wf-varname" style="color:var(--text3)">기준값 (E[CRI])</div>
+          <div class="wf-barwrap" style="background:transparent">
+            <div style="position:absolute;left:30%;top:0;bottom:0;width:2px;background:rgba(30,58,95,.12)"></div>
+            <div class="wf-bar pos" style="left:22%;width:16%;background:rgba(0,0,0,.06);color:var(--text3)">0.32</div>
+          </div>
+          <div class="wf-arrow"></div>
+        </div>
+
+        <!-- 변수들 -->
+        <div class="wf-row" id="wr0" onclick="highlightRow(this)">
+          <div class="wf-varname">🌡 표층 수온<br><span style="color:var(--text3);font-size:9px">SST 29.2°C</span></div>
+          <div class="wf-barwrap">
+            <div class="wf-bar pos" style="left:38%;width:34%">+0.42</div>
+          </div>
+          <div class="wf-arrow" style="color:var(--red)">↑</div>
+        </div>
+
+        <div class="wf-row" id="wr1" onclick="highlightRow(this)">
+          <div class="wf-varname">💧 저층 DO<br><span style="color:var(--text3);font-size:9px">3.8 mg/L</span></div>
+          <div class="wf-barwrap">
+            <div class="wf-bar pos" style="left:53%;width:25%">+0.31</div>
+          </div>
+          <div class="wf-arrow" style="color:var(--red)">↑</div>
+        </div>
+
+        <div class="wf-row" id="wr2" onclick="highlightRow(this)">
+          <div class="wf-varname">🌊 해류 정체<br><span style="color:var(--text3);font-size:9px">순환 정지 3일</span></div>
+          <div class="wf-barwrap">
+            <div class="wf-bar pos" style="left:65%;width:14%">+0.18</div>
+          </div>
+          <div class="wf-arrow" style="color:var(--orange)">↑</div>
+        </div>
+
+        <div class="wf-row" id="wr3" onclick="highlightRow(this)">
+          <div class="wf-varname">🧂 염분 성층화<br><span style="color:var(--text3);font-size:9px">ΔS 1.8 psu</span></div>
+          <div class="wf-barwrap">
+            <div class="wf-bar pos" style="left:72%;width:11%">+0.14</div>
+          </div>
+          <div class="wf-arrow" style="color:var(--amber)">↑</div>
+        </div>
+
+        <div class="wf-row" id="wr4" onclick="highlightRow(this)">
+          <div class="wf-varname">🌤 MLD 변화<br><span style="color:var(--text3);font-size:9px">4.2m → 3.1m</span></div>
+          <div class="wf-barwrap">
+            <div class="wf-bar pos" style="left:76%;width:7%">+0.08</div>
+          </div>
+          <div class="wf-arrow" style="color:var(--amber)">↑</div>
+        </div>
+
+        <div class="wf-row" id="wr5" onclick="highlightRow(this)">
+          <div class="wf-varname">💨 풍속·방향<br><span style="color:var(--text3);font-size:9px">남서 1.2 m/s</span></div>
+          <div class="wf-barwrap">
+            <div class="wf-bar neg" style="left:24%;width:7%">−0.09</div>
+          </div>
+          <div class="wf-arrow" style="color:var(--sky)">↓</div>
+        </div>
+
+        <div class="wf-row" id="wr6" onclick="highlightRow(this)">
+          <div class="wf-varname">🌧 강수량<br><span style="color:var(--text3);font-size:9px">전일 0mm</span></div>
+          <div class="wf-barwrap">
+            <div class="wf-bar neg" style="left:28%;width:4%">−0.04</div>
+          </div>
+          <div class="wf-arrow" style="color:var(--sky)">↓</div>
+        </div>
+
+        <!-- 합계 -->
+        <div class="wf-total">
+          <div class="wf-varname">최종 예측 CRI</div>
+          <div class="wf-result-bar">CRI = 0.74</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 반사실 분석 -->
+    <div class="section">
+      <div class="sec-title">반사실 분석 (Counterfactual) — "만약 ~였다면?"</div>
+      <div class="counterfactual">
+        <div class="cf-scenario">
+          <div class="cf-chip on" onclick="switchCF(this,0)">수온 −1°C</div>
+          <div class="cf-chip" onclick="switchCF(this,1)">DO +0.5</div>
+          <div class="cf-chip" onclick="switchCF(this,2)">해류 순환 회복</div>
+          <div class="cf-chip" onclick="switchCF(this,3)">풍속 강화</div>
+        </div>
+        <div class="cf-compare">
+          <div class="cf-box">
+            <div class="cf-box-label">현재 상황</div>
+            <div class="cf-box-cri" style="color:var(--red)" id="cfCurrent">0.74</div>
+            <div class="cf-box-desc" id="cfCurDesc">SST 29.2°C<br>DO 3.8mg/L<br>→ 4단계 경보</div>
+          </div>
+          <div class="cf-arrow">→</div>
+          <div class="cf-box">
+            <div class="cf-box-label" id="cfScenLabel">수온이 1°C 낮았다면</div>
+            <div class="cf-box-cri" id="cfResult" style="color:var(--orange)">0.58</div>
+            <div class="cf-box-desc" id="cfResDesc">SST 28.2°C<br>DO 3.8mg/L<br>→ 3단계 경보 수준</div>
+          </div>
+        </div>
+        <div class="cf-insight" id="cfInsight">
+          <strong>핵심 인사이트:</strong> 표층 수온이 현재보다 1°C만 낮았다면 CRI는 0.74 → 0.58로 감소하여 3단계 수준이었을 것입니다. <strong>수온 임계치(28°C) 관리가 이 권역의 가장 중요한 대응 변수</strong>입니다. 사전에 양식장 차광막 설치 등 수온 저감 조치가 효과적입니다.
+        </div>
+      </div>
+    </div>
+
+    <!-- 예측 불확실성 -->
+    <div class="section">
+      <div class="sec-title">예측 불확실성 분포 — 앙상블 50개 멤버</div>
+      <div class="uncertainty-wrap">
+        <div class="unc-row">
+          <div class="unc-label">24h CRI</div>
+          <div class="unc-bar-bg">
+            <div class="unc-bar" style="width:82%;background:linear-gradient(90deg,var(--red),rgba(239,68,68,.4))"></div>
+          </div>
+          <div class="unc-range">0.71~0.82</div>
+        </div>
+        <div class="unc-row">
+          <div class="unc-label">48h CRI</div>
+          <div class="unc-bar-bg">
+            <div class="unc-bar" style="width:75%;background:linear-gradient(90deg,var(--orange),rgba(234,88,12,.4))"></div>
+          </div>
+          <div class="unc-range">0.64~0.79</div>
+        </div>
+        <div class="unc-row">
+          <div class="unc-label">72h CRI</div>
+          <div class="unc-bar-bg">
+            <div class="unc-bar" style="width:60%;background:linear-gradient(90deg,var(--amber),rgba(245,158,11,.4))"></div>
+          </div>
+          <div class="unc-range">0.48~0.72</div>
+        </div>
+        <div style="font-size:10px;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
+          불확실성 주요 원인: ROMS 해류 예측 분산 (기여 44%) · 기상 예보 오차 (31%) · 관측 결측 (25%)
+        </div>
+      </div>
+    </div>
+
+    <!-- 자동 리포트 생성 -->
+    <div class="section">
+      <div class="sec-title">자동 리포트 생성 — NLG 엔진</div>
+      <div class="auto-report">
+        <div class="ar-toolbar">
+          <div class="ar-toolbar-left">
+            <div class="ar-tab on" onclick="switchARtab(this,0)">행정 보고용</div>
+            <div class="ar-tab" onclick="switchARtab(this,1)">어업인 알림</div>
+            <div class="ar-tab" onclick="switchARtab(this,2)">연구기관용</div>
+          </div>
+          <div class="ar-actions">
+            <button class="ar-btn secondary" onclick="showToast('PDF 저장 완료')">PDF 저장</button>
+            <button class="ar-btn secondary" onclick="showToast('행정시스템 연계 완료')">시스템 연계</button>
+            <button class="ar-btn primary" onclick="regenReport()">재생성</button>
+          </div>
+        </div>
+        <div class="ar-body" id="arBody">
+          <span id="arText"></span><span class="typing-cursor" id="cursor"></span>
+        </div>
+        <div class="ar-footer">
+          <span id="arFooter">NLG 엔진 생성 완료 · 2025-08-03 14:18:32</span>
+          <div class="gen-progress">
+            <span id="genLabel">생성 완료</span>
+            <div class="gp-bar-bg"><div class="gp-bar" id="gpBar" style="width:100%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /report-area -->
+
+  <!-- ── 오른쪽: 맥락 ── -->
+  <div class="context-panel">
+
+    <div class="ctx-section">
+      <div class="ctx-label">수온 시계열 (72h)</div>
+      <div class="mini-chart">
+        <svg viewBox="0 0 230 60">
+          <polyline points="0,45 30,42 60,38 90,32 120,25 150,20 180,18 210,16 230,14"
+            fill="none" stroke="rgba(239,68,68,.6)" stroke-width="1.5"/>
+          <line x1="0" y1="28" x2="230" y2="28" stroke="rgba(239,68,68,.25)" stroke-width="1" stroke-dasharray="3,3"/>
+          <text x="185" y="25" font-size="8" fill="rgba(239,68,68,.6)" font-family="JetBrains Mono">28°C</text>
+          <circle cx="150" cy="20" r="3" fill="var(--white)" stroke="rgba(239,68,68,.8)" stroke-width="1.5"/>
+          <text x="0" y="58" font-size="7" fill="rgba(0,0,0,.18)" font-family="JetBrains Mono">-48h</text>
+          <text x="100" y="58" font-size="7" fill="rgba(0,0,0,.18)" font-family="JetBrains Mono">NOW</text>
+          <text x="196" y="58" font-size="7" fill="rgba(0,0,0,.18)" font-family="JetBrains Mono">+24h</text>
+          <line x1="120" y1="0" x2="120" y2="52" stroke="rgba(30,58,95,.12)" stroke-width="1" stroke-dasharray="2,2"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="ctx-section">
+      <div class="ctx-label">핵심 관측값</div>
+      <div class="ctx-grid">
+        <div class="ctx-card">
+          <div class="ctx-card-label">SST</div>
+          <div class="ctx-card-val" style="color:var(--red)">29.2<span class="ctx-card-unit">°C</span></div>
+        </div>
+        <div class="ctx-card">
+          <div class="ctx-card-label">DO (저층)</div>
+          <div class="ctx-card-val" style="color:var(--orange)">3.8<span class="ctx-card-unit">mg/L</span></div>
+        </div>
+        <div class="ctx-card">
+          <div class="ctx-card-label">MLD</div>
+          <div class="ctx-card-val" style="color:var(--sky)">4.2<span class="ctx-card-unit">m</span></div>
+        </div>
+        <div class="ctx-card">
+          <div class="ctx-card-label">클로로필</div>
+          <div class="ctx-card-val" style="color:var(--green)">4.1<span class="ctx-card-unit">μg/L</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ctx-section">
+      <div class="ctx-label">유사 과거 사례</div>
+
+      <div class="similar-case" onclick="showToast('2023-08-11 통영 사례 상세 조회')">
+        <div class="sc-top">
+          <span class="sc-name">2023-08-11 통영</span>
+          <span class="sc-match">유사도 91%</span>
+        </div>
+        <div class="sc-desc">SST 29.0°C, DO 3.6, MLD 3.8m<br>고수온+빈산소 동시 발생</div>
+        <span class="sc-outcome sco-bad">넙치 89톤 폐사 · 피해 4.2억</span>
+      </div>
+
+      <div class="similar-case" onclick="showToast('2022-08-03 거제 사례 상세 조회')">
+        <div class="sc-top">
+          <span class="sc-name">2022-08-03 거제</span>
+          <span class="sc-match">유사도 84%</span>
+        </div>
+        <div class="sc-desc">SST 28.7°C, DO 4.1, MLD 5.2m<br>고수온 단독 · 빈산소 미발생</div>
+        <span class="sc-outcome sco-ok">선제 대응 · 피해 최소화</span>
+      </div>
+
+      <div class="similar-case" onclick="showToast('2021-07-28 여수 사례 상세 조회')">
+        <div class="sc-top">
+          <span class="sc-name">2021-07-28 여수</span>
+          <span class="sc-match">유사도 78%</span>
+        </div>
+        <div class="sc-desc">SST 29.3°C, DO 3.4, MLD 3.5m</div>
+        <span class="sc-outcome sco-bad">참돔 62톤 폐사 · 피해 2.8억</span>
+      </div>
+    </div>
+
+    <div class="ctx-section" style="border-bottom:none">
+      <div class="ctx-label">AI 모델 상태</div>
+      <div style="font-size:10px;color:var(--text3);line-height:2">
+        <div style="display:flex;justify-content:space-between">
+          <span>GPA 추론 시간</span>
+          <span style="color:var(--teal2);font-family:'JetBrains Mono',monospace">2.4s</span>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <span>SHAP 계산 시간</span>
+          <span style="color:var(--teal2);font-family:'JetBrains Mono',monospace">8.1s</span>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <span>NLG 생성 시간</span>
+          <span style="color:var(--teal2);font-family:'JetBrains Mono',monospace">3.7s</span>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <span>앙상블 멤버</span>
+          <span style="color:var(--text2);font-family:'JetBrains Mono',monospace">50개</span>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <span>학습 데이터 기간</span>
+          <span style="color:var(--text2);font-family:'JetBrains Mono',monospace">2010–2024</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 상태바 -->
+<div class="statusbar">
+  <div class="sb-item"><div class="sb-dot"></div>GPA 엔진 정상</div>
+  <div class="sb-item"><div class="sb-dot"></div>SHAP TreeExplainer 활성</div>
+  <div class="sb-item"><div class="sb-dot"></div>NLG 엔진 정상</div>
+  <div class="sb-item" style="margin-left:auto"><div class="sb-dot"></div>③ XAI 리포트 모듈 v1.2</div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── 시계 ──
+setInterval(() => {
+  const n = new Date();
+  document.getElementById('clock').textContent =
+    `2025-08-03 ${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;
+}, 10000);
+
+// ── 자동 리포트 타이핑 ──
+const reports = {
+  0: `■ 남해 통영·거제권 고수온·빈산소 위험 예보\n기준: 2025-08-03 14:00 KST | 발령: 4단계 경보\n\n현재 복합위험지수(CRI) 0.74로 4단계 경보 기준(0.70)을 초과하였습니다.\n\n주요 위험 원인:\n  · 표층 수온 29.2°C → 고수온 기준(28°C) 1.2°C 초과 (기여도 +0.42)\n  · 저층 용존산소 3.8mg/L → 빈산소 기준(4.0) 0.2mg/L 미달 (기여도 +0.31)\n  · 해수 순환 3일 연속 정체 → 성층화 심화 (기여도 +0.18)\n\n72시간 예측:\n  경보 단계 지속 확률 81% | CRI 범위 0.68~0.82\n\n즉시 대응 필요사항:\n  1. 양식장 산소공급장치 가동 점검\n  2. 피해 우려 품종(넙치·참돔) 긴급 출하 검토\n  3. 경남도청·통영시 재난안전과 즉시 통보`,
+  1: `🚨 긴급 문자 발송 (어업인용)\n\n[K-CRP 해양위험 4단계 경보]\n통영·거제 양식장 긴급 주의!\n\n• 수온 29.2°C — 기준 초과\n• 산소 부족 — 빈산소 발생 중\n\n즉시 조치:\n✅ 산소공급기 가동\n✅ 그물 수심 조절\n✅ 피해 우려 어류 출하 검토\n\n72시간 고위험 지속 예상\n자세히: kcrp.go.kr/alert/0803`,
+  2: `[연구기관용 기술 보고서]\n\n관측 데이터 요약:\n  SST: 29.2°C (GOCI-II, 13:00 KST)\n  DO(저층 10m): 3.8 mg/L (부이 관측)\n  MLD: 4.2m → 3.1m (KPP 진단)\n  염분 성층화: ΔS 1.8 psu\n\nGPA 모델 출력:\n  CRI_predicted: 0.742 ± 0.031\n  앙상블 분산: σ² = 0.0096\n  PINN 물리 제약 위반율: 0.3%\n\nSHAP 분해 (TreeExplainer):\n  E[f(x)] = 0.32 (기준값)\n  Σ φᵢ = +0.42 (계산값: 0.74)\n  최대 기여변수: SST (+0.42)\n\n유사 사례 참조 (DBScan 군집화):\n  2023-08-11 통영 (유사도 0.91)\n  2021-07-28 여수 (유사도 0.78)`
+};
+
+let currentReport = 0;
+let typingTimer = null;
+
+function typeText(text, target, speed=18) {
+  clearTimeout(typingTimer);
+  const cursor = document.getElementById('cursor');
+  cursor.style.display = 'inline-block';
+  target.textContent = '';
+  let i = 0;
+  const bar = document.getElementById('gpBar');
+  const label = document.getElementById('genLabel');
+  bar.style.width = '0%';
+  label.textContent = '생성 중...';
+
+  function next() {
+    if (i < text.length) {
+      target.textContent += text[i];
+      i++;
+      bar.style.width = Math.round(i/text.length*100) + '%';
+      typingTimer = setTimeout(next, speed);
+    } else {
+      cursor.style.display = 'none';
+      label.textContent = '생성 완료 · ' + new Date().toLocaleTimeString('ko-KR');
+    }
+  }
+  next();
+}
+
+function initReport() {
+  const arText = document.getElementById('arText');
+  typeText(reports[currentReport], arText, 14);
+}
+
+function regenReport() {
+  showToast('NLG 엔진 재생성 중...');
+  const arText = document.getElementById('arText');
+  typeText(reports[currentReport], arText, 10);
+}
+
+function switchARtab(el, idx) {
+  document.querySelectorAll('.ar-tab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  currentReport = idx;
+  const arText = document.getElementById('arText');
+  typeText(reports[idx], arText, 12);
+}
+
+// 초기 실행
+setTimeout(initReport, 400);
+
+// ── 케이스 데이터 ──
+const cases = [
+  {
+    title:'남해 통영·거제권 — 고수온 + 빈산소 복합위험',
+    sub:'기준시각: 2025-08-03 14:00 KST | GPA 엔진 v2.1 | SHAP TreeExplainer',
+    cri:'0.74', badge:'4단계 경보', badgeClass:'b4',
+    m1:'29.2°C (+1.2°C 이상)', m2:'3.8 mg/L (기준: 4.0)', m3:'MLD 4.2m (↓ 전일比)', m4:'89%', m5:'72시간'
+  },
+  {
+    title:'남해 여수·순천권 — 적조 확산 진행',
+    sub:'기준시각: 2025-08-03 13:45 KST | GPA 엔진 v2.1 | 적조 ST-GNN 모듈',
+    cri:'0.61', badge:'3단계 경보', badgeClass:'b3',
+    m1:'27.8°C (+0.8°C)', m2:'18.4 μg/L (클로로필)', m3:'해류 북동향 3.2cm/s', m4:'82%', m5:'48시간'
+  },
+  {
+    title:'서해 천수만권 — 부유사 확산',
+    sub:'기준시각: 2025-08-03 12:30 KST | GPA 엔진 v2.1 | 탁도 U-Net 모듈',
+    cri:'0.48', badge:'2단계 주의', badgeClass:'b2',
+    m1:'26.1°C (정상)', m2:'탁도 47.3 NTU', m3:'부유사 12.7 mg/L', m4:'76%', m5:'36시간'
+  },
+  {
+    title:'거제 빈산소 단독 발생',
+    sub:'기준시각: 2025-08-03 11:55 KST | GPA 엔진 v2.1 | DO 진단 모듈',
+    cri:'0.55', badge:'3단계 경보', badgeClass:'b3',
+    m1:'28.4°C (+0.4°C)', m2:'3.2 mg/L (기준: 4.0)', m3:'MLD 3.5m (↓↓)', m4:'85%', m5:'48시간'
+  },
+  {
+    title:'고흥만 고수온 단독',
+    sub:'기준시각: 2025-08-03 10:20 KST | GPA 엔진 v2.1 | SST 이상탐지 모듈',
+    cri:'0.38', badge:'2단계 주의', badgeClass:'b2',
+    m1:'28.4°C (+0.4°C)', m2:'5.2 mg/L (정상)', m3:'MLD 7.1m (안정)', m4:'79%', m5:'24시간'
+  },
+];
+
+function selectCase(el, idx) {
+  document.querySelectorAll('.case-item').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  const c = cases[idx];
+  document.getElementById('rptTitle').textContent = c.title;
+  document.getElementById('rptSub').textContent = c.sub;
+  document.getElementById('rptCRI').textContent = c.cri;
+  document.getElementById('rptBadge').textContent = c.badge;
+  document.getElementById('rptBadge').className = 'ci-badge ' + c.badgeClass;
+  document.getElementById('rptCRI').style.color = c.badgeClass==='b4'?'var(--red)':c.badgeClass==='b3'?'var(--orange)':'var(--amber)';
+  document.getElementById('m1').textContent = c.m1;
+  document.getElementById('m2').textContent = c.m2;
+  document.getElementById('m3').textContent = c.m3;
+  document.getElementById('m4').textContent = c.m4;
+  document.getElementById('m5').textContent = c.m5;
+  const arText = document.getElementById('arText');
+  typeText(reports[currentReport], arText, 12);
+  document.getElementById('reportArea').scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── 반사실 시나리오 ──
+const cfData = [
+  { label:'수온이 1°C 낮았다면', result:'0.58', rColor:'var(--orange)', curDesc:'SST 29.2°C<br>DO 3.8mg/L<br>→ 4단계 경보', resDesc:'SST 28.2°C<br>DO 3.8mg/L<br>→ 3단계 경보 수준', insight:'<strong>핵심 인사이트:</strong> 표층 수온이 1°C만 낮았다면 CRI는 0.74 → 0.58로 감소, 3단계 수준이었을 것입니다. <strong>수온 임계치(28°C) 관리가 핵심 대응 변수</strong>입니다. 사전 차광막 설치 등 수온 저감 조치가 효과적입니다.' },
+  { label:'DO가 0.5mg/L 높았다면', result:'0.63', rColor:'var(--orange)', curDesc:'SST 29.2°C<br>DO 3.8mg/L<br>→ 4단계 경보', resDesc:'SST 29.2°C<br>DO 4.3mg/L<br>→ 고수온 단독 3단계', insight:'<strong>핵심 인사이트:</strong> 저층 용존산소가 0.5mg/L만 높았다면 복합위험 판정을 피할 수 있었습니다. <strong>수중 산소공급 장치 사전 가동이 피해 규모를 크게 줄일 수 있는 가장 직접적인 대응</strong>입니다.' },
+  { label:'해류 순환이 회복됐다면', result:'0.51', rColor:'var(--orange)', curDesc:'SST 29.2°C<br>순환 정체 3일<br>→ 4단계 경보', resDesc:'SST 29.2°C<br>순환 1.5cm/s<br>→ 3단계 수준', insight:'<strong>핵심 인사이트:</strong> 해류 순환이 회복됐다면 CRI는 0.74 → 0.51로 감소합니다. 해류 정체는 빈산소·수온 악화를 동시에 촉진하는 <strong>복합위험의 구조적 원인</strong>입니다. 조류 예측 정확도 향상이 중장기 과제입니다.' },
+  { label:'풍속이 4m/s로 강화됐다면', result:'0.66', rColor:'var(--orange)', curDesc:'SST 29.2°C<br>풍속 1.2m/s<br>→ 4단계 경보', resDesc:'SST 28.8°C<br>풍속 4.0m/s<br>→ 경보 경계 수준', insight:'<strong>핵심 인사이트:</strong> 풍속 강화(1.2 → 4.0m/s)는 표층 혼합을 촉진하여 수온을 0.4°C 낮추고 DO를 개선시킵니다. 다만 풍속 변수는 통제 불가능하므로, <strong>이 분석은 기상 예보 정확도의 중요성을 시사</strong>합니다.' },
+];
+
+function switchCF(el, idx) {
+  document.querySelectorAll('.cf-chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  const d = cfData[idx];
+  document.getElementById('cfScenLabel').textContent = d.label;
+  document.getElementById('cfResult').textContent = d.result;
+  document.getElementById('cfResult').style.color = d.rColor;
+  document.getElementById('cfCurDesc').innerHTML = d.curDesc;
+  document.getElementById('cfResDesc').innerHTML = d.resDesc;
+  document.getElementById('cfInsight').innerHTML = d.insight;
+}
+
+// ── 워터폴 행 하이라이트 ──
+function highlightRow(el) {
+  document.querySelectorAll('.wf-row').forEach(r => r.style.background = '');
+  el.style.background = 'rgba(13,148,136,.06)';
+  el.style.borderRadius = '4px';
+}
+
+// ── 필터 ──
+function filterCase(el, type) {
+  document.querySelectorAll('.cf-btn').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  showToast(type==='all' ? '전체 케이스 표시' : type+'단계 케이스 필터링');
+}
+
+// ── 토스트 ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.cssText += 'transform:translateY(0);opacity:1;';
+  setTimeout(() => { t.style.transform='translateY(60px)'; t.style.opacity='0'; }, 2500);
+}
+</script>
+</body>
+</html>

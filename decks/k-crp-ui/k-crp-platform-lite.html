@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K-CRP | 통합 플랫폼 데모</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+<script src="../../kcrp-lock.js"></script>
+<script>
+if (!window.kcrpAccess.guardPage({ fallbackHref: "../service-deck-kcrp.html" })) {
+  document.documentElement.innerHTML = "";
+}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:#F0F4F8}
+body{font-family:"Noto Sans KR",sans-serif;display:flex;flex-direction:column;color:#1E3A5F;font-size:15px}
+.u-hdr{background:#FFFFFF;border-bottom:1px solid #CBD5E1;box-shadow:0 1px 8px rgba(30,58,95,.08);height:54px;flex-shrink:0;display:flex;align-items:center;padding:0 20px;gap:16px;z-index:100}
+.u-logo-wrap{display:flex;align-items:center;gap:10px}
+.u-logo{font-family:"Bebas Neue",sans-serif;font-size:22px;letter-spacing:4px;color:#0D9488}
+.u-logo span{color:#94A3B8;margin:0 3px}
+.u-title{font-size:13px;color:#64748B;font-weight:400}
+.u-divider{width:1px;height:22px;background:#E2E8F0}
+.u-nav{display:flex;gap:2px;margin:0 auto}
+.u-btn{padding:6px 18px;border-radius:6px;border:1px solid transparent;font-size:12.5px;font-weight:600;color:#64748B;cursor:pointer;background:transparent;font-family:"Noto Sans KR",sans-serif;transition:all .2s;white-space:nowrap}
+.u-btn:hover{background:#F1F5F9;color:#334155;border-color:#E2E8F0}
+.u-btn.on{background:#EFF6FF;border-color:#BFDBFE;color:#1D4ED8}
+.u-btn[data-key="gpa"].on{background:#F0FDFA;border-color:#99F6E4;color:#0D9488}
+.u-btn[data-key="xai"].on{background:#F5F3FF;border-color:#DDD6FE;color:#7C3AED}
+.u-btn[data-key="gis"].on{background:#F0FDF4;border-color:#BBF7D0;color:#059669}
+.u-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.u-live{display:flex;align-items:center;gap:5px;padding:3px 10px;border-radius:12px;background:#F0FDF4;border:1px solid #BBF7D0;font-size:11px;color:#059669;font-weight:700}
+.u-dot{width:6px;height:6px;border-radius:50%;background:#10B981;animation:ud 1.5s infinite}
+@keyframes ud{0%,100%{opacity:1}50%{opacity:.35}}
+.u-clk{font-family:"JetBrains Mono",monospace;font-size:12px;color:#94A3B8}
+.u-sub{background:#F8FAFC;border-bottom:1px solid #E2E8F0;height:32px;flex-shrink:0;display:flex;align-items:center;padding:0 18px;gap:10px}
+.u-sub-title{font-size:11.5px;font-weight:600;color:#475569;letter-spacing:.2px}
+.u-sub-badge{font-size:10px;padding:3px 8px;border-radius:8px;font-weight:700;letter-spacing:.3px}
+.iframe-wrap{flex:1;overflow:hidden;position:relative}
+.mod-frame{position:absolute;top:0;left:0;width:calc(100% / 1.24);height:calc(100% / 1.24);border:none;background:#F0F4F8;transform:scale(1.24);transform-origin:top left;opacity:0;visibility:hidden;pointer-events:none;z-index:0}
+.mod-frame.on{opacity:1;visibility:visible;pointer-events:auto;z-index:1}
+.u-sb{height:28px;background:#FFFFFF;border-top:1px solid #E2E8F0;box-shadow:0 -1px 4px rgba(0,0,0,.04);display:flex;align-items:center;padding:0 16px;gap:16px;flex-shrink:0}
+.u-sbi{display:flex;align-items:center;gap:5px;font-size:11px;color:#64748B}
+.u-sbd{width:6px;height:6px;border-radius:50%}
+.u-sbi .label{color:#94A3B8}
+</style>
+</head>
+<body>
+<header class="u-hdr">
+  <div class="u-logo-wrap">
+    <div class="u-logo">K<span>·</span>CRP</div>
+    <div class="u-divider"></div>
+    <div class="u-title">XAI 복합 연안환경위험 실시간 진단·예측 및 정책지원 플랫폼</div>
+  </div>
+  <nav class="u-nav">
+    <button class="u-btn on" data-key="algo" type="button">① 복합위험 알고리즘</button>
+    <button class="u-btn" data-key="gpa" type="button">② GPA 분석엔진</button>
+    <button class="u-btn" data-key="xai" type="button">③ XAI 리포트</button>
+    <button class="u-btn" data-key="gis" type="button">④ GIS 정책지원 플랫폼</button>
+  </nav>
+  <div class="u-right">
+    <div class="u-live"><div class="u-dot"></div>LIVE</div>
+    <div class="u-clk" id="u-clk">2025-08-03 14:32:00</div>
+  </div>
+</header>
+<div class="u-sub">
+  <span class="u-sub-title" id="u-sub-title">① 복합위험 알고리즘 — 시나리오 설정 및 GPA 예측 실행</span>
+  <span class="u-sub-badge" id="u-sub-badge" style="background:rgba(14,95,161,.1);border:1px solid #BFDBFE;color:#1D4ED8">알고리즘 v1.2</span>
+</div>
+<div class="iframe-wrap">
+  <iframe class="mod-frame on" id="fr-algo" src="./k-crp-lite-module-algo.html"></iframe>
+  <iframe class="mod-frame" id="fr-gpa" src="./k-crp-lite-module-gpa.html"></iframe>
+  <iframe class="mod-frame" id="fr-xai" src="./k-crp-lite-module-xai.html"></iframe>
+  <iframe class="mod-frame" id="fr-gis" src="./k-crp-lite-module-gis.html"></iframe>
+</div>
+<div class="u-sb">
+  <div class="u-sbi"><div class="u-sbd" style="background:#10B981"></div><span class="label">GPA 엔진</span> 정상 · 2.4s</div>
+  <div class="u-sbi"><div class="u-sbd" style="background:#10B981"></div><span class="label">GOCI-II</span> 13:00 수신 완료</div>
+  <div class="u-sbi"><div class="u-sbd" style="background:#F59E0B"></div><span class="label">ROMS</span> 6분 지연</div>
+  <div class="u-sbi"><div class="u-sbd" style="background:#10B981"></div><span class="label">현장관측망</span> 47/52 정상</div>
+  <div class="u-sbi"><div class="u-sbd" style="background:#EF4444;animation:blink 1s infinite"></div><span style="color:#EF4444;font-weight:600">4단계 경보 발령 중</span>&nbsp;통영·거제</div>
+  <div class="u-sbi" style="margin-left:auto;color:#94A3B8;">K-CRP 통합 플랫폼 v1.0 &nbsp;|&nbsp; 시범운영</div>
+</div>
+<style>@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}</style>
+<script>
+const subinfo = {
+  algo: ['① 복합위험 알고리즘 — 시나리오 설정 및 GPA 예측 실행', '#1D4ED8', 'rgba(14,95,161,.1)', '#BFDBFE', '알고리즘 v1.2'],
+  gpa: ['② GPA 분석엔진 — PINN 기반 해양 복합위험 예측', '#0D9488', 'rgba(13,148,136,.1)', '#99F6E4', 'GPA v2.1'],
+  xai: ['③ XAI 설명형 리포트 — AI 예측 분해 및 자동 보고서 생성', '#7C3AED', 'rgba(124,58,237,.1)', '#DDD6FE', 'XAI v1.2'],
+  gis: ['④ GIS·API 정책지원 플랫폼 — 실시간 위험지도 및 경보관리', '#059669', 'rgba(5,150,105,.1)', '#BBF7D0', 'GIS v1.0']
+};
+function switchModule(key, button) {
+  document.querySelectorAll('.mod-frame').forEach((frame) => frame.classList.remove('on'));
+  document.querySelectorAll('.u-btn').forEach((btn) => btn.classList.remove('on'));
+  const frame = document.getElementById('fr-' + key);
+  if (frame) frame.classList.add('on');
+  if (button) button.classList.add('on');
+  const info = subinfo[key];
+  document.getElementById('u-sub-title').textContent = info[0];
+  const badge = document.getElementById('u-sub-badge');
+  badge.textContent = info[4];
+  badge.style.cssText = 'background:' + info[2] + ';border:1px solid ' + info[3] + ';color:' + info[1];
+  if (key === 'gis') {
+    setTimeout(() => {
+      const win = frame && frame.contentWindow;
+      const mapRef = win && (win.gis_map || win.map);
+      if (mapRef && typeof mapRef.invalidateSize === 'function') {
+        mapRef.invalidateSize();
+        setTimeout(() => mapRef.invalidateSize(), 150);
+        setTimeout(() => mapRef.invalidateSize(), 400);
+      }
+    }, 250);
+  }
+}
+document.querySelectorAll('.u-btn[data-key]').forEach((button) => {
+  button.addEventListener('click', () => switchModule(button.dataset.key, button));
+});
+(function tick() {
+  const now = new Date();
+  const pad = (value) => String(value).padStart(2, '0');
+  document.getElementById('u-clk').textContent = '2025-08-03 ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+  setTimeout(tick, 1000);
+})();
+</script>
+</body>
+</html>

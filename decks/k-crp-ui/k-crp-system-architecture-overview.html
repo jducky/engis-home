@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K-CRP 시스템 운영 구조 및 아키텍처</title>
+<script src="../../kcrp-lock.js"></script>
+<script>
+if (!window.kcrpAccess.guardPage({ fallbackHref: "../service-deck-kcrp.html" })) {
+  document.documentElement.innerHTML = "";
+}
+</script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+  :root {
+    --navy:   #0D1F3C;
+    --blue:   #1A4A8A;
+    --blue2:  #2563C0;
+    --sky:    #3B9EE0;
+    --teal:   #0E7A6E;
+    --green:  #1B7A45;
+    --amber:  #B45309;
+    --coral:  #C0392B;
+    --purple: #5B3FA6;
+    --gpa:    #7C3AED;   /* GPA 전용 보라 */
+    --gpa-lt: #EDE9FE;
+    --gray1:  #F0F4FA;
+    --gray2:  #E2E8F2;
+    --gray3:  #94A3B8;
+    --white:  #FFFFFF;
+    --text:   #0F172A;
+    --text2:  #334155;
+    --text3:  #64748B;
+    --border: #CBD5E1;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--white);
+    color: var(--text);
+    width: 1400px;
+    margin: 0 auto;
+    padding: 32px;
+  }
+
+  /* ── 헤더 ── */
+  .header {
+    background: var(--navy);
+    color: white;
+    padding: 24px 32px 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .header h1 { font-size: 28px; font-weight: 900; letter-spacing: -0.5px; }
+  .header p  { font-size: 13px; opacity: 0.7; margin-top: 6px; font-weight: 300; }
+  .header-badge {
+    background: var(--gpa);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── 6단계 흐름 바 ── */
+  .flow-bar {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .flow-step {
+    padding: 10px 12px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    position: relative;
+    border-right: 1px solid rgba(255,255,255,0.3);
+  }
+  .flow-step:last-child { border-right: none; }
+  .flow-step .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    font-size: 11px; font-weight: 900;
+    margin-bottom: 4px;
+  }
+  .flow-step .label { font-size: 12px; display: block; }
+  .flow-step .sub   { font-size: 10px; opacity: 0.8; font-weight: 400; margin-top: 2px; display: block; }
+  .fs1 { background: #1E40AF; color: white; }
+  .fs2 { background: #1D5FA6; color: white; }
+  .fs3 { background: #0F766E; color: white; }
+  .fs4 { background: #0369A1; color: white; }
+  .fs5 { background: #6D28D9; color: white; }
+  .fs6 { background: #1E3A5F; color: white; }
+
+  /* ── 메인 그리드 ── */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 200px 220px 260px 220px 240px 220px;
+    gap: 12px;
+    margin-bottom: 16px;
+    align-items: start;
+  }
+
+  /* ── 컬럼 공통 ── */
+  .col-header {
+    font-size: 11px; font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 6px 6px 0 0;
+    text-align: center;
+    letter-spacing: 0.03em;
+  }
+  .col-body {
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 10px;
+    background: var(--white);
+    min-height: 320px;
+  }
+
+  .ch-blue   { background: var(--blue);   color: white; }
+  .ch-teal   { background: var(--teal);   color: white; }
+  .ch-green  { background: var(--green);  color: white; }
+  .ch-sky    { background: var(--sky);    color: white; }
+  .ch-purple { background: var(--purple); color: white; }
+  .ch-navy   { background: var(--navy);   color: white; }
+
+  /* ── 데이터 소스 카드 ── */
+  .src-card {
+    background: var(--gray1);
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-bottom: 7px;
+    border-left: 3px solid var(--blue2);
+  }
+  .src-card.gpa-src {
+    background: var(--gpa-lt);
+    border-left: 3px solid var(--gpa);
+  }
+  .src-card-title {
+    font-size: 11px; font-weight: 700; color: var(--text);
+    display: flex; align-items: center; gap: 5px;
+    margin-bottom: 3px;
+  }
+  .src-card-title .ico { font-size: 13px; }
+  .src-card ul { padding-left: 12px; }
+  .src-card ul li { font-size: 10px; color: var(--text2); line-height: 1.6; }
+  .gpa-badge {
+    display: inline-block;
+    background: var(--gpa);
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+    margin-left: 4px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── 처리 블록 ── */
+  .proc-block {
+    background: var(--gray1);
+    border-radius: 6px;
+    padding: 9px 10px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border);
+  }
+  .proc-block.gpa-block {
+    background: var(--gpa-lt);
+    border: 1.5px solid var(--gpa);
+  }
+  .proc-title {
+    font-size: 11px; font-weight: 700; color: var(--text);
+    margin-bottom: 5px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .proc-title.gpa-title { color: var(--gpa); }
+  .proc-body  { font-size: 10px; color: var(--text2); line-height: 1.65; }
+  .proc-mono  {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    background: rgba(0,0,0,0.05);
+    padding: 4px 7px;
+    border-radius: 4px;
+    margin-top: 5px;
+    color: var(--blue);
+    font-weight: 600;
+  }
+  .proc-mono.gpa-mono { color: var(--gpa); background: rgba(124,58,237,0.08); }
+
+  /* ── CRI 엔진 ── */
+  .cri-box {
+    background: linear-gradient(135deg, #EFF6FF 0%, #F0FDF4 100%);
+    border: 1.5px solid var(--blue2);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 8px;
+  }
+  .cri-formula {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--blue);
+    text-align: center;
+    padding: 6px;
+    background: rgba(37,99,192,0.08);
+    border-radius: 4px;
+    margin: 6px 0;
+  }
+  .cri-spec { font-size: 10px; color: var(--text3); margin-top: 4px; }
+  .cri-spec span { color: var(--blue); font-weight: 700; }
+
+  /* ── 히트맵 이미지 대체 ── */
+  .heatmap-mock {
+    width: 100%; height: 90px;
+    background: linear-gradient(135deg,
+      #0D47A1 0%, #1565C0 15%, #0288D1 25%,
+      #26C6DA 35%, #66BB6A 45%, #FDD835 55%,
+      #FF7043 70%, #E53935 85%, #B71C1C 100%);
+    border-radius: 6px;
+    margin: 6px 0;
+    display: flex; align-items: flex-end; justify-content: flex-end;
+    padding: 4px;
+  }
+  .heatmap-label { font-size: 9px; color: white; font-weight: 700; opacity: 0.9; }
+
+  /* ── 트리거 ── */
+  .trigger-item {
+    display: flex; align-items: flex-start; gap: 6px;
+    font-size: 10px; color: var(--text2);
+    margin-bottom: 5px; line-height: 1.5;
+  }
+  .trigger-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    flex-shrink: 0; margin-top: 4px;
+  }
+  .td-red   { background: var(--coral); }
+  .td-amber { background: var(--amber); }
+  .td-blue  { background: var(--sky); }
+
+  /* ── Risk 패키지 ── */
+  .risk-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    font-size: 10px;
+  }
+  .ri-label { font-weight: 500; color: var(--text); }
+  .ri-val   { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; }
+  .ri-danger { background: #FEE2E2; }
+  .ri-danger .ri-val { color: var(--coral); }
+  .ri-warn  { background: #FEF3C7; }
+  .ri-warn  .ri-val { color: var(--amber); }
+  .ri-info  { background: #DBEAFE; }
+  .ri-info  .ri-val { color: var(--blue2); }
+  .ri-gpa   { background: var(--gpa-lt); }
+  .ri-gpa   .ri-val { color: var(--gpa); }
+
+  /* ── 서비스 카드 ── */
+  .svc-card {
+    background: var(--gray1);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 9px 10px;
+    margin-bottom: 8px;
+  }
+  .svc-title { font-size: 11px; font-weight: 700; margin-bottom: 4px; color: var(--text); }
+  .svc-body  { font-size: 10px; color: var(--text2); line-height: 1.6; }
+  .svc-tag {
+    display: inline-block;
+    background: var(--navy); color: white;
+    font-size: 9px; font-weight: 700;
+    padding: 2px 7px; border-radius: 10px;
+    margin-right: 3px; margin-top: 4px;
+  }
+
+  /* ── 화살표 연결 영역 ── */
+  .arrow-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    margin-bottom: 4px;
+    text-align: center;
+    font-size: 16px;
+    color: var(--gray3);
+  }
+
+  /* ── 하단 3열 ── */
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .bottom-box {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .bottom-header {
+    padding: 9px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+  }
+  .bottom-body { padding: 12px 14px; }
+  .bh-blue   { background: var(--blue); }
+  .bh-teal   { background: var(--teal); }
+  .bh-navy   { background: var(--navy); }
+
+  .step-flow {
+    display: flex; align-items: center; gap: 0; flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+  .step-item {
+    text-align: center;
+    flex: 1; min-width: 70px;
+  }
+  .step-circle {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 4px;
+    font-size: 16px;
+  }
+  .step-num  { font-size: 9px; color: var(--text3); font-weight: 700; }
+  .step-name { font-size: 10px; font-weight: 700; color: var(--text); margin-top: 2px; }
+  .step-arrow { font-size: 18px; color: var(--gray3); flex-shrink: 0; }
+
+  .sc-blue   { background: #DBEAFE; }
+  .sc-teal   { background: #CCFBF1; }
+  .sc-amber  { background: #FEF3C7; }
+  .sc-coral  { background: #FEE2E2; }
+  .sc-purple { background: #EDE9FE; }
+  .sc-green  { background: #DCFCE7; }
+
+  .user-list { display: flex; gap: 8px; flex-wrap: wrap; }
+  .user-chip {
+    flex: 1; min-width: 120px;
+    background: var(--gray1);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+  .user-chip-title { font-size: 11px; font-weight: 700; margin-bottom: 3px; }
+  .user-chip ul { padding-left: 12px; }
+  .user-chip li { font-size: 10px; color: var(--text2); line-height: 1.6; }
+
+  .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .res-item { background: var(--gray1); border-radius: 6px; padding: 8px; text-align: center; }
+  .res-val  { font-size: 18px; font-weight: 900; color: var(--blue); }
+  .res-lab  { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+  /* ── 차별성 바 ── */
+  .diff-bar {
+    background: var(--navy);
+    color: white;
+    border-radius: 10px;
+    padding: 14px 20px;
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .diff-label { font-size: 12px; font-weight: 700; opacity: 0.6; flex-shrink: 0; }
+  .diff-items { display: flex; gap: 12px; flex-wrap: wrap; flex: 1; }
+  .diff-item {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 11px;
+  }
+  .diff-item .di-ico { font-size: 16px; }
+  .diff-item .di-txt { font-weight: 500; }
+  .diff-item.gpa-diff { background: rgba(124,58,237,0.3); border: 1px solid rgba(124,58,237,0.5); }
+  .diff-slogan {
+    font-size: 13px; font-weight: 700;
+    text-align: right;
+    flex-shrink: 0;
+    opacity: 0.9;
+    line-height: 1.4;
+  }
+
+  .section-divider {
+    height: 1px; background: var(--border);
+    margin: 10px 0;
+  }
+
+  .tag-gpa {
+    display: inline-block;
+    background: var(--gpa);
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-left: 5px;
+    letter-spacing: 0.04em;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<!-- 헤더 -->
+<div class="header">
+  <div>
+    <h1>K-CRP 시스템 운영 구조 및 아키텍처</h1>
+    <p>전국 해역 상시 모니터링 + 관심지역 정밀 분석을 통한 의사결정 지원</p>
+  </div>
+  <div style="text-align:right">
+    <div class="header-badge">GPA INTEGRATED</div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:6px">Geophysical AI 통합 아키텍처</div>
+  </div>
+</div>
+
+<!-- 6단계 흐름 바 -->
+<div class="flow-bar">
+  <div class="flow-step fs1"><div class="num">1</div><span class="label">데이터 수집</span><span class="sub">해양·기상·현장</span></div>
+  <div class="flow-step fs2"><div class="num">2</div><span class="label">전국 CRI 분석</span><span class="sub">500m~1km 격자</span></div>
+  <div class="flow-step fs3"><div class="num">3</div><span class="label">위험 탐지</span><span class="sub">임계치·이벤트 자동</span></div>
+  <div class="flow-step fs4"><div class="num">4</div><span class="label">정밀 분석</span><span class="sub">양식장·관심지역</span></div>
+  <div class="flow-step fs5"><div class="num">5</div><span class="label">의사결정 지원</span><span class="sub">시나리오·최적행동</span></div>
+  <div class="flow-step fs6"><div class="num">6</div><span class="label">서비스 제공</span><span class="sub">대시보드·알림·API</span></div>
+</div>
+
+<!-- 메인 6열 그리드 -->
+<div class="main-grid">
+
+  <!-- ① 데이터 수집 레이어 -->
+  <div>
+    <div class="col-header ch-blue">데이터 수집 레이어</div>
+    <div class="col-body">
+
+      <div class="src-card">
+        <div class="src-card-title"><span class="ico">🛰</span> 위성 데이터</div>
+        <ul><li>천리안위성 (GK-2A/2B)</li><li>NOAA, Sentinel 등</li><li>클로로필·SST 영상</li></ul>
+      </div>
+
+      <!-- GPA ① Earth Foundation Model -->
+      <div class="src-card gpa-src">
+        <div class="src-card-title">
+          <span class="ico">🧠</span> 해양 수치모델
+          <span class="gpa-badge">GPA ①</span>
+        </div>
+        <ul>
+          <li>ROMS, HYCOM (전통 수치모델)</li>
+          <li style="color:var(--gpa);font-weight:700">+ Earth FM 파인튜닝</li>
+          <li style="color:var(--gpa)">GraphCast · FourCastNet</li>
+          <li style="color:var(--gpa)">한국 연안 특화 예측</li>
+          <li>수온·해류·DO·염분</li>
+        </ul>
+      </div>
+
+      <div class="src-card">
+        <div class="src-card-title"><span class="ico">📡</span> 현장 IoT 센서</div>
+        <ul><li>수온·DO·염분·pH</li><li>조위·유속 (양식장)</li></ul>
+      </div>
+
+      <div class="src-card">
+        <div class="src-card-title"><span class="ico">🐟</span> 수과원 관측/예측</div>
+        <ul><li>적조 발생 정보</li><li>유해생물 관측 자료</li><li>고수온 특보</li></ul>
+      </div>
+
+      <div class="src-card">
+        <div class="src-card-title"><span class="ico">🌤</span> 기상 데이터</div>
+        <ul><li>기온·강수·풍속·풍향</li><li>기상예보 (단기/중기)</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② 데이터 통합·처리 -->
+  <div>
+    <div class="col-header ch-blue">데이터 통합·처리 레이어</div>
+    <div class="col-body">
+
+      <div class="proc-block">
+        <div class="proc-title">사공간 정렬 및 격자화</div>
+        <div class="proc-body">500m~1km 격자 통합<br>좌표계 표준화 (EPSG:4326)</div>
+      </div>
+
+      <!-- GPA ② PINN 기반 결측 보정 -->
+      <div class="proc-block gpa-block">
+        <div class="proc-title gpa-title">🔬 결측 보정 <span class="tag-gpa">GPA ②</span></div>
+        <div class="proc-body">
+          <strong style="color:var(--gpa)">PINN 기반 물리 보간</strong><br>
+          해양 방정식 내장 신경망으로<br>
+          관측 공백 격자 값 생성<br>
+          (열전달·연속방정식 제약)
+        </div>
+        <div class="proc-mono gpa-mono">Physics-Informed NN<br>∂T/∂t + u·∇T = κ∇²T</div>
+        <div class="proc-body" style="margin-top:5px;color:var(--text3)">
+          vs. 기존 통계 보간(IDW):<br>
+          물리적으로 유효한 값만 허용
+        </div>
+      </div>
+
+      <div class="proc-block">
+        <div class="proc-title">품질 관리 (QC)</div>
+        <div class="proc-body">이상값 필터링<br>시계열 일관성 검증</div>
+      </div>
+
+      <div class="proc-block">
+        <div class="proc-title">L1 상태변수 생성</div>
+        <div class="proc-body">표준화 (0~1 스케일)<br>수온·DO·적조·클로로필<br>변화율·유속 등 파생변수</div>
+        <div class="proc-mono">표준화 환경 상태 데이터</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ 전국 CRI 분석 엔진 -->
+  <div>
+    <div class="col-header ch-teal">전국 CRI 분석 엔진</div>
+    <div class="col-body">
+
+      <div class="cri-box">
+        <div class="proc-title" style="color:var(--teal)">복합위험지수 (CRI) 산정</div>
+        <div class="cri-formula">CRI = Σ wᵢFᵢ + Σ wᵢⱼ|Fᵢ||Fⱼ|</div>
+        <div class="cri-spec">
+          <span>6대 축</span>: 생물·물리·화학·해양환경·기상·운영<br>
+          wᵢⱼ: 복합 상호작용 가중치 (XAI 학습)
+        </div>
+      </div>
+
+      <div class="heatmap-mock">
+        <span class="heatmap-label">CRI Heatmap 0→100</span>
+      </div>
+
+      <div class="proc-block">
+        <div class="proc-title" style="color:var(--teal)">XAI/SHAP 원인 분해</div>
+        <div class="proc-body">요인별 기여도 산출<br>"적조 55% + 고수온 28%"<br>원인 설명 자동 생성</div>
+      </div>
+
+      <div class="proc-block">
+        <div class="proc-title">공간 해상도</div>
+        <div class="proc-body">전국: <strong>500m~1km</strong> 격자<br>갱신: <strong>3시간</strong> 단위<br>출력: CRI Heatmap (0~100)</div>
+      </div>
+
+      <div style="background:var(--gray1);border-radius:6px;padding:7px 9px;font-size:10px;color:var(--text3);border-left:3px solid var(--teal)">
+        전국 해역 상시 모니터링
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ 이벤트 트리거 + 정밀 분석 -->
+  <div>
+    <div class="col-header ch-green">이벤트 트리거 + 정밀 분석</div>
+    <div class="col-body">
+
+      <div class="proc-block" style="border-left:3px solid var(--coral)">
+        <div class="proc-title" style="color:var(--coral)">트리거 조건</div>
+        <div class="trigger-item"><div class="trigger-dot td-red"></div>CRI &gt; 임계치 (예: 60)</div>
+        <div class="trigger-item"><div class="trigger-dot td-amber"></div>급격한 상승 감지</div>
+        <div class="trigger-item"><div class="trigger-dot td-blue"></div>특정 패턴 탐지<br>&nbsp;&nbsp;&nbsp;(고수온+적조+저산소)</div>
+      </div>
+
+      <div style="text-align:center;font-size:11px;color:var(--text3);padding:4px 0">위험지역 자동 선정</div>
+
+      <div class="proc-block" style="border-left:3px solid var(--green)">
+        <div class="proc-title" style="color:var(--green)">양식장 정밀 분석</div>
+        <div class="proc-body">
+          센서 데이터 실시간 결합<br>
+          고해상도 보정 (양식장 단위)<br>
+          폐사 확률 예측 (24~72h)<br>
+          <strong>공간 해상도: 양식장 단위</strong>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div style="background:var(--gray1);border-radius:6px;padding:8px 10px;">
+        <div style="font-size:11px;font-weight:700;margin-bottom:5px;color:var(--text)">분석 결과 (Risk Package)</div>
+        <div class="risk-item ri-danger"><span class="ri-label">CRI (복합위험도)</span><span class="ri-val">78 / 위험</span></div>
+        <div class="risk-item ri-danger"><span class="ri-label">폐사 확률</span><span class="ri-val">62%</span></div>
+        <div class="risk-item ri-warn"><span class="ri-label">주요 원인 기여도</span><span class="ri-val">적조 55%</span></div>
+        <div class="risk-item ri-info"><span class="ri-label">위험 유형 분류</span><span class="ri-val">복합형</span></div>
+        <div class="risk-item ri-gpa"><span class="ri-label">예측 신뢰도 (GPA)</span><span class="ri-val">93.2%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑤ 의사결정 AI 엔진 -->
+  <div>
+    <div class="col-header ch-purple">의사결정 AI 엔진</div>
+    <div class="col-body">
+
+      <div class="proc-block" style="border-left:3px solid var(--purple)">
+        <div class="proc-title" style="color:var(--purple)">시나리오 시뮬레이션</div>
+        <div class="proc-body">
+          대응 시나리오 자동 생성<br>
+          결과 비교 (폐사·손실 감소)<br>
+          제약조건 (비용·시간·인력)
+        </div>
+      </div>
+
+      <!-- GPA ③ 예측 정확도 향상 -->
+      <div class="proc-block gpa-block">
+        <div class="proc-title gpa-title">🔮 72h 예측 엔진 <span class="tag-gpa">GPA ③</span></div>
+        <div class="proc-body">
+          <strong style="color:var(--gpa)">Earth FM 기반 고정밀 예측</strong><br>
+          GraphCast 파인튜닝 모델로<br>
+          72시간 수온·기상 예측<br>
+          → CRI 예보 정확도 향상
+        </div>
+        <div class="proc-mono gpa-mono">전통 NWP 대비<br>동등 정확도 · 100× 속도</div>
+      </div>
+
+      <div class="proc-block" style="border-left:3px solid var(--purple)">
+        <div class="proc-title" style="color:var(--purple)">최적 행동 추천 (L3)</div>
+        <div class="proc-body">
+          ① 사료 공급 즉시 중단<br>
+          ② 산소공급기 전체 가동<br>
+          ③ 가두리 이동 검토<br>
+          ④ 조기 출하 타이밍 제공
+        </div>
+      </div>
+
+      <div class="proc-block">
+        <div class="proc-title">출하 최적화</div>
+        <div class="proc-body">CRI 72h 예보 연동<br>경제적 최적 출하 시점<br>손실 최소화 전략</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑥ 서비스·플랫폼 레이어 -->
+  <div>
+    <div class="col-header ch-navy">서비스 / 플랫폼 레이어</div>
+    <div class="col-body">
+
+      <div class="svc-card">
+        <div class="svc-title">🖥 대시보드 (웹)</div>
+        <div class="svc-body">지역 선정·양식장 선택<br>해역 CRI 지도 시각화<br>시계열·원인 분석</div>
+        <span class="svc-tag">지자체</span><span class="svc-tag">해수부</span>
+      </div>
+
+      <div class="svc-card">
+        <div class="svc-title">📱 모바일 앱</div>
+        <div class="svc-body">
+          양식장 위치 기반 CRI<br>
+          행동 지침 카드<br>
+          72h 예보 + 출하 타이밍<br>
+          위험 푸시 알림
+        </div>
+        <span class="svc-tag">어업인</span><span class="svc-tag">양식업자</span>
+      </div>
+
+      <div class="svc-card">
+        <div class="svc-title">🔌 API / 데이터 서비스</div>
+        <div class="svc-body">
+          REST API 제공<br>
+          /risk-index · /forecast<br>
+          외부 시스템 연계
+        </div>
+        <span class="svc-tag">연구기관</span><span class="svc-tag">민간</span>
+      </div>
+
+      <div class="svc-card">
+        <div class="svc-title">🔔 알림 채널</div>
+        <div class="svc-body">SMS · 카카오톡<br>이메일 · 앱 푸시</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main-grid -->
+
+<!-- 하단 3열 -->
+<div class="bottom-grid">
+
+  <!-- 운용 흐름 -->
+  <div class="bottom-box">
+    <div class="bottom-header bh-blue">운용 흐름 (Step-by-Step)</div>
+    <div class="bottom-body">
+      <div class="step-flow">
+        <div class="step-item">
+          <div class="step-circle sc-blue">🛰</div>
+          <div class="step-num">STEP 1</div>
+          <div class="step-name">데이터 수집</div>
+        </div>
+        <div class="step-arrow">›</div>
+        <div class="step-item">
+          <div class="step-circle sc-purple">🧠</div>
+          <div class="step-num" style="color:var(--gpa)">GPA</div>
+          <div class="step-name" style="color:var(--gpa)">보간·예측</div>
+        </div>
+        <div class="step-arrow">›</div>
+        <div class="step-item">
+          <div class="step-circle sc-teal">📊</div>
+          <div class="step-num">STEP 2</div>
+          <div class="step-name">CRI 계산</div>
+        </div>
+        <div class="step-arrow">›</div>
+        <div class="step-item">
+          <div class="step-circle sc-amber">⚠️</div>
+          <div class="step-num">STEP 3</div>
+          <div class="step-name">위험 탐지</div>
+        </div>
+        <div class="step-arrow">›</div>
+        <div class="step-item">
+          <div class="step-circle sc-coral">🔬</div>
+          <div class="step-num">STEP 4</div>
+          <div class="step-name">정밀 분석</div>
+        </div>
+        <div class="step-arrow">›</div>
+        <div class="step-item">
+          <div class="step-circle sc-purple">🤖</div>
+          <div class="step-num">STEP 5</div>
+          <div class="step-name">의사결정</div>
+        </div>
+        <div class="step-arrow">›</div>
+        <div class="step-item">
+          <div class="step-circle sc-green">📲</div>
+          <div class="step-num">STEP 6</div>
+          <div class="step-name">사용자 전달</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:8px;font-size:10px;color:var(--text3)">
+        <span style="background:var(--gray2);border-radius:4px;padding:3px 8px;">상시 3시간 단위 갱신</span>
+        <span style="background:var(--gray2);border-radius:4px;padding:3px 8px;">필요 시 1~3시간 단위 (양식장)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 서비스 대상 -->
+  <div class="bottom-box">
+    <div class="bottom-header bh-teal">서비스 대상 (사용자별 맞춤)</div>
+    <div class="bottom-body">
+      <div class="user-list">
+        <div class="user-chip">
+          <div class="user-chip-title">🏛 정부·지자체</div>
+          <ul>
+            <li>전국 모니터링·조기 경보</li>
+            <li>정책 의사결정 지원</li>
+            <li>상황 공유 및 전파 체계</li>
+          </ul>
+        </div>
+        <div class="user-chip">
+          <div class="user-chip-title">🐟 양식장·어업인</div>
+          <ul>
+            <li>개별 양식장 위험 분석</li>
+            <li>대응 전략 및 실행 지원</li>
+            <li>손실 최소화·생산성 향상</li>
+            <li>출하 타이밍 최적화</li>
+          </ul>
+        </div>
+      </div>
+      <div style="margin-top:8px;background:var(--gpa-lt);border-radius:6px;padding:8px 10px;border-left:3px solid var(--gpa)">
+        <div style="font-size:10px;font-weight:700;color:var(--gpa);margin-bottom:3px">GPA 사용자 체감 효과</div>
+        <div style="font-size:10px;color:var(--text2)">예측 불확실 구간 축소 → 행동 지침 신뢰도 향상<br>관측 공백 해역에서도 CRI 산정 가능</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 해상도 및 GPA 역할 요약 -->
+  <div class="bottom-box">
+    <div class="bottom-header bh-navy">분석 해상도 + GPA 역할 요약</div>
+    <div class="bottom-body">
+      <div class="res-grid">
+        <div class="res-item">
+          <div class="res-val">500m</div>
+          <div class="res-lab">전국 공간 해상도</div>
+        </div>
+        <div class="res-item">
+          <div class="res-val">3h</div>
+          <div class="res-lab">데이터 갱신 주기</div>
+        </div>
+        <div class="res-item">
+          <div class="res-val">72h</div>
+          <div class="res-lab">CRI 예보 범위</div>
+        </div>
+        <div class="res-item" style="background:var(--gpa-lt)">
+          <div class="res-val" style="color:var(--gpa)">×3</div>
+          <div class="res-lab" style="color:var(--gpa)">GPA 공백 보정률</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;">
+        <div style="font-size:10px;font-weight:700;color:var(--text);margin-bottom:5px">GPA 3대 역할</div>
+        <div style="font-size:10px;color:var(--text2);background:var(--gpa-lt);border-radius:6px;padding:7px 9px;border-left:3px solid var(--gpa);line-height:1.8">
+          <strong style="color:var(--gpa)">① Earth FM 파인튜닝</strong> — 데이터 수집 레이어<br>
+          ROMS/HYCOM 대체·보완, 연안 특화 72h 예측<br>
+          <strong style="color:var(--gpa)">② PINN 물리 보간</strong> — 데이터 처리 레이어<br>
+          관측 공백 격자를 물리 방정식으로 채움<br>
+          <strong style="color:var(--gpa)">③ 예측 신뢰도 메타</strong> — Risk Package<br>
+          예측 불확실성 정량화, 행동 지침 신뢰도 제공
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 차별성 바 -->
+<div class="diff-bar">
+  <div class="diff-label">K-CRP 차별성</div>
+  <div class="diff-items">
+    <div class="diff-item">
+      <span class="di-ico">🔗</span>
+      <span class="di-txt">복합위험 통합 분석<br><small style="opacity:0.7">여러 요인 + 상호작용</small></span>
+    </div>
+    <div class="diff-item">
+      <span class="di-ico">🗺</span>
+      <span class="di-txt">전국 모니터링 + 현장 맞춤<br><small style="opacity:0.7">광역-국지 이중 해상도</small></span>
+    </div>
+    <div class="diff-item">
+      <span class="di-ico">🤖</span>
+      <span class="di-txt">XAI 기반 의사결정<br><small style="opacity:0.7">SHAP 원인 설명</small></span>
+    </div>
+    <div class="diff-item gpa-diff">
+      <span class="di-ico">🧠</span>
+      <span class="di-txt">Geophysical AI<br><small style="opacity:0.7">PINN + Earth FM</small></span>
+    </div>
+    <div class="diff-item">
+      <span class="di-ico">📈</span>
+      <span class="di-txt">피해 예측 + 경제성<br><small style="opacity:0.7">손실 절감 효과</small></span>
+    </div>
+  </div>
+  <div class="diff-slogan">"전국을 보고,<br>현장에서 결정한다"</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,3741 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K-CRP | 통합 플랫폼 데모</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;background:#060F1A;}
+body{font-family:"Noto Sans KR",sans-serif;display:flex;flex-direction:column;color:#C8E6F7;}
+.u-hdr{
+  background:#07121F;border-bottom:2px solid #0D9488;
+  height:52px;flex-shrink:0;display:flex;align-items:center;padding:0 18px;gap:14px;z-index:100;
+}
+.u-logo{font-family:"Bebas Neue",sans-serif;font-size:21px;letter-spacing:4px;color:#14B8A6;text-shadow:0 0 18px rgba(20,184,166,.5);}
+.u-logo span{color:#C8E6F7;opacity:.3;margin:0 4px;}
+.u-title{font-size:12px;color:#6EA8C8;}
+.u-nav{display:flex;gap:3px;margin:0 auto;}
+.u-btn{
+  padding:5px 16px;border-radius:5px;border:1px solid #122840;font-size:11px;
+  font-weight:600;color:#35607E;cursor:pointer;background:transparent;
+  font-family:"Noto Sans KR",sans-serif;transition:all .22s;white-space:nowrap;
+}
+.u-btn:hover{border-color:#1A3A55;color:#6EA8C8;}
+.u-btn.on{background:rgba(13,148,136,.2);border-color:#14B8A6;color:#14B8A6;box-shadow:0 0 10px rgba(13,148,136,.18);}
+.u-right{display:flex;align-items:center;gap:9px;flex-shrink:0;}
+.u-live{display:flex;align-items:center;gap:5px;padding:2px 9px;border-radius:10px;
+  background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);
+  font-size:10px;color:#10B981;font-weight:600;}
+.u-dot{width:5px;height:5px;border-radius:50%;background:#10B981;animation:ud 1.5s infinite;}
+@keyframes ud{0%,100%{opacity:1}50%{opacity:.2}}
+.u-clk{font-family:"JetBrains Mono",monospace;font-size:11px;color:#35607E;}
+
+.u-sub{
+  background:#0A1A28;border-bottom:1px solid #122840;height:30px;flex-shrink:0;
+  display:flex;align-items:center;padding:0 16px;gap:8px;
+}
+.u-sub-title{font-size:10px;font-weight:600;color:#35607E;letter-spacing:.4px;}
+.u-sub-badge{font-size:9px;padding:1px 7px;border-radius:6px;font-weight:600;}
+
+.iframe-wrap{flex:1;overflow:hidden;position:relative;}
+.mod-frame{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  border:none;display:none;
+}
+.mod-frame.on{display:block;}
+
+.u-sb{
+  height:26px;background:rgba(5,12,22,.98);border-top:1px solid #122840;
+  display:flex;align-items:center;padding:0 14px;gap:14px;flex-shrink:0;
+}
+.u-sbi{display:flex;align-items:center;gap:4px;font-size:10px;color:#35607E;}
+.u-sbd{width:5px;height:5px;border-radius:50%;}
+</style>
+</head>
+<body>
+
+<header class="u-hdr">
+  <div class="u-logo">K<span>|</span>CRP</div>
+  <div class="u-title">XAI 복합 연안환경위험 실시간 진단·예측 및 정책지원 플랫폼</div>
+  <nav class="u-nav">
+    <button class="u-btn on" onclick="uSwitch('algo',this)">① 복합위험 알고리즘</button>
+    <button class="u-btn"    onclick="uSwitch('gpa', this)">② GPA 분석엔진</button>
+    <button class="u-btn"    onclick="uSwitch('xai', this)">③ XAI 리포트</button>
+    <button class="u-btn"    onclick="uSwitch('gis', this)">④ GIS 정책지원 플랫폼</button>
+  </nav>
+  <div class="u-right">
+    <div class="u-live"><div class="u-dot"></div>LIVE</div>
+    <div class="u-clk" id="u-clk">2025-08-03 14:32:00</div>
+  </div>
+</header>
+
+<div id="u-sub" class="u-sub">
+  <span class="u-sub-title" id="u-sub-title">① 복합위험 알고리즘 — 시나리오 설정 및 GPA 예측 실행</span>
+  <span class="u-sub-badge" id="u-sub-badge" style="background:rgba(14,95,161,.18);border:1px solid #38BDF8;color:#38BDF8">알고리즘 v1.2</span>
+</div>
+
+<div class="iframe-wrap">
+  <iframe class="mod-frame on" id="fr-algo" srcdoc="<!DOCTYPE html>
+<html lang=&quot;ko&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>K-CRP | 복합위험 진단·예측 알고리즘</title>
+<link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;>
+<link href=&quot;https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Bebas+Neue&amp;display=swap&quot; rel=&quot;stylesheet&quot;>
+<style>
+:root {
+  --navy:    #060F1A;
+  --navy2:   #0A1A28;
+  --navy3:   #0D2135;
+  --panel:   #091828;
+  --border:  #163248;
+  --border2: #1E3F5A;
+  --teal:    #0D9488;
+  --teal2:   #14B8A6;
+  --teal3:   #5EEAD4;
+  --blue:    #0E5FA1;
+  --sky:     #38BDF8;
+  --amber:   #F59E0B;
+  --orange:  #EA580C;
+  --red:     #EF4444;
+  --green:   #10B981;
+  --purple:  #8B5CF6;
+  --pink:    #EC4899;
+  --text:    #D9EEF9;
+  --text2:   #7AAEC8;
+  --text3:   #3E6B88;
+  --white:   #FFFFFF;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--navy);color:var(--text);display:flex;flex-direction:column;}
+
+/* ── 헤더 ── */
+.hdr{
+  background:var(--panel);border-bottom:1px solid var(--border);
+  height:52px;flex-shrink:0;display:flex;align-items:center;padding:0 18px;gap:14px;z-index:200;
+}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:3px;color:var(--teal2);text-shadow:0 0 18px rgba(20,184,166,.4);}
+.logo span{color:var(--text);opacity:.4;margin:0 5px;}
+.hdr-title{font-size:12px;color:var(--text2);}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.hbadge{font-size:10px;padding:3px 9px;border-radius:10px;font-weight:600;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);color:var(--green);}
+.hbadge2{font-size:10px;padding:3px 9px;border-radius:10px;font-weight:600;background:rgba(14,95,161,.15);border:1px solid rgba(14,95,161,.3);color:var(--sky);}
+.clk{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);}
+
+/* ── 3단 레이아웃 ── */
+.layout{display:flex;flex:1;overflow:hidden;}
+
+/* ═══ 왼쪽: 시나리오 설정 패널 ═══ */
+.setup-panel{
+  width:268px;flex-shrink:0;
+  background:var(--panel);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.sp-head{
+  padding:12px 14px 10px;border-bottom:1px solid var(--border);
+  font-size:10px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;
+}
+.sp-scroll{flex:1;overflow-y:auto;padding:10px 12px;}
+.sp-scroll::-webkit-scrollbar{width:3px;}
+.sp-scroll::-webkit-scrollbar-thumb{background:var(--border);}
+
+/* 섹션 */
+.sp-sec{margin-bottom:14px;}
+.sp-sec-title{
+  font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1.5px;
+  text-transform:uppercase;margin-bottom:8px;
+  display:flex;align-items:center;gap:6px;
+}
+.sp-sec-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* 권역 선택 */
+.region-btns{display:grid;grid-template-columns:1fr 1fr;gap:4px;}
+.rbtn{
+  padding:6px 8px;border-radius:5px;border:1px solid var(--border);
+  font-size:10px;color:var(--text3);cursor:pointer;background:transparent;
+  font-family:'Noto Sans KR',sans-serif;transition:all .2s;text-align:center;
+}
+.rbtn:hover{border-color:var(--border2);color:var(--text2);}
+.rbtn.on{background:rgba(13,148,136,.15);border-color:var(--teal);color:var(--teal2);}
+
+/* 시나리오 카드 */
+.scenario-card{
+  background:var(--navy3);border:1px solid var(--border);border-radius:6px;
+  padding:10px 11px;margin-bottom:5px;cursor:pointer;transition:all .2s;
+}
+.scenario-card:hover{border-color:var(--border2);}
+.scenario-card.on{border-color:var(--teal);background:rgba(13,148,136,.08);}
+.sc-head{display:flex;align-items:center;gap:7px;margin-bottom:5px;}
+.sc-icon{width:22px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+.sc-name{font-size:11px;font-weight:600;color:var(--text);}
+.sc-desc{font-size:9px;color:var(--text3);line-height:1.5;}
+.sc-check{margin-left:auto;font-size:12px;color:var(--teal2);display:none;}
+.scenario-card.on .sc-check{display:block;}
+
+/* 슬라이더 */
+.slider-row{margin-bottom:10px;}
+.sl-label{display:flex;justify-content:space-between;font-size:10px;color:var(--text2);margin-bottom:5px;}
+.sl-val{font-family:'JetBrains Mono',monospace;color:var(--teal2);font-weight:600;}
+input[type=range]{
+  width:100%;height:4px;border-radius:2px;outline:none;border:none;cursor:pointer;
+  background:linear-gradient(90deg,var(--teal) var(--pct,50%),rgba(255,255,255,.08) var(--pct,50%));
+  -webkit-appearance:none;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:13px;height:13px;border-radius:50%;
+  background:var(--teal2);border:2px solid var(--navy);box-shadow:0 0 6px rgba(20,184,166,.4);
+}
+
+/* 실행 버튼 */
+.run-btn{
+  margin:10px 12px 12px;padding:10px 0;border-radius:6px;border:none;
+  background:linear-gradient(135deg,var(--teal),var(--blue));
+  color:var(--white);font-size:12px;font-weight:700;cursor:pointer;
+  font-family:'Noto Sans KR',sans-serif;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:opacity .2s;box-shadow:0 4px 16px rgba(13,148,136,.25);
+  flex-shrink:0;
+}
+.run-btn:hover{opacity:.9;}
+.run-btn:active{transform:scale(.98);}
+.run-spinner{width:12px;height:12px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;display:none;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ═══ 중앙: 결과 시각화 ═══ */
+.result-area{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:14px;}
+.result-area::-webkit-scrollbar{width:4px;}
+.result-area::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+/* 진행 오버레이 */
+.run-overlay{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  background:rgba(6,15,26,.85);backdrop-filter:blur(4px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:16px;z-index:50;opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.run-overlay.show{opacity:1;pointer-events:all;}
+.run-circle{
+  width:64px;height:64px;border-radius:50%;
+  border:3px solid var(--border2);border-top-color:var(--teal2);
+  animation:spin .8s linear infinite;
+}
+.run-step{font-size:12px;color:var(--teal2);font-family:'JetBrains Mono',monospace;}
+.run-prog-bg{width:200px;height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;}
+.run-prog{height:3px;background:var(--teal2);border-radius:2px;width:0%;transition:width .3s;}
+
+/* 섹션 헤더 */
+.sec-hdr{
+  font-size:10px;font-weight:700;color:var(--text3);letter-spacing:1.5px;
+  text-transform:uppercase;margin-bottom:0;
+  display:flex;align-items:center;gap:8px;
+}
+.sec-hdr::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* CRI 요약 카드 */
+.cri-summary{
+  background:var(--panel);border:1px solid var(--border);border-radius:10px;
+  padding:16px;position:relative;overflow:hidden;
+}
+.cri-summary::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gradBar,linear-gradient(90deg,var(--red),var(--orange)));}
+.cri-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+.cri-main{}
+.cri-region-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.cri-scenario-tag{font-size:10px;color:var(--text3);}
+.cri-right{text-align:right;}
+.cri-number{font-family:'JetBrains Mono',monospace;font-size:38px;font-weight:700;line-height:1;}
+.cri-unit{font-size:10px;color:var(--text3);margin-top:2px;}
+
+/* 72h 타임라인 바 */
+.timeline-bar{height:32px;border-radius:5px;overflow:hidden;display:flex;margin-bottom:8px;}
+.tlb-seg{display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:rgba(255,255,255,.8);transition:flex .8s;}
+.tl-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+
+/* 6개 예측 패널 */
+.pred-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.pred-card{
+  background:var(--panel);border:1px solid var(--border);border-radius:8px;
+  padding:12px;position:relative;overflow:hidden;
+}
+.pred-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.pred-card.heat::before{background:linear-gradient(90deg,var(--red),var(--orange));}
+.pred-card.oxy::before{background:linear-gradient(90deg,var(--blue),var(--sky));}
+.pred-card.algae::before{background:linear-gradient(90deg,var(--green),var(--teal2));}
+.pred-card.sed::before{background:linear-gradient(90deg,var(--amber),#F97316);}
+.pred-card.mld::before{background:linear-gradient(90deg,var(--purple),var(--pink));}
+.pred-card.cri::before{background:linear-gradient(90deg,var(--red),var(--purple));}
+.pc-label{font-size:9px;color:var(--text3);margin-bottom:6px;letter-spacing:.5px;}
+.pc-val{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;line-height:1;margin-bottom:4px;}
+.pc-unit{font-size:9px;color:var(--text3);font-family:'Noto Sans KR',sans-serif;font-weight:400;}
+.pc-trend{font-size:9px;margin-bottom:8px;}
+.pc-spark{height:36px;width:100%;}
+
+/* 피해 리스크 테이블 */
+.risk-table{background:var(--panel);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.rt-head{background:var(--navy3);display:grid;grid-template-columns:1fr 80px 80px 80px;padding:8px 12px;font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;}
+.rt-row{display:grid;grid-template-columns:1fr 80px 80px 80px;padding:9px 12px;border-top:1px solid var(--border);transition:background .15s;}
+.rt-row:hover{background:rgba(255,255,255,.02);}
+.rt-species{font-size:11px;color:var(--text);}
+.rt-cell{font-size:10px;color:var(--text2);text-align:center;font-family:'JetBrains Mono',monospace;}
+.rt-prob{font-weight:700;}
+.prob-h{color:var(--red);}
+.prob-m{color:var(--orange);}
+.prob-l{color:var(--amber);}
+.prob-n{color:var(--green);}
+.rt-risk-bar{height:4px;border-radius:2px;margin-top:3px;}
+
+/* 모델 구성 뷰 */
+.model-flow{
+  background:var(--panel);border:1px solid var(--border);border-radius:8px;
+  padding:14px;display:flex;align-items:center;gap:0;overflow-x:auto;
+}
+.mf-box{
+  background:var(--navy3);border:1px solid var(--border2);border-radius:6px;
+  padding:9px 12px;flex-shrink:0;text-align:center;min-width:90px;
+  transition:border-color .3s,background .3s;
+}
+.mf-box.active{border-color:var(--teal);background:rgba(13,148,136,.1);box-shadow:0 0 12px rgba(13,148,136,.15);}
+.mf-icon{font-size:16px;margin-bottom:4px;}
+.mf-label{font-size:9px;color:var(--text3);line-height:1.3;}
+.mf-name{font-size:10px;font-weight:700;color:var(--text2);margin-bottom:2px;}
+.mf-arrow{font-size:16px;color:var(--border2);padding:0 6px;flex-shrink:0;transition:color .3s;}
+.mf-arrow.active{color:var(--teal);}
+
+/* ═══ 오른쪽: 입력 모니터 ═══ */
+.input-panel{
+  width:248px;flex-shrink:0;
+  background:var(--panel);border-left:1px solid var(--border);
+  display:flex;flex-direction:column;overflow-hidden;
+}
+.ip-head{padding:12px 14px 10px;border-bottom:1px solid var(--border);font-size:10px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;}
+.ip-scroll{flex:1;overflow-y:auto;padding:10px 12px;}
+.ip-scroll::-webkit-scrollbar{width:3px;}
+.ip-scroll::-webkit-scrollbar-thumb{background:var(--border);}
+
+/* 데이터 소스 */
+.ds-card{background:var(--navy3);border:1px solid var(--border);border-radius:6px;padding:9px 11px;margin-bottom:6px;}
+.ds-top{display:flex;align-items:center;gap:7px;margin-bottom:5px;}
+.ds-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.ds-name{font-size:10px;font-weight:600;color:var(--text);}
+.ds-status{font-size:9px;margin-left:auto;font-family:'JetBrains Mono',monospace;}
+.ds-meta{font-size:9px;color:var(--text3);line-height:1.5;}
+
+/* 입력 변수 게이지 */
+.var-row{margin-bottom:8px;}
+.var-label{display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-bottom:3px;}
+.var-val{font-family:'JetBrains Mono',monospace;font-weight:600;}
+.var-bar-bg{height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;}
+.var-bar{height:5px;border-radius:3px;}
+
+/* 앙상블 분포 */
+.ensemble-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:2px;margin-bottom:4px;}
+.ens-dot{height:20px;border-radius:2px;opacity:.7;}
+
+/* 하단 상태바 */
+.statusbar{
+  height:26px;background:rgba(6,15,26,.96);border-top:1px solid var(--border);
+  display:flex;align-items:center;padding:0 16px;gap:18px;flex-shrink:0;
+}
+.sb-i{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);}
+.sb-d{width:5px;height:5px;border-radius:50%;background:var(--green);}
+.sb-d.w{background:var(--amber);}
+
+/* 토스트 */
+#toast{position:fixed;bottom:38px;left:50%;transform:translateX(-50%) translateY(50px);background:rgba(13,148,136,.95);border:1px solid var(--teal2);border-radius:8px;padding:8px 18px;font-size:11px;color:var(--white);opacity:0;transition:all .3s;z-index:9999;white-space:nowrap;}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+</style>
+</head>
+<body>
+
+<!-- 헤더 -->
+<header class=&quot;hdr&quot;>
+  <div class=&quot;logo&quot;>K<span>|</span>CRP</div>
+  <div class=&quot;hdr-title&quot;>복합위험 진단·예측 알고리즘 — 시나리오 설정 및 실행</div>
+  <div class=&quot;hdr-right&quot;>
+    <span class=&quot;hbadge2&quot;>① 알고리즘 모듈</span>
+    <span class=&quot;hbadge&quot;>GPA v2.1 가동 중</span>
+    <span class=&quot;clk&quot; id=&quot;clk&quot;>2025-08-03 14:32</span>
+  </div>
+</header>
+
+<div class=&quot;layout&quot; style=&quot;position:relative;&quot;>
+
+<!-- 실행 오버레이 -->
+<div class=&quot;run-overlay&quot; id=&quot;overlay&quot;>
+  <div class=&quot;run-circle&quot;></div>
+  <div class=&quot;run-step&quot; id=&quot;runStep&quot;>데이터 전처리 중...</div>
+  <div class=&quot;run-prog-bg&quot;><div class=&quot;run-prog&quot; id=&quot;runProg&quot;></div></div>
+  <div style=&quot;font-size:10px;color:var(--text3);&quot; id=&quot;runSub&quot;>ROMS/HYCOM 데이터 정합 중</div>
+</div>
+
+<!-- ═══ 왼쪽 설정 패널 ═══ -->
+<div class=&quot;setup-panel&quot;>
+  <div class=&quot;sp-head&quot;>① 시나리오 설정</div>
+  <div class=&quot;sp-scroll&quot;>
+
+    <!-- 권역 선택 -->
+    <div class=&quot;sp-sec&quot;>
+      <div class=&quot;sp-sec-title&quot;>분석 권역</div>
+      <div class=&quot;region-btns&quot;>
+        <div class=&quot;rbtn on&quot; onclick=&quot;selRegion(this,'남해 통영·거제')&quot;>통영·거제</div>
+        <div class=&quot;rbtn&quot; onclick=&quot;selRegion(this,'남해 여수·순천')&quot;>여수·순천</div>
+        <div class=&quot;rbtn&quot; onclick=&quot;selRegion(this,'서해 천수만')&quot;>천수만</div>
+        <div class=&quot;rbtn&quot; onclick=&quot;selRegion(this,'서해 가로림만')&quot;>가로림만</div>
+        <div class=&quot;rbtn&quot; onclick=&quot;selRegion(this,'동해 강릉·속초')&quot;>강릉·속초</div>
+        <div class=&quot;rbtn&quot; onclick=&quot;selRegion(this,'남해 고흥')&quot;>고흥</div>
+      </div>
+    </div>
+
+    <!-- 예측 시나리오 -->
+    <div class=&quot;sp-sec&quot;>
+      <div class=&quot;sp-sec-title&quot;>복합위험 시나리오</div>
+
+      <div class=&quot;scenario-card on&quot; onclick=&quot;selScen(this,'heat')&quot;>
+        <div class=&quot;sc-head&quot;>
+          <div class=&quot;sc-icon&quot; style=&quot;background:rgba(239,68,68,.15)&quot;>🌡</div>
+          <div>
+            <div class=&quot;sc-name&quot;>고수온 + 빈산소</div>
+          </div>
+          <div class=&quot;sc-check&quot;>✓</div>
+        </div>
+        <div class=&quot;sc-desc&quot;>SST 임계치 초과 + 저층 DO 감소 동시 탐지<br>멀티변수 LSTM + Attention 모델</div>
+      </div>
+
+      <div class=&quot;scenario-card&quot; onclick=&quot;selScen(this,'algae')&quot;>
+        <div class=&quot;sc-head&quot;>
+          <div class=&quot;sc-icon&quot; style=&quot;background:rgba(16,185,129,.15)&quot;>🌿</div>
+          <div>
+            <div class=&quot;sc-name&quot;>적조 + 해류 + 수온</div>
+          </div>
+          <div class=&quot;sc-check&quot;>✓</div>
+        </div>
+        <div class=&quot;sc-desc&quot;>클로로필-a 급증 + 해류 확산 경로 예측<br>공간-시간 그래프 신경망 (ST-GNN)</div>
+      </div>
+
+      <div class=&quot;scenario-card&quot; onclick=&quot;selScen(this,'sed')&quot;>
+        <div class=&quot;sc-head&quot;>
+          <div class=&quot;sc-icon&quot; style=&quot;background:rgba(245,158,11,.15)&quot;>🟤</div>
+          <div>
+            <div class=&quot;sc-name&quot;>부유사·탁도 확산</div>
+          </div>
+          <div class=&quot;sc-check&quot;>✓</div>
+        </div>
+        <div class=&quot;sc-desc&quot;>위성 반사도 기반 탁도 역산 + 확산 추적<br>U-Net 위성 영상 분할 + 라그랑지안</div>
+      </div>
+
+      <div class=&quot;scenario-card&quot; onclick=&quot;selScen(this,'all')&quot;>
+        <div class=&quot;sc-head&quot;>
+          <div class=&quot;sc-icon&quot; style=&quot;background:rgba(139,92,246,.15)&quot;>⚡</div>
+          <div>
+            <div class=&quot;sc-name&quot;>전체 복합위험 통합</div>
+          </div>
+          <div class=&quot;sc-check&quot;>✓</div>
+        </div>
+        <div class=&quot;sc-desc&quot;>3개 시나리오 동시 분석<br>GPA 앙상블 통합 CRI 산출</div>
+      </div>
+    </div>
+
+    <!-- 예측 파라미터 -->
+    <div class=&quot;sp-sec&quot;>
+      <div class=&quot;sp-sec-title&quot;>예측 파라미터</div>
+
+      <div class=&quot;slider-row&quot;>
+        <div class=&quot;sl-label&quot;>
+          <span>예측 리드타임</span>
+          <span class=&quot;sl-val&quot; id=&quot;sv-lead&quot;>72h</span>
+        </div>
+        <input type=&quot;range&quot; min=&quot;24&quot; max=&quot;120&quot; value=&quot;72&quot; step=&quot;24&quot;
+          oninput=&quot;updSlider(this,'sv-lead',v=>v+'h')&quot;>
+      </div>
+
+      <div class=&quot;slider-row&quot;>
+        <div class=&quot;sl-label&quot;>
+          <span>앙상블 멤버 수</span>
+          <span class=&quot;sl-val&quot; id=&quot;sv-ens&quot;>50개</span>
+        </div>
+        <input type=&quot;range&quot; min=&quot;10&quot; max=&quot;100&quot; value=&quot;50&quot; step=&quot;10&quot;
+          oninput=&quot;updSlider(this,'sv-ens',v=>v+'개')&quot;>
+      </div>
+
+      <div class=&quot;slider-row&quot;>
+        <div class=&quot;sl-label&quot;>
+          <span>공간 해상도</span>
+          <span class=&quot;sl-val&quot; id=&quot;sv-res&quot;>500m</span>
+        </div>
+        <input type=&quot;range&quot; min=&quot;1&quot; max=&quot;5&quot; value=&quot;3&quot; step=&quot;1&quot;
+          oninput=&quot;updSlider(this,'sv-res',v=>['1km','750m','500m','300m','250m'][v-1])&quot;>
+      </div>
+
+      <div class=&quot;slider-row&quot;>
+        <div class=&quot;sl-label&quot;>
+          <span>물리 제약 강도 (λ)</span>
+          <span class=&quot;sl-val&quot; id=&quot;sv-phys&quot;>0.8</span>
+        </div>
+        <input type=&quot;range&quot; min=&quot;0&quot; max=&quot;10&quot; value=&quot;8&quot; step=&quot;1&quot;
+          oninput=&quot;updSlider(this,'sv-phys',v=>(v/10).toFixed(1))&quot;>
+      </div>
+    </div>
+
+    <!-- 초기 조건 -->
+    <div class=&quot;sp-sec&quot;>
+      <div class=&quot;sp-sec-title&quot;>초기 조건 설정</div>
+      <div style=&quot;display:grid;gap:5px;&quot;>
+        <div style=&quot;display:flex;justify-content:space-between;align-items:center;font-size:10px;&quot;>
+          <span style=&quot;color:var(--text2)&quot;>SST 초기값</span>
+          <span style=&quot;color:var(--teal2);font-family:'JetBrains Mono',monospace;font-size:11px;&quot;>29.2°C</span>
+        </div>
+        <div style=&quot;display:flex;justify-content:space-between;align-items:center;font-size:10px;&quot;>
+          <span style=&quot;color:var(--text2)&quot;>DO 초기값 (저층)</span>
+          <span style=&quot;color:var(--teal2);font-family:'JetBrains Mono',monospace;font-size:11px;&quot;>3.8 mg/L</span>
+        </div>
+        <div style=&quot;display:flex;justify-content:space-between;align-items:center;font-size:10px;&quot;>
+          <span style=&quot;color:var(--text2)&quot;>클로로필-a</span>
+          <span style=&quot;color:var(--teal2);font-family:'JetBrains Mono',monospace;font-size:11px;&quot;>4.1 μg/L</span>
+        </div>
+        <div style=&quot;display:flex;justify-content:space-between;align-items:center;font-size:10px;&quot;>
+          <span style=&quot;color:var(--text2)&quot;>자료동화 방식</span>
+          <span style=&quot;color:var(--text2);font-size:10px;&quot;>OI (최적내삽)</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /sp-scroll -->
+
+  <button class=&quot;run-btn&quot; id=&quot;runBtn&quot; onclick=&quot;runModel()&quot;>
+    <div class=&quot;run-spinner&quot; id=&quot;spinner&quot;></div>
+    <span id=&quot;runBtnTxt&quot;>▶ 예측 실행</span>
+  </button>
+</div><!-- /setup-panel -->
+
+<!-- ═══ 중앙 결과 ═══ -->
+<div class=&quot;result-area&quot; id=&quot;resultArea&quot;>
+
+  <!-- 모델 파이프라인 흐름도 -->
+  <div>
+    <div class=&quot;sec-hdr&quot; style=&quot;margin-bottom:10px&quot;>모델 처리 파이프라인</div>
+    <div class=&quot;model-flow&quot; id=&quot;modelFlow&quot;>
+      <div class=&quot;mf-box active&quot; id=&quot;mf0&quot;><div class=&quot;mf-icon&quot;>📡</div><div class=&quot;mf-name&quot;>데이터 입력</div><div class=&quot;mf-label&quot;>위성·관측·<br>수치모델</div></div>
+      <div class=&quot;mf-arrow active&quot; id=&quot;ma0&quot;>→</div>
+      <div class=&quot;mf-box active&quot; id=&quot;mf1&quot;><div class=&quot;mf-icon&quot;>⚙️</div><div class=&quot;mf-name&quot;>경량 물리층</div><div class=&quot;mf-label&quot;>다운스케일링<br>조석·MLD</div></div>
+      <div class=&quot;mf-arrow active&quot; id=&quot;ma1&quot;>→</div>
+      <div class=&quot;mf-box active&quot; id=&quot;mf2&quot;><div class=&quot;mf-icon&quot;>🤖</div><div class=&quot;mf-name&quot;>GPA 엔진</div><div class=&quot;mf-label&quot;>PINN+LSTM<br>ST-GNN</div></div>
+      <div class=&quot;mf-arrow active&quot; id=&quot;ma2&quot;>→</div>
+      <div class=&quot;mf-box active&quot; id=&quot;mf3&quot;><div class=&quot;mf-icon&quot;>📊</div><div class=&quot;mf-name&quot;>앙상블</div><div class=&quot;mf-label&quot;>불확실성<br>추정</div></div>
+      <div class=&quot;mf-arrow active&quot; id=&quot;ma3&quot;>→</div>
+      <div class=&quot;mf-box active&quot; id=&quot;mf4&quot;><div class=&quot;mf-icon&quot;>🎯</div><div class=&quot;mf-name&quot;>CRI 산출</div><div class=&quot;mf-label&quot;>복합위험지수<br>72h 예측</div></div>
+      <div class=&quot;mf-arrow active&quot; id=&quot;ma4&quot;>→</div>
+      <div class=&quot;mf-box active&quot; id=&quot;mf5&quot;><div class=&quot;mf-icon&quot;>🔍</div><div class=&quot;mf-name&quot;>XAI 분해</div><div class=&quot;mf-label&quot;>SHAP 기여도<br>자동 리포트</div></div>
+    </div>
+  </div>
+
+  <!-- CRI 요약 -->
+  <div>
+    <div class=&quot;sec-hdr&quot; style=&quot;margin-bottom:10px&quot;>복합위험지수 (CRI) 진단 결과</div>
+    <div class=&quot;cri-summary&quot; id=&quot;criCard&quot;>
+      <div class=&quot;cri-top&quot;>
+        <div class=&quot;cri-main&quot;>
+          <div class=&quot;cri-region-name&quot; id=&quot;criRegion&quot;>남해 통영·거제권</div>
+          <div class=&quot;cri-scenario-tag&quot; id=&quot;criScen&quot;>시나리오: 고수온 + 빈산소 | 2025-08-03 14:00 KST</div>
+        </div>
+        <div class=&quot;cri-right&quot;>
+          <div class=&quot;cri-number&quot; id=&quot;criNum&quot; style=&quot;color:var(--red)&quot;>0.74</div>
+          <div class=&quot;cri-unit&quot;>CRI (0~1)</div>
+          <div style=&quot;margin-top:5px&quot;>
+            <span style=&quot;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:var(--red)&quot; id=&quot;criLevel&quot;>4단계 경보</span>
+          </div>
+        </div>
+      </div>
+      <!-- 72h 타임라인 -->
+      <div style=&quot;margin-bottom:4px;font-size:9px;color:var(--text3);&quot;>72시간 위험단계 예측 분포</div>
+      <div class=&quot;timeline-bar&quot; id=&quot;tlBar&quot;>
+        <div class=&quot;tlb-seg&quot; style=&quot;flex:8;background:var(--red)&quot;>경보(4)</div>
+        <div class=&quot;tlb-seg&quot; style=&quot;flex:2;background:var(--orange)&quot;>경보(3)</div>
+      </div>
+      <div class=&quot;tl-labels&quot;><span>0h</span><span>12h</span><span>24h</span><span>36h</span><span>48h</span><span>60h</span><span>72h</span></div>
+    </div>
+  </div>
+
+  <!-- 6개 예측 변수 패널 -->
+  <div>
+    <div class=&quot;sec-hdr&quot; style=&quot;margin-bottom:10px&quot;>핵심 변수별 72h 예측</div>
+    <div class=&quot;pred-grid&quot;>
+
+      <!-- 수온 -->
+      <div class=&quot;pred-card heat&quot;>
+        <div class=&quot;pc-label&quot;>🌡 표층 수온 (SST)</div>
+        <div class=&quot;pc-val&quot; style=&quot;color:var(--red)&quot;>29.2<span class=&quot;pc-unit&quot;> °C</span></div>
+        <div class=&quot;pc-trend&quot; style=&quot;color:var(--red)&quot;>▲ 72h 후 최고 30.1°C 예측</div>
+        <svg class=&quot;pc-spark&quot; viewBox=&quot;0 0 120 36&quot;>
+          <polyline points=&quot;0,28 15,26 30,23 45,19 60,16 75,13 90,11 105,10 120,9&quot; fill=&quot;none&quot; stroke=&quot;rgba(239,68,68,.6)&quot; stroke-width=&quot;1.5&quot;/>
+          <line x1=&quot;0&quot; y1=&quot;18&quot; x2=&quot;120&quot; y2=&quot;18&quot; stroke=&quot;rgba(239,68,68,.2)&quot; stroke-width=&quot;1&quot; stroke-dasharray=&quot;3,2&quot;/>
+          <text x=&quot;0&quot; y=&quot;35&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.2)&quot; font-family=&quot;JetBrains Mono&quot;>now</text>
+          <text x=&quot;96&quot; y=&quot;35&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.2)&quot; font-family=&quot;JetBrains Mono&quot;>+72h</text>
+        </svg>
+      </div>
+
+      <!-- 빈산소 -->
+      <div class=&quot;pred-card oxy&quot;>
+        <div class=&quot;pc-label&quot;>💧 저층 DO</div>
+        <div class=&quot;pc-val&quot; style=&quot;color:var(--sky)&quot;>3.8<span class=&quot;pc-unit&quot;> mg/L</span></div>
+        <div class=&quot;pc-trend&quot; style=&quot;color:var(--red)&quot;>▼ 72h 후 최저 3.1mg/L 예측</div>
+        <svg class=&quot;pc-spark&quot; viewBox=&quot;0 0 120 36&quot;>
+          <polyline points=&quot;0,12 15,14 30,17 45,20 60,24 75,27 90,29 105,30 120,31&quot; fill=&quot;none&quot; stroke=&quot;rgba(56,189,248,.6)&quot; stroke-width=&quot;1.5&quot;/>
+          <line x1=&quot;0&quot; y1=&quot;20&quot; x2=&quot;120&quot; y2=&quot;20&quot; stroke=&quot;rgba(56,189,248,.2)&quot; stroke-width=&quot;1&quot; stroke-dasharray=&quot;3,2&quot;/>
+          <text x=&quot;0&quot; y=&quot;35&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.2)&quot; font-family=&quot;JetBrains Mono&quot;>now</text>
+          <text x=&quot;96&quot; y=&quot;35&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.2)&quot; font-family=&quot;JetBrains Mono&quot;>+72h</text>
+        </svg>
+      </div>
+
+      <!-- 클로로필 -->
+      <div class=&quot;pred-card algae&quot;>
+        <div class=&quot;pc-label&quot;>🌿 클로로필-a</div>
+        <div class=&quot;pc-val&quot; style=&quot;color:var(--green)&quot;>4.1<span class=&quot;pc-unit&quot;> μg/L</span></div>
+        <div class=&quot;pc-trend&quot; style=&quot;color:var(--green)&quot;>— 적조 임계치 이하 유지</div>
+        <svg class=&quot;pc-spark&quot; viewBox=&quot;0 0 120 36&quot;>
+          <polyline points=&quot;0,20 15,19 30,21 45,20 60,19 75,20 90,21 105,19 120,20&quot; fill=&quot;none&quot; stroke=&quot;rgba(16,185,129,.6)&quot; stroke-width=&quot;1.5&quot;/>
+          <line x1=&quot;0&quot; y1=&quot;12&quot; x2=&quot;120&quot; y2=&quot;12&quot; stroke=&quot;rgba(16,185,129,.2)&quot; stroke-width=&quot;1&quot; stroke-dasharray=&quot;3,2&quot;/>
+          <text x=&quot;0&quot; y=&quot;35&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.2)&quot; font-family=&quot;JetBrains Mono&quot;>now</text>
+        </svg>
+      </div>
+
+      <!-- MLD -->
+      <div class=&quot;pred-card mld&quot;>
+        <div class=&quot;pc-label&quot;>🔵 혼합층 깊이 (MLD)</div>
+        <div class=&quot;pc-val&quot; style=&quot;color:var(--purple)&quot;>4.2<span class=&quot;pc-unit&quot;> m</span></div>
+        <div class=&quot;pc-trend&quot; style=&quot;color:var(--red)&quot;>▼ 24h 후 3.1m → 빈산소 심화</div>
+        <svg class=&quot;pc-spark&quot; viewBox=&quot;0 0 120 36&quot;>
+          <polyline points=&quot;0,10 20,13 40,17 60,22 80,26 100,29 120,30&quot; fill=&quot;none&quot; stroke=&quot;rgba(139,92,246,.6)&quot; stroke-width=&quot;1.5&quot;/>
+          <text x=&quot;0&quot; y=&quot;35&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.2)&quot; font-family=&quot;JetBrains Mono&quot;>now</text>
+        </svg>
+      </div>
+
+      <!-- 부유사 -->
+      <div class=&quot;pred-card sed&quot;>
+        <div class=&quot;pc-label&quot;>🟤 부유사 농도</div>
+        <div class=&quot;pc-val&quot; style=&quot;color:var(--amber)&quot;>12.7<span class=&quot;pc-unit&quot;> mg/L</span></div>
+        <div class=&quot;pc-trend&quot; style=&quot;color:var(--text3)&quot;>— 조류 영향 소폭 변동</div>
+        <svg class=&quot;pc-spark&quot; viewBox=&quot;0 0 120 36&quot;>
+          <polyline points=&quot;0,18 20,17 40,19 60,16 80,18 100,17 120,18&quot; fill=&quot;none&quot; stroke=&quot;rgba(245,158,11,.6)&quot; stroke-width=&quot;1.5&quot;/>
+          <text x=&quot;0&quot; y=&quot;35&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.2)&quot; font-family=&quot;JetBrains Mono&quot;>now</text>
+        </svg>
+      </div>
+
+      <!-- 복합 CRI -->
+      <div class=&quot;pred-card cri&quot;>
+        <div class=&quot;pc-label&quot;>⚡ 복합위험지수 (CRI)</div>
+        <div class=&quot;pc-val&quot; style=&quot;color:var(--red)&quot;>0.74<span class=&quot;pc-unit&quot;> /1.0</span></div>
+        <div class=&quot;pc-trend&quot; style=&quot;color:var(--red)&quot;>▲ 4단계 유지 · 72h 후 0.68</div>
+        <svg class=&quot;pc-spark&quot; viewBox=&quot;0 0 120 36&quot;>
+          <path d=&quot;M0,18 C20,16 40,12 60,10 C80,8 100,9 120,11&quot; fill=&quot;none&quot; stroke=&quot;rgba(239,68,68,.6)&quot; stroke-width=&quot;1.5&quot;/>
+          <path d=&quot;M0,18 C20,16 40,12 60,10 C80,8 100,9 120,11 C110,15 90,18 60,20 C30,22 15,21 0,20Z&quot; fill=&quot;rgba(239,68,68,.06)&quot;/>
+          <line x1=&quot;0&quot; y1=&quot;22&quot; x2=&quot;120&quot; y2=&quot;22&quot; stroke=&quot;rgba(239,68,68,.2)&quot; stroke-width=&quot;1&quot; stroke-dasharray=&quot;3,2&quot;/>
+          <text x=&quot;0&quot; y=&quot;35&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.2)&quot; font-family=&quot;JetBrains Mono&quot;>now</text>
+        </svg>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 피해 리스크 테이블 -->
+  <div>
+    <div class=&quot;sec-hdr&quot; style=&quot;margin-bottom:10px&quot;>양식 품종별 피해 리스크 평가</div>
+    <div class=&quot;risk-table&quot;>
+      <div class=&quot;rt-head&quot;>
+        <span>품종</span><span style=&quot;text-align:center&quot;>24h 피해확률</span><span style=&quot;text-align:center&quot;>48h 피해확률</span><span style=&quot;text-align:center&quot;>예상 피해규모</span>
+      </div>
+      <div class=&quot;rt-row&quot;>
+        <div><div class=&quot;rt-species&quot;>🐟 넙치 (광어)</div><div class=&quot;rt-risk-bar&quot; style=&quot;width:88%;background:var(--red)&quot;></div></div>
+        <div class=&quot;rt-cell prob-h&quot;>88%</div>
+        <div class=&quot;rt-cell prob-h&quot;>94%</div>
+        <div class=&quot;rt-cell&quot; style=&quot;color:var(--red)&quot;>~3.2억</div>
+      </div>
+      <div class=&quot;rt-row&quot;>
+        <div><div class=&quot;rt-species&quot;>🐠 참돔</div><div class=&quot;rt-risk-bar&quot; style=&quot;width:72%;background:var(--orange)&quot;></div></div>
+        <div class=&quot;rt-cell prob-m&quot;>72%</div>
+        <div class=&quot;rt-cell prob-h&quot;>81%</div>
+        <div class=&quot;rt-cell&quot; style=&quot;color:var(--orange)&quot;>~1.8억</div>
+      </div>
+      <div class=&quot;rt-row&quot;>
+        <div><div class=&quot;rt-species&quot;>🦪 굴</div><div class=&quot;rt-risk-bar&quot; style=&quot;width:41%;background:var(--amber)&quot;></div></div>
+        <div class=&quot;rt-cell prob-l&quot;>41%</div>
+        <div class=&quot;rt-cell prob-m&quot;>58%</div>
+        <div class=&quot;rt-cell&quot; style=&quot;color:var(--amber)&quot;>~0.6억</div>
+      </div>
+      <div class=&quot;rt-row&quot;>
+        <div><div class=&quot;rt-species&quot;>🐙 전복</div><div class=&quot;rt-risk-bar&quot; style=&quot;width:63%;background:var(--orange)&quot;></div></div>
+        <div class=&quot;rt-cell prob-m&quot;>63%</div>
+        <div class=&quot;rt-cell prob-m&quot;>74%</div>
+        <div class=&quot;rt-cell&quot; style=&quot;color:var(--orange)&quot;>~2.1억</div>
+      </div>
+      <div class=&quot;rt-row&quot;>
+        <div><div class=&quot;rt-species&quot;>🦐 새우류</div><div class=&quot;rt-risk-bar&quot; style=&quot;width:28%;background:var(--amber)&quot;></div></div>
+        <div class=&quot;rt-cell prob-l&quot;>28%</div>
+        <div class=&quot;rt-cell prob-l&quot;>35%</div>
+        <div class=&quot;rt-cell&quot; style=&quot;color:var(--amber)&quot;>~0.3억</div>
+      </div>
+      <div class=&quot;rt-row&quot; style=&quot;background:rgba(239,68,68,.04)&quot;>
+        <div style=&quot;font-size:11px;font-weight:700;color:var(--red)&quot;>합계 예상 피해</div>
+        <div class=&quot;rt-cell&quot;></div>
+        <div class=&quot;rt-cell&quot;></div>
+        <div class=&quot;rt-cell&quot; style=&quot;color:var(--red);font-weight:700;font-size:12px&quot;>~8.0억</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /result-area -->
+
+<!-- ═══ 오른쪽 입력 모니터 ═══ -->
+<div class=&quot;input-panel&quot;>
+  <div class=&quot;ip-head&quot;>데이터 입력 모니터</div>
+  <div class=&quot;ip-scroll&quot;>
+
+    <div style=&quot;font-size:9px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px&quot;>데이터 소스 상태</div>
+
+    <div class=&quot;ds-card&quot;>
+      <div class=&quot;ds-top&quot;>
+        <div class=&quot;ds-dot&quot; style=&quot;background:var(--green)&quot;></div>
+        <div class=&quot;ds-name&quot;>GOCI-II 위성</div>
+        <div class=&quot;ds-status&quot; style=&quot;color:var(--green)&quot;>정상</div>
+      </div>
+      <div class=&quot;ds-meta&quot;>해상도: 250m | 갱신: 1시간<br>최근 수신: 13:00 KST</div>
+    </div>
+
+    <div class=&quot;ds-card&quot;>
+      <div class=&quot;ds-top&quot;>
+        <div class=&quot;ds-dot&quot; style=&quot;background:var(--amber)&quot;></div>
+        <div class=&quot;ds-name&quot;>ROMS 수치모델</div>
+        <div class=&quot;ds-status&quot; style=&quot;color:var(--amber)&quot;>6분 지연</div>
+      </div>
+      <div class=&quot;ds-meta&quot;>해상도: 1~3km | 갱신: 6시간<br>OI 자료동화 처리 중</div>
+    </div>
+
+    <div class=&quot;ds-card&quot;>
+      <div class=&quot;ds-top&quot;>
+        <div class=&quot;ds-dot&quot; style=&quot;background:var(--green)&quot;></div>
+        <div class=&quot;ds-name&quot;>HYCOM 전구모델</div>
+        <div class=&quot;ds-status&quot; style=&quot;color:var(--green)&quot;>정상</div>
+      </div>
+      <div class=&quot;ds-meta&quot;>해상도: 8km | 갱신: 6시간<br>다운스케일링 완료</div>
+    </div>
+
+    <div class=&quot;ds-card&quot;>
+      <div class=&quot;ds-top&quot;>
+        <div class=&quot;ds-dot&quot; style=&quot;background:var(--green)&quot;></div>
+        <div class=&quot;ds-name&quot;>현장관측망</div>
+        <div class=&quot;ds-status&quot; style=&quot;color:var(--green)&quot;>47/52</div>
+      </div>
+      <div class=&quot;ds-meta&quot;>부이 47개 정상 수신<br>결측 5개 → AI 보간 처리</div>
+    </div>
+
+    <div class=&quot;ds-card&quot;>
+      <div class=&quot;ds-top&quot;>
+        <div class=&quot;ds-dot&quot; style=&quot;background:var(--green)&quot;></div>
+        <div class=&quot;ds-name&quot;>기상청 수치예보</div>
+        <div class=&quot;ds-status&quot; style=&quot;color:var(--green)&quot;>정상</div>
+      </div>
+      <div class=&quot;ds-meta&quot;>해상도: 1.5km | 갱신: 3시간<br>풍향·풍속·강수 연계 완료</div>
+    </div>
+
+    <div style=&quot;font-size:9px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin:12px 0 8px&quot;>핵심 입력 변수</div>
+
+    <div class=&quot;var-row&quot;>
+      <div class=&quot;var-label&quot;><span>표층 수온 (SST)</span><span class=&quot;var-val&quot; style=&quot;color:var(--red)&quot;>29.2°C</span></div>
+      <div class=&quot;var-bar-bg&quot;><div class=&quot;var-bar&quot; style=&quot;width:84%;background:linear-gradient(90deg,var(--red),rgba(239,68,68,.4))&quot;></div></div>
+    </div>
+    <div class=&quot;var-row&quot;>
+      <div class=&quot;var-label&quot;><span>저층 DO</span><span class=&quot;var-val&quot; style=&quot;color:var(--orange)&quot;>3.8mg/L</span></div>
+      <div class=&quot;var-bar-bg&quot;><div class=&quot;var-bar&quot; style=&quot;width:38%;background:linear-gradient(90deg,var(--sky),rgba(56,189,248,.4))&quot;></div></div>
+    </div>
+    <div class=&quot;var-row&quot;>
+      <div class=&quot;var-label&quot;><span>클로로필-a</span><span class=&quot;var-val&quot; style=&quot;color:var(--green)&quot;>4.1μg/L</span></div>
+      <div class=&quot;var-bar-bg&quot;><div class=&quot;var-bar&quot; style=&quot;width:22%;background:linear-gradient(90deg,var(--green),rgba(16,185,129,.4))&quot;></div></div>
+    </div>
+    <div class=&quot;var-row&quot;>
+      <div class=&quot;var-label&quot;><span>MLD</span><span class=&quot;var-val&quot; style=&quot;color:var(--purple)&quot;>4.2m</span></div>
+      <div class=&quot;var-bar-bg&quot;><div class=&quot;var-bar&quot; style=&quot;width:42%;background:linear-gradient(90deg,var(--purple),rgba(139,92,246,.4))&quot;></div></div>
+    </div>
+    <div class=&quot;var-row&quot;>
+      <div class=&quot;var-label&quot;><span>풍속</span><span class=&quot;var-val&quot; style=&quot;color:var(--sky)&quot;>1.2m/s</span></div>
+      <div class=&quot;var-bar-bg&quot;><div class=&quot;var-bar&quot; style=&quot;width:12%;background:linear-gradient(90deg,var(--sky),rgba(56,189,248,.4))&quot;></div></div>
+    </div>
+    <div class=&quot;var-row&quot;>
+      <div class=&quot;var-label&quot;><span>부유사</span><span class=&quot;var-val&quot; style=&quot;color:var(--amber)&quot;>12.7mg/L</span></div>
+      <div class=&quot;var-bar-bg&quot;><div class=&quot;var-bar&quot; style=&quot;width:48%;background:linear-gradient(90deg,var(--amber),rgba(245,158,11,.4))&quot;></div></div>
+    </div>
+
+    <div style=&quot;font-size:9px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin:12px 0 8px&quot;>앙상블 분포 (50 멤버)</div>
+    <div class=&quot;ensemble-grid&quot; id=&quot;ensGrid&quot;></div>
+    <div style=&quot;font-size:9px;color:var(--text3);margin-top:4px&quot;>평균: 0.74 | σ: 0.031 | 범위: 0.68~0.82</div>
+
+    <div style=&quot;font-size:9px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin:12px 0 8px&quot;>물리 제약 검증</div>
+    <div style=&quot;font-size:10px;color:var(--text2);line-height:2&quot;>
+      <div style=&quot;display:flex;justify-content:space-between&quot;><span>보존 법칙 위반율</span><span style=&quot;color:var(--green);font-family:'JetBrains Mono',monospace&quot;>0.3%</span></div>
+      <div style=&quot;display:flex;justify-content:space-between&quot;><span>수온-염분 일관성</span><span style=&quot;color:var(--green);font-family:'JetBrains Mono',monospace&quot;>✓ 통과</span></div>
+      <div style=&quot;display:flex;justify-content:space-between&quot;><span>MLD 물리 범위</span><span style=&quot;color:var(--green);font-family:'JetBrains Mono',monospace&quot;>✓ 통과</span></div>
+      <div style=&quot;display:flex;justify-content:space-between&quot;><span>PINN Loss</span><span style=&quot;color:var(--teal2);font-family:'JetBrains Mono',monospace&quot;>0.0042</span></div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /layout -->
+
+<!-- 상태바 -->
+<div class=&quot;statusbar&quot;>
+  <div class=&quot;sb-i&quot;><div class=&quot;sb-d&quot;></div>GPA 엔진 대기 중</div>
+  <div class=&quot;sb-i&quot;><div class=&quot;sb-d&quot;></div>경량 물리층 초기화 완료</div>
+  <div class=&quot;sb-i&quot;><div class=&quot;sb-d w&quot;></div>ROMS 6분 지연</div>
+  <div class=&quot;sb-i&quot;><div class=&quot;sb-d&quot;></div>앙상블 50멤버 준비</div>
+  <div class=&quot;sb-i&quot; style=&quot;margin-left:auto&quot;><div class=&quot;sb-d&quot;></div>① 알고리즘 모듈 v1.2</div>
+</div>
+
+<div id=&quot;toast&quot;></div>
+
+<script>
+// 시계
+setInterval(()=>{
+  const n=new Date();
+  document.getElementById('clk').textContent=`2025-08-03 ${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;
+},15000);
+
+// 슬라이더
+function updSlider(el,id,fn){
+  const min=+el.min,max=+el.max,val=+el.value;
+  el.style.setProperty('--pct',((val-min)/(max-min)*100)+'%');
+  document.getElementById(id).textContent=fn(val);
+}
+document.querySelectorAll('input[type=range]').forEach(el=>{
+  const min=+el.min,max=+el.max,val=+el.value;
+  el.style.setProperty('--pct',((val-min)/(max-min)*100)+'%');
+});
+
+// 권역 선택
+const regionData={
+  '남해 통영·거제':{cri:'0.74',level:'4단계 경보',lc:'var(--red)',scen:'고수온 + 빈산소',
+    tl:[{f:8,c:'var(--red)',l:'경보(4)'},{f:2,c:'var(--orange)',l:'경보(3)'}]},
+  '남해 여수·순천':{cri:'0.61',level:'3단계 경보',lc:'var(--orange)',scen:'적조 + 해류 + 수온',
+    tl:[{f:3,c:'var(--orange)',l:'경보(3)'},{f:5,c:'var(--amber)',l:'주의'},{f:2,c:'var(--green)',l:'관심'}]},
+  '서해 천수만':{cri:'0.48',level:'2단계 주의',lc:'var(--amber)',scen:'부유사·탁도 확산',
+    tl:[{f:4,c:'var(--amber)',l:'주의'},{f:6,c:'var(--green)',l:'관심'}]},
+  '서해 가로림만':{cri:'0.31',level:'2단계 주의',lc:'var(--amber)',scen:'수온 상승 감시',
+    tl:[{f:2,c:'var(--amber)',l:'주의'},{f:8,c:'var(--green)',l:'관심'}]},
+  '동해 강릉·속초':{cri:'0.18',level:'1단계 관심',lc:'var(--green)',scen:'정상 감시',
+    tl:[{f:10,c:'var(--green)',l:'관심'}]},
+  '남해 고흥':{cri:'0.38',level:'2단계 주의',lc:'var(--amber)',scen:'고수온 단독',
+    tl:[{f:3,c:'var(--amber)',l:'주의'},{f:7,c:'var(--green)',l:'관심'}]},
+};
+
+let curRegion='남해 통영·거제';
+function selRegion(el,name){
+  document.querySelectorAll('.rbtn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  curRegion=name;
+  const d=regionData[name];
+  if(!d)return;
+  document.getElementById('criRegion').textContent=name+'권';
+  document.getElementById('criNum').textContent=d.cri;
+  document.getElementById('criNum').style.color=d.lc;
+  document.getElementById('criLevel').textContent=d.level;
+  document.getElementById('criLevel').style.color=d.lc.replace('var(','').replace(')','');
+  document.getElementById('criScen').textContent='시나리오: '+d.scen+' | 2025-08-03 14:00 KST';
+  const tl=document.getElementById('tlBar');
+  tl.innerHTML=d.tl.map(s=>`<div class=&quot;tlb-seg&quot; style=&quot;flex:${s.f};background:${s.c}&quot;>${s.l}</div>`).join('');
+  toast(name+'권역 데이터 로드 완료');
+}
+
+// 시나리오 선택
+function selScen(el,type){
+  document.querySelectorAll('.scenario-card').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  const names={heat:'고수온 + 빈산소',algae:'적조 + 해류 + 수온',sed:'부유사·탁도 확산',all:'전체 복합위험 통합'};
+  document.getElementById('criScen').textContent='시나리오: '+(names[type]||'')+&quot; | 2025-08-03 14:00 KST&quot;;
+}
+
+// 모델 실행
+const steps=[
+  ['데이터 전처리 중...','ROMS/HYCOM 다운스케일링 (500m 격자화)',8],
+  ['조석·조류 계산 중...','T_TIDE 조화분석 — 통영 조화상수 적용',22],
+  ['MLD 진단 중...','KPP 1D 수직혼합 스킴 실행',36],
+  ['초기장 정합 중...','OI 최적내삽 자료동화 처리',50],
+  ['GPA 엔진 추론 중...','PINN + LSTM/Transformer 순전파',64],
+  ['앙상블 계산 중...','50개 멤버 불확실성 추정',78],
+  ['CRI 산출 중...','복합위험지수 공간 분포 계산',88],
+  ['XAI 분해 중...','SHAP TreeExplainer 기여도 계산',96],
+  ['완료!','GPA 예측 파이프라인 완료',100],
+];
+
+function runModel(){
+  const overlay=document.getElementById('overlay');
+  const btn=document.getElementById('runBtn');
+  const spinner=document.getElementById('spinner');
+  const btnTxt=document.getElementById('runBtnTxt');
+  overlay.classList.add('show');
+  spinner.style.display='block';
+  btnTxt.textContent='실행 중...';
+  btn.disabled=true;
+
+  // 파이프라인 박스 리셋
+  for(let i=0;i<6;i++){
+    document.getElementById('mf'+i).classList.remove('active');
+    if(i<5) document.getElementById('ma'+i).classList.remove('active');
+  }
+
+  let si=0;
+  function nextStep(){
+    if(si>=steps.length){
+      overlay.classList.remove('show');
+      spinner.style.display='none';
+      btnTxt.textContent='▶ 예측 실행';
+      btn.disabled=false;
+      // 파이프라인 전체 활성화
+      for(let i=0;i<6;i++){
+        setTimeout(()=>{
+          document.getElementById('mf'+i).classList.add('active');
+          if(i<5) document.getElementById('ma'+i).classList.add('active');
+        },i*120);
+      }
+      toast('GPA 예측 완료 — 총 소요 14.2초');
+      return;
+    }
+    const [step,sub,pct]=steps[si];
+    document.getElementById('runStep').textContent=step;
+    document.getElementById('runSub').textContent=sub;
+    document.getElementById('runProg').style.width=pct+'%';
+    // 파이프라인 박스 순차 활성화
+    const boxIdx=Math.min(Math.floor(si/1.5),5);
+    document.getElementById('mf'+boxIdx).classList.add('active');
+    if(boxIdx>0) document.getElementById('ma'+(boxIdx-1)).classList.add('active');
+    si++;
+    setTimeout(nextStep, si===steps.length ? 600 : 700);
+  }
+  nextStep();
+}
+
+// 앙상블 점 그리기
+function drawEnsemble(){
+  const grid=document.getElementById('ensGrid');
+  const vals=[.68,.69,.70,.71,.71,.72,.72,.73,.73,.73,.74,.74,.74,.74,.74,.74,.74,.75,.75,.75,.75,.75,.76,.76,.76,.76,.77,.77,.77,.78,.78,.78,.78,.79,.79,.79,.79,.80,.80,.80,.80,.80,.81,.81,.81,.82,.82,.82,.82,.82];
+  grid.innerHTML=vals.map(v=>{
+    const h=Math.round((v-0.65)/0.2*100);
+    const c=v>=0.7?'var(--red)':v>=0.5?'var(--orange)':'var(--amber)';
+    return `<div class=&quot;ens-dot&quot; style=&quot;background:${c};height:${Math.max(8,h/5+8)}px;align-self:flex-end&quot;></div>`;
+  }).join('');
+}
+drawEnsemble();
+
+// 토스트
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+</script>
+</body>
+</html>
+"></iframe>
+  <iframe class="mod-frame" id="fr-gpa" srcdoc="<!DOCTYPE html>
+<html lang=&quot;ko&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>K-CRP | GPA 분석엔진</title>
+<link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;>
+<link href=&quot;https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Bebas+Neue&amp;display=swap&quot; rel=&quot;stylesheet&quot;>
+<style>
+:root {
+  --navy:   #050D18;
+  --navy2:  #081525;
+  --navy3:  #0B1E32;
+  --panel:  #07121F;
+  --border: #122840;
+  --b2:     #1A3A55;
+  --teal:   #0D9488;
+  --teal2:  #14B8A6;
+  --teal3:  #5EEAD4;
+  --blue:   #0E5FA1;
+  --sky:    #38BDF8;
+  --amber:  #F59E0B;
+  --orange: #EA580C;
+  --red:    #EF4444;
+  --green:  #10B981;
+  --purple: #8B5CF6;
+  --pink:   #EC4899;
+  --lime:   #84CC16;
+  --text:   #C8E6F7;
+  --text2:  #6EA8C8;
+  --text3:  #35607E;
+  --white:  #FFFFFF;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--navy);color:var(--text);display:flex;flex-direction:column;}
+
+/* 헤더 */
+.hdr{background:var(--panel);border-bottom:1px solid var(--border);height:50px;flex-shrink:0;
+  display:flex;align-items:center;padding:0 18px;gap:12px;z-index:200;}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:3px;color:var(--teal2);text-shadow:0 0 16px rgba(20,184,166,.4);}
+.logo span{color:var(--text);opacity:.35;margin:0 4px;}
+.hdr-sub{font-size:12px;color:var(--text2);}
+.hdr-r{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.hbadge{font-size:10px;padding:2px 9px;border-radius:10px;font-weight:600;}
+.b-teal{background:rgba(13,148,136,.15);border:1px solid rgba(13,148,136,.3);color:var(--teal2);}
+.b-blue{background:rgba(14,95,161,.15);border:1px solid rgba(14,95,161,.3);color:var(--sky);}
+.b-green{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);color:var(--green);}
+.live{display:flex;align-items:center;gap:5px;padding:2px 9px;border-radius:10px;
+  background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);font-size:10px;color:var(--green);font-weight:600;}
+.ld{width:5px;height:5px;border-radius:50%;background:var(--green);animation:p 1.5s infinite;}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.2}}
+.clk{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);}
+
+/* 메인 탭 */
+.main-tabs{display:flex;background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0;}
+.mtab{padding:0 20px;height:38px;display:flex;align-items:center;font-size:11px;color:var(--text3);
+  cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+.mtab:hover{color:var(--text2);}
+.mtab.on{color:var(--teal2);border-bottom-color:var(--teal2);}
+
+/* 3단 레이아웃 */
+.layout{display:flex;flex:1;overflow:hidden;}
+
+/* ═══ 왼쪽: 파이프라인 상태 ═══ */
+.left-panel{width:252px;flex-shrink:0;background:var(--panel);
+  border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.lp-head{padding:11px 13px 9px;border-bottom:1px solid var(--border);
+  font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;}
+.lp-body{flex:1;overflow-y:auto;padding:10px 12px;}
+.lp-body::-webkit-scrollbar{width:3px;}
+.lp-body::-webkit-scrollbar-thumb{background:var(--border);}
+
+/* 파이프라인 스텝 */
+.pipe-step{display:flex;gap:10px;margin-bottom:4px;position:relative;}
+.pipe-step:not(:last-child)::after{
+  content:'';position:absolute;left:13px;top:28px;width:2px;height:calc(100% - 8px);
+  background:var(--border);
+}
+.pipe-step.done::after{background:var(--teal);}
+.ps-icon{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:11px;flex-shrink:0;border:1px solid var(--border);background:var(--navy3);
+  position:relative;z-index:1;transition:all .4s;}
+.ps-icon.done{background:rgba(13,148,136,.2);border-color:var(--teal);box-shadow:0 0 8px rgba(13,148,136,.3);}
+.ps-icon.run{background:rgba(14,95,161,.2);border-color:var(--blue);animation:run-pulse 1s infinite;}
+.ps-icon.wait{opacity:.4;}
+@keyframes run-pulse{0%,100%{box-shadow:0 0 0 0 rgba(14,95,161,.4)}50%{box-shadow:0 0 0 6px rgba(14,95,161,0)}}
+.ps-body{flex:1;padding-top:2px;padding-bottom:12px;}
+.ps-name{font-size:10px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.ps-detail{font-size:9px;color:var(--text3);line-height:1.4;}
+.ps-time{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--teal2);margin-top:2px;}
+
+/* 성능 미터 */
+.perf-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px;}
+.perf-card{background:var(--navy3);border:1px solid var(--border);border-radius:5px;padding:8px 9px;}
+.pc-lbl{font-size:8px;color:var(--text3);margin-bottom:3px;letter-spacing:.5px;}
+.pc-v{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;}
+.pc-sub{font-size:8px;color:var(--text3);margin-top:1px;}
+
+/* Loss 그래프 미니 */
+.mini-svg{width:100%;height:48px;}
+
+/* ═══ 중앙: 메인 뷰 (탭별) ═══ */
+.center{flex:1;overflow:hidden;display:flex;flex-direction:column;}
+.tab-content{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:12px;}
+.tab-content::-webkit-scrollbar{width:4px;}
+.tab-content::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+/* 섹션 헤더 */
+.sh{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;
+  display:flex;align-items:center;gap:7px;margin-bottom:8px;}
+.sh::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* 아키텍처 다이어그램 */
+.arch-wrap{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:14px;overflow-x:auto;}
+.arch-row{display:flex;align-items:stretch;gap:0;min-width:700px;}
+.arch-col{display:flex;flex-direction:column;gap:5px;}
+.arch-arrow{display:flex;align-items:center;padding:0 6px;color:var(--b2);font-size:18px;flex-shrink:0;align-self:center;}
+.arch-arrow.glow{color:var(--teal);text-shadow:0 0 8px rgba(13,148,136,.5);}
+
+.abox{border:1px solid var(--border);border-radius:6px;padding:8px 10px;flex:1;
+  background:var(--navy3);transition:all .3s;cursor:pointer;position:relative;overflow:hidden;}
+.abox::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.abox.c-teal::before{background:var(--teal2);}
+.abox.c-blue::before{background:var(--blue);}
+.abox.c-purple::before{background:var(--purple);}
+.abox.c-green::before{background:var(--green);}
+.abox.c-red::before{background:var(--red);}
+.abox.c-amber::before{background:var(--amber);}
+.abox:hover{border-color:var(--b2);background:rgba(255,255,255,.03);}
+.abox.active{border-color:var(--teal);background:rgba(13,148,136,.08);box-shadow:0 0 12px rgba(13,148,136,.15);}
+.ab-icon{font-size:14px;margin-bottom:4px;}
+.ab-name{font-size:9px;font-weight:700;color:var(--text);margin-bottom:2px;white-space:nowrap;}
+.ab-detail{font-size:8px;color:var(--text3);line-height:1.4;}
+.ab-badge{font-size:8px;font-weight:600;padding:1px 5px;border-radius:3px;margin-top:3px;display:inline-block;}
+
+/* PINN 설명 카드 */
+.pinn-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pinn-card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:13px;position:relative;overflow:hidden;}
+.pinn-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;}
+.pinn-card.pc-teal::before{background:var(--teal2);}
+.pinn-card.pc-purple::before{background:var(--purple);}
+.pinn-card.pc-blue::before{background:var(--blue);}
+.pinn-card.pc-green::before{background:var(--green);}
+.pinn-title{font-size:11px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.pinn-sub{font-size:10px;color:var(--text3);line-height:1.6;}
+.pinn-formula{
+  margin-top:8px;padding:7px 10px;border-radius:4px;
+  background:rgba(0,0,0,.3);border:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--teal3);
+  line-height:1.6;
+}
+
+/* Loss 곡선 */
+.loss-wrap{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:14px;}
+.loss-legend{display:flex;gap:16px;margin-bottom:10px;}
+.ll-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);}
+.ll-line{width:18px;height:2px;border-radius:1px;}
+
+/* 멀티소스 퓨전 */
+.fusion-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.fsrc{background:var(--panel);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center;}
+.fsrc-icon{font-size:18px;margin-bottom:5px;}
+.fsrc-name{font-size:9px;font-weight:600;color:var(--text);margin-bottom:3px;}
+.fsrc-detail{font-size:8px;color:var(--text3);line-height:1.4;}
+.fsrc-bar{height:3px;border-radius:2px;margin-top:6px;}
+.fusion-center{
+  background:var(--panel);border:1px solid var(--teal);border-radius:8px;
+  padding:12px;text-align:center;
+  box-shadow:0 0 20px rgba(13,148,136,.15);
+  display:flex;flex-direction:column;justify-content:center;
+}
+.fc-title{font-size:11px;font-weight:700;color:var(--teal2);margin-bottom:4px;}
+.fc-sub{font-size:9px;color:var(--text3);line-height:1.5;}
+
+/* 검증 테이블 */
+.val-table{background:var(--panel);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.vt-head{background:var(--navy3);display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1fr;
+  padding:8px 12px;font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;}
+.vt-row{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1fr;
+  padding:8px 12px;border-top:1px solid var(--border);font-size:10px;transition:background .15s;}
+.vt-row:hover{background:rgba(255,255,255,.02);}
+.vt-name{color:var(--text);font-weight:500;}
+.vt-cell{font-family:'JetBrains Mono',monospace;color:var(--text2);text-align:center;}
+.good{color:var(--green);}
+.ok{color:var(--teal2);}
+.warn{color:var(--amber);}
+
+/* 추론 실시간 모니터 */
+.infer-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.infer-card{background:var(--panel);border:1px solid var(--border);border-radius:7px;padding:11px;}
+.ic-label{font-size:9px;color:var(--text3);margin-bottom:5px;}
+.ic-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;line-height:1;margin-bottom:3px;}
+.ic-bar-bg{height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin-bottom:3px;}
+.ic-bar{height:4px;border-radius:2px;transition:width 1s ease;}
+.ic-sub{font-size:9px;color:var(--text3);}
+
+/* ═══ 오른쪽: 실시간 모니터 ═══ */
+.right-panel{width:240px;flex-shrink:0;background:var(--panel);
+  border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.rp-head{padding:11px 13px 9px;border-bottom:1px solid var(--border);
+  font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;}
+.rp-body{flex:1;overflow-y:auto;padding:10px 12px;}
+.rp-body::-webkit-scrollbar{width:3px;}
+.rp-body::-webkit-scrollbar-thumb{background:var(--border);}
+
+/* 실시간 로그 */
+.log-item{padding:5px 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:9px;line-height:1.5;}
+.log-t{font-family:'JetBrains Mono',monospace;color:var(--text3);margin-right:4px;}
+.log-ok{color:var(--green);}
+.log-warn{color:var(--amber);}
+.log-info{color:var(--sky);}
+.log-run{color:var(--teal2);}
+
+/* GPU 모니터 */
+.gpu-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.gpu-label{font-size:9px;color:var(--text3);width:60px;flex-shrink:0;}
+.gpu-bar-bg{flex:1;height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;}
+.gpu-bar{height:6px;border-radius:3px;transition:width 1.5s ease;}
+.gpu-val{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text2);width:32px;text-align:right;}
+
+/* 예측 품질 */
+.quality-ring{display:flex;justify-content:center;margin:8px 0;}
+
+/* 상태바 */
+.statusbar{height:26px;background:rgba(5,13,24,.97);border-top:1px solid var(--border);
+  display:flex;align-items:center;padding:0 14px;gap:16px;flex-shrink:0;}
+.sbi{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text3);}
+.sbd{width:5px;height:5px;border-radius:50%;}
+
+/* 토스트 */
+#toast{position:fixed;bottom:36px;left:50%;transform:translateX(-50%) translateY(50px);
+  background:rgba(13,148,136,.95);border:1px solid var(--teal2);border-radius:8px;
+  padding:7px 16px;font-size:11px;color:var(--white);opacity:0;transition:all .3s;
+  z-index:9999;white-space:nowrap;}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+</style>
+</head>
+<body>
+
+<header class=&quot;hdr&quot;>
+  <div class=&quot;logo&quot;>K<span>|</span>CRP</div>
+  <div class=&quot;hdr-sub&quot;>② Geo-Physical AI (GPA) 분석엔진 — 물리 기반 해양 복합위험 예측</div>
+  <div class=&quot;hdr-r&quot;>
+    <span class=&quot;hbadge b-teal&quot;>PINN v2.1</span>
+    <span class=&quot;hbadge b-blue&quot;>ST-GNN</span>
+    <span class=&quot;hbadge b-teal&quot;>LSTM·Attn</span>
+    <div class=&quot;live&quot;><div class=&quot;ld&quot;></div>추론 중</div>
+    <span class=&quot;clk&quot; id=&quot;clk&quot;>2025-08-03 14:32</span>
+  </div>
+</header>
+
+<!-- 메인 탭 -->
+<div class=&quot;main-tabs&quot;>
+  <div class=&quot;mtab on&quot; onclick=&quot;switchTab(0,this)&quot;>🏗 아키텍처</div>
+  <div class=&quot;mtab&quot; onclick=&quot;switchTab(1,this)&quot;>⚛ PINN 물리 제약</div>
+  <div class=&quot;mtab&quot; onclick=&quot;switchTab(2,this)&quot;>📡 멀티소스 융합</div>
+  <div class=&quot;mtab&quot; onclick=&quot;switchTab(3,this)&quot;>📈 모델 검증</div>
+  <div class=&quot;mtab&quot; onclick=&quot;switchTab(4,this)&quot;>⚡ 실시간 추론</div>
+</div>
+
+<div class=&quot;layout&quot;>
+
+<!-- ═══ 왼쪽 패널 ═══ -->
+<div class=&quot;left-panel&quot;>
+  <div class=&quot;lp-head&quot;>파이프라인 실행 상태</div>
+  <div class=&quot;lp-body&quot;>
+
+    <!-- 파이프라인 스텝 -->
+    <div style=&quot;margin-bottom:12px;&quot;>
+      <div class=&quot;pipe-step done&quot;>
+        <div class=&quot;ps-icon done&quot;>📡</div>
+        <div class=&quot;ps-body&quot;>
+          <div class=&quot;ps-name&quot;>데이터 수집·정합</div>
+          <div class=&quot;ps-detail&quot;>GOCI-II·ROMS·HYCOM·관측망<br>OI 자료동화 완료</div>
+          <div class=&quot;ps-time&quot;>완료 2.1s</div>
+        </div>
+      </div>
+      <div class=&quot;pipe-step done&quot;>
+        <div class=&quot;ps-icon done&quot;>⚙️</div>
+        <div class=&quot;ps-body&quot;>
+          <div class=&quot;ps-name&quot;>경량 물리 전처리</div>
+          <div class=&quot;ps-detail&quot;>500m 다운스케일링<br>T_TIDE 조석 · KPP MLD</div>
+          <div class=&quot;ps-time&quot;>완료 3.4s</div>
+        </div>
+      </div>
+      <div class=&quot;pipe-step done&quot;>
+        <div class=&quot;ps-icon done&quot;>🔀</div>
+        <div class=&quot;ps-body&quot;>
+          <div class=&quot;ps-name&quot;>멀티소스 퓨전</div>
+          <div class=&quot;ps-detail&quot;>CNN 공간·LSTM 시계열<br>Attention 가중치 적용</div>
+          <div class=&quot;ps-time&quot;>완료 1.8s</div>
+        </div>
+      </div>
+      <div class=&quot;pipe-step run&quot;>
+        <div class=&quot;ps-icon run&quot;>🤖</div>
+        <div class=&quot;ps-body&quot;>
+          <div class=&quot;ps-name&quot;>GPA 추론 (진행 중)</div>
+          <div class=&quot;ps-detail&quot;>PINN + ST-GNN 순전파<br>물리 제약 검증 중...</div>
+          <div class=&quot;ps-time&quot; style=&quot;color:var(--amber)&quot; id=&quot;inferTime&quot;>진행 중 2.4s...</div>
+        </div>
+      </div>
+      <div class=&quot;pipe-step wait&quot;>
+        <div class=&quot;ps-icon wait&quot;>🎲</div>
+        <div class=&quot;ps-body&quot;>
+          <div class=&quot;ps-name&quot;>앙상블 추론</div>
+          <div class=&quot;ps-detail&quot;>50 멤버 불확실성 추정</div>
+          <div class=&quot;ps-time&quot;>대기 중</div>
+        </div>
+      </div>
+      <div class=&quot;pipe-step wait&quot;>
+        <div class=&quot;ps-icon wait&quot;>🎯</div>
+        <div class=&quot;ps-body&quot;>
+          <div class=&quot;ps-name&quot;>CRI 산출·출력</div>
+          <div class=&quot;ps-detail&quot;>복합위험지수 공간 매핑</div>
+          <div class=&quot;ps-time&quot;>대기 중</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 성능 지표 -->
+    <div style=&quot;font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:7px;&quot;>엔진 성능 지표</div>
+    <div class=&quot;perf-grid&quot;>
+      <div class=&quot;perf-card&quot;>
+        <div class=&quot;pc-lbl&quot;>추론 시간</div>
+        <div class=&quot;pc-v&quot; style=&quot;color:var(--teal2)&quot; id=&quot;inferMs&quot;>2.4s</div>
+        <div class=&quot;pc-sub&quot;>GPU A100</div>
+      </div>
+      <div class=&quot;perf-card&quot;>
+        <div class=&quot;pc-lbl&quot;>PINN Loss</div>
+        <div class=&quot;pc-v&quot; style=&quot;color:var(--green)&quot;>0.0042</div>
+        <div class=&quot;pc-sub&quot;>수렴 안정</div>
+      </div>
+      <div class=&quot;perf-card&quot;>
+        <div class=&quot;pc-lbl&quot;>물리 위반율</div>
+        <div class=&quot;pc-v&quot; style=&quot;color:var(--green)&quot;>0.3%</div>
+        <div class=&quot;pc-sub&quot;>목표 &amp;lt;1%</div>
+      </div>
+      <div class=&quot;perf-card&quot;>
+        <div class=&quot;pc-lbl&quot;>예측 신뢰도</div>
+        <div class=&quot;pc-v&quot; style=&quot;color:var(--teal2)&quot;>89%</div>
+        <div class=&quot;pc-sub&quot;>앙상블 평균</div>
+      </div>
+    </div>
+
+    <!-- 미니 Loss 그래프 -->
+    <div style=&quot;margin-top:10px;font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;&quot;>학습 Loss 추이</div>
+    <svg class=&quot;mini-svg&quot; viewBox=&quot;0 0 220 48&quot; style=&quot;width:100%&quot;>
+      <!-- 그리드 -->
+      <line x1=&quot;0&quot; y1=&quot;12&quot; x2=&quot;220&quot; y2=&quot;12&quot; stroke=&quot;rgba(255,255,255,.04)&quot; stroke-width=&quot;1&quot;/>
+      <line x1=&quot;0&quot; y1=&quot;24&quot; x2=&quot;220&quot; y2=&quot;24&quot; stroke=&quot;rgba(255,255,255,.04)&quot; stroke-width=&quot;1&quot;/>
+      <line x1=&quot;0&quot; y1=&quot;36&quot; x2=&quot;220&quot; y2=&quot;36&quot; stroke=&quot;rgba(255,255,255,.04)&quot; stroke-width=&quot;1&quot;/>
+      <!-- Total Loss -->
+      <path d=&quot;M0,44 C20,38 40,28 60,20 C80,14 100,10 130,7 C155,5 185,4 220,4&quot;
+        fill=&quot;none&quot; stroke=&quot;rgba(20,184,166,.7)&quot; stroke-width=&quot;1.5&quot;/>
+      <!-- Physics Loss -->
+      <path d=&quot;M0,40 C20,32 40,22 60,16 C80,12 100,9 130,7 C155,6 185,5 220,4&quot;
+        fill=&quot;none&quot; stroke=&quot;rgba(139,92,246,.5)&quot; stroke-width=&quot;1&quot; stroke-dasharray=&quot;3,2&quot;/>
+      <!-- Data Loss -->
+      <path d=&quot;M0,42 C25,35 50,26 75,19 C100,14 130,9 160,7 C185,5 205,4 220,4&quot;
+        fill=&quot;none&quot; stroke=&quot;rgba(56,189,248,.5)&quot; stroke-width=&quot;1&quot; stroke-dasharray=&quot;3,2&quot;/>
+      <text x=&quot;0&quot; y=&quot;48&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.2)&quot; font-family=&quot;JetBrains Mono&quot;>Ep.0</text>
+      <text x=&quot;180&quot; y=&quot;48&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.2)&quot; font-family=&quot;JetBrains Mono&quot;>200</text>
+    </svg>
+    <div style=&quot;display:flex;gap:10px;margin-top:4px;&quot;>
+      <div style=&quot;display:flex;align-items:center;gap:4px;font-size:8px;color:var(--text3)&quot;><div style=&quot;width:12px;height:2px;background:var(--teal2);border-radius:1px&quot;></div>Total</div>
+      <div style=&quot;display:flex;align-items:center;gap:4px;font-size:8px;color:var(--text3)&quot;><div style=&quot;width:12px;height:1px;background:var(--purple);border-radius:1px&quot;></div>Physics</div>
+      <div style=&quot;display:flex;align-items:center;gap:4px;font-size:8px;color:var(--text3)&quot;><div style=&quot;width:12px;height:1px;background:var(--sky);border-radius:1px&quot;></div>Data</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ 중앙 메인 ═══ -->
+<div class=&quot;center&quot;>
+
+  <!-- 탭 0: 아키텍처 -->
+  <div class=&quot;tab-content&quot; id=&quot;tc0&quot;>
+
+    <div>
+      <div class=&quot;sh&quot;>GPA 엔진 전체 아키텍처</div>
+      <div class=&quot;arch-wrap&quot;>
+        <div class=&quot;arch-row&quot;>
+
+          <!-- 입력 소스 -->
+          <div class=&quot;arch-col&quot; style=&quot;gap:4px;&quot;>
+            <div class=&quot;abox c-teal&quot; onclick=&quot;hlBox(this)&quot; style=&quot;min-width:88px&quot;>
+              <div class=&quot;ab-icon&quot;>🛰</div>
+              <div class=&quot;ab-name&quot;>GOCI-II</div>
+              <div class=&quot;ab-detail&quot;>위성 영상<br>250m · 1h</div>
+              <div class=&quot;ab-badge&quot; style=&quot;background:rgba(13,148,136,.15);color:var(--teal2)&quot;>CNN 처리</div>
+            </div>
+            <div class=&quot;abox c-blue&quot; onclick=&quot;hlBox(this)&quot; style=&quot;min-width:88px&quot;>
+              <div class=&quot;ab-icon&quot;>🌊</div>
+              <div class=&quot;ab-name&quot;>ROMS/HYCOM</div>
+              <div class=&quot;ab-detail&quot;>수치모델<br>1~9km · 6h</div>
+              <div class=&quot;ab-badge&quot; style=&quot;background:rgba(14,95,161,.15);color:var(--sky)&quot;>물리 Prior</div>
+            </div>
+            <div class=&quot;abox c-green&quot; onclick=&quot;hlBox(this)&quot; style=&quot;min-width:88px&quot;>
+              <div class=&quot;ab-icon&quot;>📍</div>
+              <div class=&quot;ab-name&quot;>현장 관측망</div>
+              <div class=&quot;ab-detail&quot;>부이·수질망<br>실시간</div>
+              <div class=&quot;ab-badge&quot; style=&quot;background:rgba(16,185,129,.15);color:var(--green)&quot;>LSTM 처리</div>
+            </div>
+            <div class=&quot;abox c-amber&quot; onclick=&quot;hlBox(this)&quot; style=&quot;min-width:88px&quot;>
+              <div class=&quot;ab-icon&quot;>🌤</div>
+              <div class=&quot;ab-name&quot;>기상 예보</div>
+              <div class=&quot;ab-detail&quot;>기상청 수치<br>1.5km · 3h</div>
+              <div class=&quot;ab-badge&quot; style=&quot;background:rgba(245,158,11,.15);color:var(--amber)&quot;>Attention</div>
+            </div>
+          </div>
+
+          <div class=&quot;arch-arrow glow&quot;>⟹</div>
+
+          <!-- 경량 물리층 -->
+          <div class=&quot;arch-col&quot;>
+            <div class=&quot;abox c-purple&quot; onclick=&quot;hlBox(this)&quot; style=&quot;min-width:100px;flex:1;&quot;>
+              <div class=&quot;ab-icon&quot;>⚙️</div>
+              <div class=&quot;ab-name&quot;>경량 물리 전처리층</div>
+              <div class=&quot;ab-detail&quot;>
+                ① 연안 다운스케일링<br>
+                &amp;nbsp;&amp;nbsp;500m 격자화·지형 보정<br>
+                ② T_TIDE 조석·조류<br>
+                &amp;nbsp;&amp;nbsp;조화상수 기반 계산<br>
+                ③ KPP MLD 진단<br>
+                &amp;nbsp;&amp;nbsp;수직 혼합층 깊이<br>
+                ④ OI 자료동화<br>
+                &amp;nbsp;&amp;nbsp;초기장 최적내삽
+              </div>
+            </div>
+          </div>
+
+          <div class=&quot;arch-arrow glow&quot;>⟹</div>
+
+          <!-- GPA 코어 -->
+          <div class=&quot;arch-col&quot; style=&quot;gap:4px;&quot;>
+            <div class=&quot;abox c-teal active&quot; onclick=&quot;hlBox(this)&quot; style=&quot;min-width:108px&quot;>
+              <div class=&quot;ab-icon&quot;>🧠</div>
+              <div class=&quot;ab-name&quot;>PINN 코어</div>
+              <div class=&quot;ab-detail&quot;>Physics Loss 내재화<br>보존 법칙 제약</div>
+              <div class=&quot;ab-badge&quot; style=&quot;background:rgba(13,148,136,.2);color:var(--teal2)&quot;>핵심 ★</div>
+            </div>
+            <div class=&quot;abox c-blue&quot; onclick=&quot;hlBox(this)&quot; style=&quot;min-width:108px&quot;>
+              <div class=&quot;ab-icon&quot;>🔄</div>
+              <div class=&quot;ab-name&quot;>LSTM + Attention</div>
+              <div class=&quot;ab-detail&quot;>시계열 패턴 학습<br>변수 간 상관관계</div>
+            </div>
+            <div class=&quot;abox c-purple&quot; onclick=&quot;hlBox(this)&quot; style=&quot;min-width:108px&quot;>
+              <div class=&quot;ab-icon&quot;>🕸</div>
+              <div class=&quot;ab-name&quot;>ST-GNN</div>
+              <div class=&quot;ab-detail&quot;>공간-시간 그래프<br>해류 엣지 가중치</div>
+            </div>
+          </div>
+
+          <div class=&quot;arch-arrow glow&quot;>⟹</div>
+
+          <!-- 앙상블 -->
+          <div class=&quot;arch-col&quot;>
+            <div class=&quot;abox c-green&quot; onclick=&quot;hlBox(this)&quot; style=&quot;min-width:90px;flex:1;&quot;>
+              <div class=&quot;ab-icon&quot;>🎲</div>
+              <div class=&quot;ab-name&quot;>앙상블 모듈</div>
+              <div class=&quot;ab-detail&quot;>
+                멤버 50개<br>
+                불확실성 σ<br>
+                MC Dropout<br>
+                Deep Ensemble
+              </div>
+            </div>
+          </div>
+
+          <div class=&quot;arch-arrow glow&quot;>⟹</div>
+
+          <!-- 출력 -->
+          <div class=&quot;arch-col&quot; style=&quot;gap:4px;&quot;>
+            <div class=&quot;abox c-red&quot; onclick=&quot;hlBox(this)&quot; style=&quot;min-width:92px&quot;>
+              <div class=&quot;ab-icon&quot;>🎯</div>
+              <div class=&quot;ab-name&quot;>CRI 예측값</div>
+              <div class=&quot;ab-detail&quot;>복합위험지수<br>48~72h 시계열</div>
+            </div>
+            <div class=&quot;abox c-amber&quot; onclick=&quot;hlBox(this)&quot; style=&quot;min-width:92px&quot;>
+              <div class=&quot;ab-icon&quot;>📊</div>
+              <div class=&quot;ab-name&quot;>불확실성 범위</div>
+              <div class=&quot;ab-detail&quot;>σ 신뢰구간<br>앙상블 분산</div>
+            </div>
+            <div class=&quot;abox c-teal&quot; onclick=&quot;hlBox(this)&quot; style=&quot;min-width:92px&quot;>
+              <div class=&quot;ab-icon&quot;>🔍</div>
+              <div class=&quot;ab-name&quot;>SHAP → XAI</div>
+              <div class=&quot;ab-detail&quot;>변수 기여도<br>자동 리포트</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- 추론 현황 -->
+    <div>
+      <div class=&quot;sh&quot;>실시간 추론 현황 (남해 통영·거제)</div>
+      <div class=&quot;infer-grid&quot;>
+        <div class=&quot;infer-card&quot;>
+          <div class=&quot;ic-label&quot;>현재 CRI 예측값</div>
+          <div class=&quot;ic-val&quot; style=&quot;color:var(--red)&quot;>0.74</div>
+          <div class=&quot;ic-bar-bg&quot;><div class=&quot;ic-bar&quot; style=&quot;width:74%;background:var(--red)&quot;></div></div>
+          <div class=&quot;ic-sub&quot;>4단계 경보 · σ=0.031</div>
+        </div>
+        <div class=&quot;infer-card&quot;>
+          <div class=&quot;ic-label&quot;>24h 예측 CRI</div>
+          <div class=&quot;ic-val&quot; style=&quot;color:var(--red)&quot;>0.78</div>
+          <div class=&quot;ic-bar-bg&quot;><div class=&quot;ic-bar&quot; style=&quot;width:78%;background:var(--orange)&quot;></div></div>
+          <div class=&quot;ic-sub&quot;>경보 심화 예상 · σ=0.039</div>
+        </div>
+        <div class=&quot;infer-card&quot;>
+          <div class=&quot;ic-label&quot;>72h 예측 CRI</div>
+          <div class=&quot;ic-val&quot; style=&quot;color:var(--amber)&quot;>0.65</div>
+          <div class=&quot;ic-bar-bg&quot;><div class=&quot;ic-bar&quot; style=&quot;width:65%;background:var(--amber)&quot;></div></div>
+          <div class=&quot;ic-sub&quot;>완화 가능성 · σ=0.058</div>
+        </div>
+        <div class=&quot;infer-card&quot;>
+          <div class=&quot;ic-label&quot;>SST 예측 (24h)</div>
+          <div class=&quot;ic-val&quot; style=&quot;color:var(--red)&quot;>30.1°</div>
+          <div class=&quot;ic-bar-bg&quot;><div class=&quot;ic-bar&quot; style=&quot;width:86%;background:linear-gradient(90deg,var(--red),var(--orange))&quot;></div></div>
+          <div class=&quot;ic-sub&quot;>고수온 지속 · 임계+2.1°C</div>
+        </div>
+        <div class=&quot;infer-card&quot;>
+          <div class=&quot;ic-label&quot;>DO 예측 (24h)</div>
+          <div class=&quot;ic-val&quot; style=&quot;color:var(--sky)&quot;>3.1</div>
+          <div class=&quot;ic-bar-bg&quot;><div class=&quot;ic-bar&quot; style=&quot;width:31%;background:var(--sky)&quot;></div></div>
+          <div class=&quot;ic-sub&quot;>빈산소 심화 · mg/L</div>
+        </div>
+        <div class=&quot;infer-card&quot;>
+          <div class=&quot;ic-label&quot;>MLD 예측 (24h)</div>
+          <div class=&quot;ic-val&quot; style=&quot;color:var(--purple)&quot;>3.1m</div>
+          <div class=&quot;ic-bar-bg&quot;><div class=&quot;ic-bar&quot; style=&quot;width:31%;background:var(--purple)&quot;></div></div>
+          <div class=&quot;ic-sub&quot;>성층 심화 → 빈산소 가속</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 탭 1: PINN 물리 제약 -->
+  <div class=&quot;tab-content&quot; id=&quot;tc1&quot; style=&quot;display:none&quot;>
+    <div>
+      <div class=&quot;sh&quot;>Physics-Informed Neural Network (PINN) 구조</div>
+      <div class=&quot;pinn-grid&quot;>
+
+        <div class=&quot;pinn-card pc-teal&quot;>
+          <div class=&quot;pinn-title&quot;>📐 Loss 함수 설계</div>
+          <div class=&quot;pinn-sub&quot;>총 손실함수는 데이터 손실과 물리 제약 손실의 가중합으로 구성됩니다. λ₁·λ₂는 물리 제약 강도를 조절하는 하이퍼파라미터입니다.</div>
+          <div class=&quot;pinn-formula&quot;>
+            L_total = L_data<br>
+            &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;+ λ₁ × L_physics<br>
+            &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;+ λ₂ × L_boundary<br><br>
+            현재: λ₁=0.8, λ₂=0.3<br>
+            L_total = 0.0042 ✓
+          </div>
+        </div>
+
+        <div class=&quot;pinn-card pc-purple&quot;>
+          <div class=&quot;pinn-title&quot;>🌊 해양 물리 제약 조건</div>
+          <div class=&quot;pinn-sub&quot;>해양 물리 방정식을 위반하는 예측에 페널티를 부과합니다. 데이터가 부족한 구간에서도 물리적으로 타당한 예측을 보장합니다.</div>
+          <div class=&quot;pinn-formula&quot;>
+            ① 열역학: ∂T/∂t + u·∇T = κ∇²T<br>
+            ② 연속방정식: ∇·u = 0<br>
+            ③ DO 소모: ∂O₂/∂t = -R·f(T,S)<br>
+            ④ MLD: Ri &amp;lt; Ri_cr → 혼합<br>
+            ⑤ 수온-염분 관계: T-S 제약
+          </div>
+        </div>
+
+        <div class=&quot;pinn-card pc-blue&quot;>
+          <div class=&quot;pinn-title&quot;>🔄 자동 미분 (AD) 적용</div>
+          <div class=&quot;pinn-sub&quot;>PyTorch autograd를 활용해 편미분 항을 자동으로 계산합니다. 수치 미분 대비 정확도가 높고 역전파와 통합이 용이합니다.</div>
+          <div class=&quot;pinn-formula&quot;>
+            # PyTorch autograd<br>
+            T = model(x, t)<br>
+            dT_dt = grad(T, t)<br>
+            dT_dx = grad(T, x)<br>
+            L_phys = MSE(<br>
+            &amp;nbsp;&amp;nbsp;dT_dt + u*dT_dx,<br>
+            &amp;nbsp;&amp;nbsp;kappa*laplacian(T)<br>
+            )
+          </div>
+        </div>
+
+        <div class=&quot;pinn-card pc-green&quot;>
+          <div class=&quot;pinn-title&quot;>✅ 물리 제약 검증 현황</div>
+          <div class=&quot;pinn-sub&quot;>현재 추론 결과의 물리 제약 준수율입니다. 위반 사례는 자동으로 재추론 또는 보정 처리됩니다.</div>
+          <div class=&quot;pinn-formula&quot;>
+            열역학 보존: 99.8% ✓<br>
+            연속방정식:  99.9% ✓<br>
+            DO 소모 모델: 99.4% ✓<br>
+            MLD 물리범위: 100% ✓<br>
+            T-S 관계:    99.7% ✓<br>
+            ────────────────<br>
+            전체 위반율: 0.3% ✓
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PINN vs 순수 ML 비교 -->
+    <div>
+      <div class=&quot;sh&quot;>PINN vs 순수 데이터 기반 ML 비교</div>
+      <div class=&quot;val-table&quot;>
+        <div class=&quot;vt-head&quot; style=&quot;grid-template-columns:1.8fr 1fr 1fr 1fr;&quot;>
+          <span>평가 항목</span><span style=&quot;text-align:center&quot;>순수 ML</span><span style=&quot;text-align:center&quot;>GPA (PINN)</span><span style=&quot;text-align:center&quot;>개선</span>
+        </div>
+        <div class=&quot;vt-row&quot; style=&quot;grid-template-columns:1.8fr 1fr 1fr 1fr;&quot;>
+          <div class=&quot;vt-name&quot;>물리 법칙 준수</div>
+          <div class=&quot;vt-cell warn&quot;>보장 없음</div>
+          <div class=&quot;vt-cell good&quot;>99.7%</div>
+          <div class=&quot;vt-cell good&quot;>★★★★★</div>
+        </div>
+        <div class=&quot;vt-row&quot; style=&quot;grid-template-columns:1.8fr 1fr 1fr 1fr;&quot;>
+          <div class=&quot;vt-name&quot;>관측 공백 구간 예측</div>
+          <div class=&quot;vt-cell warn&quot;>불안정</div>
+          <div class=&quot;vt-cell good&quot;>물리 보간</div>
+          <div class=&quot;vt-cell good&quot;>★★★★☆</div>
+        </div>
+        <div class=&quot;vt-row&quot; style=&quot;grid-template-columns:1.8fr 1fr 1fr 1fr;&quot;>
+          <div class=&quot;vt-name&quot;>72h 예측 RMSE (SST)</div>
+          <div class=&quot;vt-cell warn&quot;>1.42°C</div>
+          <div class=&quot;vt-cell good&quot;>0.84°C</div>
+          <div class=&quot;vt-cell good&quot;>↓41%</div>
+        </div>
+        <div class=&quot;vt-row&quot; style=&quot;grid-template-columns:1.8fr 1fr 1fr 1fr;&quot;>
+          <div class=&quot;vt-name&quot;>극값 예측 (고수온)</div>
+          <div class=&quot;vt-cell warn&quot;>과소 추정</div>
+          <div class=&quot;vt-cell good&quot;>정확 포착</div>
+          <div class=&quot;vt-cell good&quot;>★★★★★</div>
+        </div>
+        <div class=&quot;vt-row&quot; style=&quot;grid-template-columns:1.8fr 1fr 1fr 1fr;&quot;>
+          <div class=&quot;vt-name&quot;>새 권역 전이학습</div>
+          <div class=&quot;vt-cell warn&quot;>재학습 필요</div>
+          <div class=&quot;vt-cell ok&quot;>Fine-tuning</div>
+          <div class=&quot;vt-cell ok&quot;>★★★☆☆</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 탭 2: 멀티소스 융합 -->
+  <div class=&quot;tab-content&quot; id=&quot;tc2&quot; style=&quot;display:none&quot;>
+    <div>
+      <div class=&quot;sh&quot;>멀티소스 데이터 융합 아키텍처</div>
+      <div style=&quot;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:16px;&quot;>
+        <div class=&quot;fusion-grid&quot; style=&quot;margin-bottom:14px;&quot;>
+          <div class=&quot;fsrc&quot; onclick=&quot;toast('GOCI-II: CNN으로 공간 피처 추출')&quot;>
+            <div class=&quot;fsrc-icon&quot;>🛰</div>
+            <div class=&quot;fsrc-name&quot;>GOCI-II 위성</div>
+            <div class=&quot;fsrc-detail&quot;>SST·클로로필·탁도<br>250m · 1시간</div>
+            <div class=&quot;fsrc-bar&quot; style=&quot;background:var(--teal2)&quot;></div>
+          </div>
+          <div class=&quot;fsrc&quot; onclick=&quot;toast('ROMS: 물리 사전정보(prior)로 활용')&quot;>
+            <div class=&quot;fsrc-icon&quot;>🌊</div>
+            <div class=&quot;fsrc-name&quot;>ROMS 수치모델</div>
+            <div class=&quot;fsrc-detail&quot;>해류·수온·염분<br>1~3km · 6시간</div>
+            <div class=&quot;fsrc-bar&quot; style=&quot;background:var(--blue)&quot;></div>
+          </div>
+          <div class=&quot;fsrc&quot; onclick=&quot;toast('현장 관측: LSTM 시계열 인코딩')&quot;>
+            <div class=&quot;fsrc-icon&quot;>📍</div>
+            <div class=&quot;fsrc-name&quot;>현장 관측망</div>
+            <div class=&quot;fsrc-detail&quot;>DO·수온·염분<br>47개 부이 실시간</div>
+            <div class=&quot;fsrc-bar&quot; style=&quot;background:var(--green)&quot;></div>
+          </div>
+          <div class=&quot;fsrc&quot; onclick=&quot;toast('기상: Attention 가중치로 영향 반영')&quot;>
+            <div class=&quot;fsrc-icon&quot;>🌤</div>
+            <div class=&quot;fsrc-name&quot;>기상청 수치예보</div>
+            <div class=&quot;fsrc-detail&quot;>풍향·풍속·강수<br>1.5km · 3시간</div>
+            <div class=&quot;fsrc-bar&quot; style=&quot;background:var(--amber)&quot;></div>
+          </div>
+        </div>
+
+        <!-- 퓨전 중앙 -->
+        <div style=&quot;display:flex;align-items:center;gap:10px;margin-bottom:14px;&quot;>
+          <div style=&quot;flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--teal))&quot;></div>
+          <div style=&quot;font-size:18px;color:var(--teal2)&quot;>⬇</div>
+          <div style=&quot;flex:1;height:1px;background:linear-gradient(90deg,var(--teal),transparent)&quot;></div>
+        </div>
+
+        <div class=&quot;fusion-center&quot; onclick=&quot;toast('Cross-Attention으로 소스 간 상관관계 학습')&quot;>
+          <div class=&quot;fc-title&quot;>🔀 Cross-Modal Attention Fusion</div>
+          <div class=&quot;fc-sub&quot;>위성(CNN 임베딩) × 수치모델(물리 Prior) × 현장관측(LSTM) × 기상(시계열)<br>
+          4개 소스를 Cross-Attention으로 가중 결합 → 통합 해양 상태 표현 생성</div>
+          <div style=&quot;margin-top:8px;display:flex;justify-content:center;gap:12px;&quot;>
+            <span style=&quot;font-size:9px;padding:2px 8px;border-radius:3px;background:rgba(13,148,136,.15);color:var(--teal2);border:1px solid rgba(13,148,136,.2)&quot;>d_model=512</span>
+            <span style=&quot;font-size:9px;padding:2px 8px;border-radius:3px;background:rgba(14,95,161,.15);color:var(--sky);border:1px solid rgba(14,95,161,.2)&quot;>8 Heads</span>
+            <span style=&quot;font-size:9px;padding:2px 8px;border-radius:3px;background:rgba(139,92,246,.15);color:var(--purple);border:1px solid rgba(139,92,246,.2)&quot;>4 Layers</span>
+          </div>
+        </div>
+
+        <div style=&quot;display:flex;align-items:center;gap:10px;margin:14px 0;&quot;>
+          <div style=&quot;flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--teal))&quot;></div>
+          <div style=&quot;font-size:18px;color:var(--teal2)&quot;>⬇</div>
+          <div style=&quot;flex:1;height:1px;background:linear-gradient(90deg,var(--teal),transparent)&quot;></div>
+        </div>
+
+        <!-- Attention 가중치 시각화 -->
+        <div style=&quot;font-size:9px;color:var(--text3);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;&quot;>현재 Attention 가중치 분포 (CRI 예측 기준)</div>
+        <div style=&quot;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;&quot;>
+          <div style=&quot;text-align:center;&quot;>
+            <div style=&quot;font-size:10px;color:var(--teal2);font-weight:600;margin-bottom:4px&quot;>GOCI-II</div>
+            <div style=&quot;height:60px;background:rgba(13,148,136,.15);border-radius:4px;border:1px solid rgba(13,148,136,.2);display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px;&quot;>
+              <div style=&quot;width:50%;background:var(--teal2);border-radius:2px;height:78%&quot;></div>
+            </div>
+            <div style=&quot;font-size:10px;color:var(--teal2);margin-top:3px;font-family:'JetBrains Mono',monospace&quot;>0.38</div>
+          </div>
+          <div style=&quot;text-align:center;&quot;>
+            <div style=&quot;font-size:10px;color:var(--sky);font-weight:600;margin-bottom:4px&quot;>ROMS</div>
+            <div style=&quot;height:60px;background:rgba(14,95,161,.1);border-radius:4px;border:1px solid rgba(14,95,161,.2);display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px;&quot;>
+              <div style=&quot;width:50%;background:var(--sky);border-radius:2px;height:58%&quot;></div>
+            </div>
+            <div style=&quot;font-size:10px;color:var(--sky);margin-top:3px;font-family:'JetBrains Mono',monospace&quot;>0.28</div>
+          </div>
+          <div style=&quot;text-align:center;&quot;>
+            <div style=&quot;font-size:10px;color:var(--green);font-weight:600;margin-bottom:4px&quot;>현장관측</div>
+            <div style=&quot;height:60px;background:rgba(16,185,129,.1);border-radius:4px;border:1px solid rgba(16,185,129,.2);display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px;&quot;>
+              <div style=&quot;width:50%;background:var(--green);border-radius:2px;height:44%&quot;></div>
+            </div>
+            <div style=&quot;font-size:10px;color:var(--green);margin-top:3px;font-family:'JetBrains Mono',monospace&quot;>0.22</div>
+          </div>
+          <div style=&quot;text-align:center;&quot;>
+            <div style=&quot;font-size:10px;color:var(--amber);font-weight:600;margin-bottom:4px&quot;>기상</div>
+            <div style=&quot;height:60px;background:rgba(245,158,11,.1);border-radius:4px;border:1px solid rgba(245,158,11,.2);display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px;&quot;>
+              <div style=&quot;width:50%;background:var(--amber);border-radius:2px;height:24%&quot;></div>
+            </div>
+            <div style=&quot;font-size:10px;color:var(--amber);margin-top:3px;font-family:'JetBrains Mono',monospace&quot;>0.12</div>
+          </div>
+        </div>
+        <div style=&quot;font-size:9px;color:var(--text3);margin-top:8px;text-align:center;&quot;>위성(GOCI-II) 가중치가 가장 높음 — 고수온·빈산소 탐지에 위성 SST 기여 최대</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 탭 3: 모델 검증 -->
+  <div class=&quot;tab-content&quot; id=&quot;tc3&quot; style=&quot;display:none&quot;>
+    <div>
+      <div class=&quot;sh&quot;>GPA 모델 검증 결과 — 남해 시범지역 (2020~2024)</div>
+      <div class=&quot;val-table&quot;>
+        <div class=&quot;vt-head&quot;>
+          <span>예측 변수</span><span style=&quot;text-align:center&quot;>RMSE</span><span style=&quot;text-align:center&quot;>Bias</span><span style=&quot;text-align:center&quot;>상관계수</span><span style=&quot;text-align:center&quot;>평가</span>
+        </div>
+        <div class=&quot;vt-row&quot;><div class=&quot;vt-name&quot;>SST (표층 수온)</div><div class=&quot;vt-cell good&quot;>0.84°C</div><div class=&quot;vt-cell good&quot;>+0.12</div><div class=&quot;vt-cell good&quot;>0.96</div><div class=&quot;vt-cell good&quot;>우수</div></div>
+        <div class=&quot;vt-row&quot;><div class=&quot;vt-name&quot;>DO (저층 용존산소)</div><div class=&quot;vt-cell ok&quot;>0.31mg/L</div><div class=&quot;vt-cell ok&quot;>-0.08</div><div class=&quot;vt-cell ok&quot;>0.91</div><div class=&quot;vt-cell ok&quot;>양호</div></div>
+        <div class=&quot;vt-row&quot;><div class=&quot;vt-name&quot;>클로로필-a</div><div class=&quot;vt-cell ok&quot;>1.82μg/L</div><div class=&quot;vt-cell warn&quot;>+0.34</div><div class=&quot;vt-cell ok&quot;>0.88</div><div class=&quot;vt-cell ok&quot;>양호</div></div>
+        <div class=&quot;vt-row&quot;><div class=&quot;vt-name&quot;>MLD (혼합층 깊이)</div><div class=&quot;vt-cell good&quot;>0.62m</div><div class=&quot;vt-cell good&quot;>+0.05</div><div class=&quot;vt-cell good&quot;>0.94</div><div class=&quot;vt-cell good&quot;>우수</div></div>
+        <div class=&quot;vt-row&quot;><div class=&quot;vt-name&quot;>CRI 고수온 탐지율</div><div class=&quot;vt-cell good&quot;>—</div><div class=&quot;vt-cell good&quot;>—</div><div class=&quot;vt-cell good&quot;>—</div><div class=&quot;vt-cell good&quot;>71.2%</div></div>
+        <div class=&quot;vt-row&quot;><div class=&quot;vt-name&quot;>CRI 오경보율</div><div class=&quot;vt-cell good&quot;>—</div><div class=&quot;vt-cell good&quot;>—</div><div class=&quot;vt-cell good&quot;>—</div><div class=&quot;vt-cell good&quot;>28.4% ↓</div></div>
+      </div>
+    </div>
+
+    <div>
+      <div class=&quot;sh&quot;>72h 예측 정확도 시계열 (통영권 2024 여름)</div>
+      <div style=&quot;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:14px;&quot;>
+        <svg width=&quot;100%&quot; height=&quot;120&quot; viewBox=&quot;0 0 560 120&quot;>
+          <!-- 그리드 -->
+          <line x1=&quot;40&quot; y1=&quot;10&quot; x2=&quot;40&quot; y2=&quot;100&quot; stroke=&quot;rgba(255,255,255,.06)&quot; stroke-width=&quot;1&quot;/>
+          <line x1=&quot;40&quot; y1=&quot;10&quot; x2=&quot;560&quot; y2=&quot;10&quot; stroke=&quot;rgba(255,255,255,.04)&quot; stroke-width=&quot;1&quot;/>
+          <line x1=&quot;40&quot; y1=&quot;40&quot; x2=&quot;560&quot; y2=&quot;40&quot; stroke=&quot;rgba(255,255,255,.04)&quot; stroke-width=&quot;1&quot;/>
+          <line x1=&quot;40&quot; y1=&quot;70&quot; x2=&quot;560&quot; y2=&quot;70&quot; stroke=&quot;rgba(255,255,255,.04)&quot; stroke-width=&quot;1&quot;/>
+          <line x1=&quot;40&quot; y1=&quot;100&quot; x2=&quot;560&quot; y2=&quot;100&quot; stroke=&quot;rgba(255,255,255,.04)&quot; stroke-width=&quot;1&quot;/>
+          <!-- y축 라벨 -->
+          <text x=&quot;0&quot; y=&quot;13&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.25)&quot; font-family=&quot;JetBrains Mono&quot;>30°C</text>
+          <text x=&quot;0&quot; y=&quot;43&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.25)&quot; font-family=&quot;JetBrains Mono&quot;>29°C</text>
+          <text x=&quot;0&quot; y=&quot;73&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.25)&quot; font-family=&quot;JetBrains Mono&quot;>28°C</text>
+          <text x=&quot;0&quot; y=&quot;103&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.25)&quot; font-family=&quot;JetBrains Mono&quot;>27°C</text>
+          <!-- 임계선 28°C -->
+          <line x1=&quot;40&quot; y1=&quot;70&quot; x2=&quot;560&quot; y2=&quot;70&quot; stroke=&quot;rgba(239,68,68,.3)&quot; stroke-width=&quot;1&quot; stroke-dasharray=&quot;4,3&quot;/>
+          <!-- 관측값 (실선) -->
+          <polyline points=&quot;40,85 80,78 120,70 160,62 200,55 240,48 280,42 320,38 360,36 400,40 440,48 480,55 520,62 560,68&quot;
+            fill=&quot;none&quot; stroke=&quot;rgba(255,255,255,.5)&quot; stroke-width=&quot;1.5&quot;/>
+          <!-- GPA 예측 (점선) -->
+          <polyline points=&quot;40,87 80,80 120,72 160,63 200,56 240,50 280,43 320,39 360,37 400,42 440,50 480,57 520,63 560,70&quot;
+            fill=&quot;none&quot; stroke=&quot;rgba(20,184,166,.8)&quot; stroke-width=&quot;1.5&quot; stroke-dasharray=&quot;5,3&quot;/>
+          <!-- 불확실성 밴드 -->
+          <path d=&quot;M40,90 80,84 120,76 160,68 200,61 240,55 280,48 320,44 360,42 400,46 440,55 480,62 520,68 560,75 560,65 520,57 480,50 440,43 400,36 360,30 320,34 280,38 240,45 200,51 160,58 120,66 80,74 40,82Z&quot;
+            fill=&quot;rgba(20,184,166,.06)&quot; stroke=&quot;none&quot;/>
+          <!-- 레전드 -->
+          <line x1=&quot;300&quot; y1=&quot;112&quot; x2=&quot;320&quot; y2=&quot;112&quot; stroke=&quot;rgba(255,255,255,.5)&quot; stroke-width=&quot;1.5&quot;/>
+          <text x=&quot;323&quot; y=&quot;115&quot; font-size=&quot;8&quot; fill=&quot;rgba(255,255,255,.4)&quot; font-family=&quot;Noto Sans KR&quot;>관측값</text>
+          <line x1=&quot;370&quot; y1=&quot;112&quot; x2=&quot;390&quot; y2=&quot;112&quot; stroke=&quot;rgba(20,184,166,.8)&quot; stroke-width=&quot;1.5&quot; stroke-dasharray=&quot;4,2&quot;/>
+          <text x=&quot;393&quot; y=&quot;115&quot; font-size=&quot;8&quot; fill=&quot;rgba(20,184,166,.7)&quot; font-family=&quot;Noto Sans KR&quot;>GPA 예측</text>
+          <!-- x축 라벨 -->
+          <text x=&quot;36&quot; y=&quot;115&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.2)&quot; font-family=&quot;JetBrains Mono&quot;>7/15</text>
+          <text x=&quot;196&quot; y=&quot;115&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.2)&quot; font-family=&quot;JetBrains Mono&quot;>7/22</text>
+          <text x=&quot;356&quot; y=&quot;115&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.2)&quot; font-family=&quot;JetBrains Mono&quot;>7/29</text>
+          <text x=&quot;516&quot; y=&quot;115&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.2)&quot; font-family=&quot;JetBrains Mono&quot;>8/05</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- 탭 4: 실시간 추론 -->
+  <div class=&quot;tab-content&quot; id=&quot;tc4&quot; style=&quot;display:none&quot;>
+    <div>
+      <div class=&quot;sh&quot;>실시간 추론 모니터 — 전 권역</div>
+      <div class=&quot;val-table&quot;>
+        <div class=&quot;vt-head&quot;>
+          <span>권역</span><span style=&quot;text-align:center&quot;>CRI</span><span style=&quot;text-align:center&quot;>단계</span><span style=&quot;text-align:center&quot;>추론시간</span><span style=&quot;text-align:center&quot;>신뢰도</span>
+        </div>
+        <div class=&quot;vt-row&quot;><div class=&quot;vt-name&quot;>남해 통영·거제</div><div class=&quot;vt-cell&quot; style=&quot;color:var(--red)&quot;>0.74</div><div class=&quot;vt-cell&quot; style=&quot;color:var(--red)&quot;>4단계</div><div class=&quot;vt-cell ok&quot;>2.4s</div><div class=&quot;vt-cell good&quot;>89%</div></div>
+        <div class=&quot;vt-row&quot;><div class=&quot;vt-name&quot;>남해 여수·순천</div><div class=&quot;vt-cell&quot; style=&quot;color:var(--orange)&quot;>0.61</div><div class=&quot;vt-cell&quot; style=&quot;color:var(--orange)&quot;>3단계</div><div class=&quot;vt-cell ok&quot;>2.1s</div><div class=&quot;vt-cell good&quot;>82%</div></div>
+        <div class=&quot;vt-row&quot;><div class=&quot;vt-name&quot;>서해 천수만</div><div class=&quot;vt-cell&quot; style=&quot;color:var(--amber)&quot;>0.48</div><div class=&quot;vt-cell&quot; style=&quot;color:var(--amber)&quot;>2단계</div><div class=&quot;vt-cell ok&quot;>1.9s</div><div class=&quot;vt-cell ok&quot;>76%</div></div>
+        <div class=&quot;vt-row&quot;><div class=&quot;vt-name&quot;>서해 가로림만</div><div class=&quot;vt-cell&quot; style=&quot;color:var(--amber)&quot;>0.31</div><div class=&quot;vt-cell&quot; style=&quot;color:var(--amber)&quot;>2단계</div><div class=&quot;vt-cell ok&quot;>1.8s</div><div class=&quot;vt-cell ok&quot;>79%</div></div>
+        <div class=&quot;vt-row&quot;><div class=&quot;vt-name&quot;>동해 강릉·속초</div><div class=&quot;vt-cell&quot; style=&quot;color:var(--green)&quot;>0.18</div><div class=&quot;vt-cell&quot; style=&quot;color:var(--green)&quot;>1단계</div><div class=&quot;vt-cell ok&quot;>1.6s</div><div class=&quot;vt-cell good&quot;>91%</div></div>
+      </div>
+    </div>
+    <div>
+      <div class=&quot;sh&quot;>배치 추론 스케줄</div>
+      <div style=&quot;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px;&quot;>
+        <div style=&quot;background:var(--navy3);border:1px solid rgba(13,148,136,.3);border-radius:6px;padding:11px;&quot;>
+          <div style=&quot;font-size:10px;font-weight:600;color:var(--teal2);margin-bottom:6px;&quot;>⚡ 실시간 추론 (1h 주기)</div>
+          <div style=&quot;font-size:9px;color:var(--text3);line-height:1.8&quot;>
+            GOCI-II 수신 → 즉시 추론<br>
+            5개 권역 병렬 처리<br>
+            총 소요: 평균 14.2s<br>
+            CRI 갱신 → 경보 트리거
+          </div>
+        </div>
+        <div style=&quot;background:var(--navy3);border:1px solid rgba(14,95,161,.3);border-radius:6px;padding:11px;&quot;>
+          <div style=&quot;font-size:10px;font-weight:600;color:var(--sky);margin-bottom:6px;&quot;>🎲 앙상블 추론 (6h 주기)</div>
+          <div style=&quot;font-size:9px;color:var(--text3);line-height:1.8&quot;>
+            ROMS 새 출력 시 실행<br>
+            50 멤버 병렬 추론<br>
+            총 소요: 평균 68s<br>
+            불확실성 범위 갱신
+          </div>
+        </div>
+        <div style=&quot;background:var(--navy3);border:1px solid rgba(139,92,246,.3);border-radius:6px;padding:11px;&quot;>
+          <div style=&quot;font-size:10px;font-weight:600;color:var(--purple);margin-bottom:6px;&quot;>🔁 모델 재학습 (월 1회)</div>
+          <div style=&quot;font-size:9px;color:var(--text3);line-height:1.8&quot;>
+            신규 관측 데이터 추가<br>
+            Fine-tuning 2~4시간<br>
+            A/B 검증 후 배포<br>
+            권역별 도메인 적응
+          </div>
+        </div>
+        <div style=&quot;background:var(--navy3);border:1px solid rgba(16,185,129,.3);border-radius:6px;padding:11px;&quot;>
+          <div style=&quot;font-size:10px;font-weight:600;color:var(--green);margin-bottom:6px;&quot;>🛡 Fallback 시스템</div>
+          <div style=&quot;font-size:9px;color:var(--text3);line-height:1.8&quot;>
+            ROMS 장애 시 자동 전환<br>
+            경량 물리층 단독 예측<br>
+            24h 임시 예보 유지<br>
+            자동 알림 → 운영팀
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /center -->
+
+<!-- ═══ 오른쪽: 실시간 로그·GPU ═══ -->
+<div class=&quot;right-panel&quot;>
+  <div class=&quot;rp-head&quot;>실시간 시스템 로그</div>
+  <div class=&quot;rp-body&quot;>
+
+    <div style=&quot;font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:7px;&quot;>GPU 리소스 모니터</div>
+
+    <div class=&quot;gpu-row&quot;>
+      <div class=&quot;gpu-label&quot;>GPU 점유율</div>
+      <div class=&quot;gpu-bar-bg&quot;><div class=&quot;gpu-bar&quot; id=&quot;gpuUtil&quot; style=&quot;width:78%;background:linear-gradient(90deg,var(--teal),var(--teal2))&quot;></div></div>
+      <div class=&quot;gpu-val&quot; id=&quot;gpuUtilVal&quot;>78%</div>
+    </div>
+    <div class=&quot;gpu-row&quot;>
+      <div class=&quot;gpu-label&quot;>VRAM 사용</div>
+      <div class=&quot;gpu-bar-bg&quot;><div class=&quot;gpu-bar&quot; style=&quot;width:62%;background:linear-gradient(90deg,var(--blue),var(--sky))&quot;></div></div>
+      <div class=&quot;gpu-val&quot;>38.4GB</div>
+    </div>
+    <div class=&quot;gpu-row&quot;>
+      <div class=&quot;gpu-label&quot;>GPU 온도</div>
+      <div class=&quot;gpu-bar-bg&quot;><div class=&quot;gpu-bar&quot; style=&quot;width:54%;background:linear-gradient(90deg,var(--green),var(--amber))&quot;></div></div>
+      <div class=&quot;gpu-val&quot;>67°C</div>
+    </div>
+    <div class=&quot;gpu-row&quot;>
+      <div class=&quot;gpu-label&quot;>배치 처리</div>
+      <div class=&quot;gpu-bar-bg&quot;><div class=&quot;gpu-bar&quot; style=&quot;width:42%;background:linear-gradient(90deg,var(--purple),var(--pink))&quot;></div></div>
+      <div class=&quot;gpu-val&quot;>42%</div>
+    </div>
+
+    <div style=&quot;font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin:12px 0 7px;&quot;>실행 로그</div>
+
+    <div id=&quot;logArea&quot;>
+      <div class=&quot;log-item&quot;><span class=&quot;log-t&quot;>14:32:07</span><span class=&quot;log-ok&quot;>[OK]</span> GOCI-II 13:00 KST 수신 완료</div>
+      <div class=&quot;log-item&quot;><span class=&quot;log-t&quot;>14:32:08</span><span class=&quot;log-run&quot;>[RUN]</span> CNN 위성 피처 추출 (250m)</div>
+      <div class=&quot;log-item&quot;><span class=&quot;log-t&quot;>14:32:09</span><span class=&quot;log-ok&quot;>[OK]</span> 경량 물리층 초기화</div>
+      <div class=&quot;log-item&quot;><span class=&quot;log-t&quot;>14:32:09</span><span class=&quot;log-run&quot;>[RUN]</span> T_TIDE 조석 계산 (통영)</div>
+      <div class=&quot;log-item&quot;><span class=&quot;log-t&quot;>14:32:10</span><span class=&quot;log-ok&quot;>[OK]</span> KPP MLD 진단 완료 4.2m</div>
+      <div class=&quot;log-item&quot;><span class=&quot;log-t&quot;>14:32:10</span><span class=&quot;log-warn&quot;>[WARN]</span> ROMS 지연 6분 — OI 대기</div>
+      <div class=&quot;log-item&quot;><span class=&quot;log-t&quot;>14:32:11</span><span class=&quot;log-run&quot;>[RUN]</span> PINN 순전파 (통영·거제)</div>
+      <div class=&quot;log-item&quot;><span class=&quot;log-t&quot;>14:32:12</span><span class=&quot;log-ok&quot;>[OK]</span> 물리 제약 검증 통과 0.3%</div>
+      <div class=&quot;log-item&quot;><span class=&quot;log-t&quot;>14:32:13</span><span class=&quot;log-run&quot;>[RUN]</span> ST-GNN 해류 그래프 추론</div>
+      <div class=&quot;log-item&quot;><span class=&quot;log-t&quot;>14:32:13</span><span class=&quot;log-run&quot;>[RUN]</span> LSTM 시계열 72h 예측 중</div>
+    </div>
+
+    <div style=&quot;font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin:12px 0 7px;&quot;>데이터 품질 지표</div>
+    <div style=&quot;font-size:9px;color:var(--text3);line-height:2;&quot;>
+      <div style=&quot;display:flex;justify-content:space-between;&quot;><span>관측 결측률</span><span style=&quot;color:var(--green);font-family:'JetBrains Mono',monospace&quot;>4.2%</span></div>
+      <div style=&quot;display:flex;justify-content:space-between;&quot;><span>위성 운량 차폐</span><span style=&quot;color:var(--amber);font-family:'JetBrains Mono',monospace&quot;>12.1%</span></div>
+      <div style=&quot;display:flex;justify-content:space-between;&quot;><span>ROMS 자료동화율</span><span style=&quot;color:var(--green);font-family:'JetBrains Mono',monospace&quot;>94.8%</span></div>
+      <div style=&quot;display:flex;justify-content:space-between;&quot;><span>OI 수렴 반복수</span><span style=&quot;color:var(--teal2);font-family:'JetBrains Mono',monospace&quot;>8회</span></div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /layout -->
+
+<div class=&quot;statusbar&quot;>
+  <div class=&quot;sbi&quot;><div class=&quot;sbd&quot; style=&quot;background:var(--green)&quot;></div>GPA 추론 중 (통영·거제)</div>
+  <div class=&quot;sbi&quot;><div class=&quot;sbd&quot; style=&quot;background:var(--green)&quot;></div>PINN Loss 0.0042 안정</div>
+  <div class=&quot;sbi&quot;><div class=&quot;sbd&quot; style=&quot;background:var(--amber)&quot;></div>ROMS 6분 지연</div>
+  <div class=&quot;sbi&quot;><div class=&quot;sbd&quot; style=&quot;background:var(--green)&quot;></div>GPU A100 78% 활용</div>
+  <div class=&quot;sbi&quot; style=&quot;margin-left:auto&quot;><div class=&quot;sbd&quot; style=&quot;background:var(--green)&quot;></div>② GPA 엔진 v2.1</div>
+</div>
+
+<div id=&quot;toast&quot;></div>
+
+<script>
+// 시계
+setInterval(()=>{
+  const n=new Date();
+  document.getElementById('clk').textContent=`2025-08-03 ${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;
+},15000);
+
+// 탭 전환
+function switchTab(idx,el){
+  document.querySelectorAll('.mtab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  for(let i=0;i<5;i++) document.getElementById('tc'+i).style.display=i===idx?'flex':'none';
+  document.querySelectorAll('.tab-content').forEach((t,i)=>{t.style.display=i===idx?'flex':'none';});
+}
+// 초기화
+for(let i=1;i<5;i++) document.getElementById('tc'+i).style.display='none';
+
+// 박스 하이라이트
+function hlBox(el){
+  document.querySelectorAll('.abox').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  toast(el.querySelector('.ab-name').textContent + ' — ' + (el.querySelector('.ab-detail')||{textContent:''}).textContent.replace(/\n/g,' '));
+}
+
+// 실시간 로그 추가
+const logMsgs=[
+  ['14:32:14','[OK]','log-ok','앙상블 멤버 1~10 추론 완료'],
+  ['14:32:15','[RUN]','log-run','앙상블 멤버 11~25 병렬 처리 중'],
+  ['14:32:16','[OK]','log-ok','물리 보존 법칙 검증 완료'],
+  ['14:32:17','[RUN]','log-run','SHAP 기여도 계산 시작'],
+  ['14:32:18','[OK]','log-ok','CRI 산출 완료 — 통영 0.74'],
+  ['14:32:19','[OK]','log-ok','4단계 경보 트리거 → GIS 연계'],
+];
+let li=0;
+setInterval(()=>{
+  if(li>=logMsgs.length) return;
+  const m=logMsgs[li++];
+  const area=document.getElementById('logArea');
+  const div=document.createElement('div');
+  div.className='log-item';
+  div.innerHTML=`<span class=&quot;log-t&quot;>${m[0]}</span><span class=&quot;${m[2]}&quot;>${m[1]}</span> ${m[3]}`;
+  area.appendChild(div);
+  area.scrollTop=area.scrollHeight;
+  if(li===logMsgs.length){
+    document.getElementById('inferTime').textContent='완료 14.2s';
+    document.getElementById('inferTime').style.color='var(--teal2)';
+  }
+},2200);
+
+// GPU 점유율 애니메이션
+let gpuTick=0;
+setInterval(()=>{
+  gpuTick++;
+  const v=Math.round(72+Math.sin(gpuTick*.4)*8);
+  document.getElementById('gpuUtil').style.width=v+'%';
+  document.getElementById('gpuUtilVal').textContent=v+'%';
+},2000);
+
+// 토스트
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg.substring(0,60);
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+</script>
+</body>
+</html>
+"></iframe>
+  <iframe class="mod-frame" id="fr-xai" srcdoc="<!DOCTYPE html>
+<html lang=&quot;ko&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>K-CRP | XAI 설명형 위험 리포트</title>
+<link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;>
+<link href=&quot;https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Bebas+Neue&amp;display=swap&quot; rel=&quot;stylesheet&quot;>
+<style>
+:root {
+  --navy:   #071828;
+  --navy2:  #0C2235;
+  --navy3:  #0F2E47;
+  --panel:  #0A1F30;
+  --border: #1A3A52;
+  --teal:   #0D9488;
+  --teal2:  #14B8A6;
+  --teal3:  #5EEAD4;
+  --blue:   #0E5FA1;
+  --sky:    #38BDF8;
+  --amber:  #F59E0B;
+  --orange: #EA580C;
+  --red:    #EF4444;
+  --green:  #10B981;
+  --purple: #8B5CF6;
+  --text:   #E2F0FF;
+  --text2:  #8BAFC8;
+  --text3:  #4A7A9B;
+  --white:  #FFFFFF;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; }
+body {
+  font-family:'Noto Sans KR',sans-serif;
+  background:var(--navy);
+  color:var(--text);
+  display:flex; flex-direction:column;
+  overflow:hidden; height:100vh;
+}
+
+/* ── 헤더 ── */
+.header {
+  background:var(--panel);
+  border-bottom:1px solid var(--border);
+  height:54px; flex-shrink:0;
+  display:flex; align-items:center;
+  padding:0 20px; gap:16px;
+  position:relative; z-index:100;
+}
+.logo { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:3px; color:var(--teal2); text-shadow:0 0 20px rgba(20,184,166,.4); }
+.logo span { color:var(--text); opacity:.5; margin:0 5px; }
+.header-title { font-size:13px; color:var(--text2); }
+.header-badge {
+  margin-left:auto; display:flex; align-items:center; gap:8px;
+}
+.hbadge {
+  font-size:11px; padding:3px 10px; border-radius:12px; font-weight:600;
+  background:rgba(139,92,246,.15); border:1px solid rgba(139,92,246,.3); color:var(--purple);
+}
+.live-badge {
+  display:flex; align-items:center; gap:5px;
+  background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.25);
+  border-radius:12px; padding:3px 10px; font-size:11px; color:var(--green); font-weight:600;
+}
+.live-dot { width:5px; height:5px; border-radius:50%; background:var(--green); animation:pg 1.5s infinite; }
+@keyframes pg { 0%,100%{opacity:1} 50%{opacity:.3} }
+.time-d { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text3); }
+
+/* ── 레이아웃 ── */
+.layout { display:flex; flex:1; overflow:hidden; }
+
+/* ── 왼쪽: 케이스 선택 ── */
+.case-panel {
+  width:240px; flex-shrink:0;
+  background:var(--panel);
+  border-right:1px solid var(--border);
+  display:flex; flex-direction:column;
+  overflow:hidden;
+}
+.cp-header {
+  padding:14px 14px 10px;
+  border-bottom:1px solid var(--border);
+  font-size:10px; font-weight:600; color:var(--text3);
+  letter-spacing:1.5px; text-transform:uppercase;
+}
+.cp-filters { display:flex; gap:4px; padding:10px 14px; border-bottom:1px solid var(--border); }
+.cf-btn {
+  flex:1; padding:5px 0; border-radius:4px; border:1px solid var(--border);
+  font-size:10px; color:var(--text3); cursor:pointer; background:transparent;
+  font-family:'Noto Sans KR',sans-serif; transition:all .2s; text-align:center;
+}
+.cf-btn.on { background:rgba(13,148,136,.15); border-color:var(--teal); color:var(--teal2); }
+.case-list { flex:1; overflow-y:auto; padding:8px; }
+.case-list::-webkit-scrollbar { width:3px; }
+.case-list::-webkit-scrollbar-thumb { background:var(--border); }
+.case-item {
+  padding:10px 12px; border-radius:6px; border:1px solid transparent;
+  cursor:pointer; transition:all .2s; margin-bottom:4px;
+}
+.case-item:hover { background:rgba(255,255,255,.03); border-color:var(--border); }
+.case-item.active { background:rgba(13,148,136,.1); border-color:var(--teal); }
+.ci-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
+.ci-name { font-size:11px; font-weight:600; color:var(--text); }
+.ci-badge { font-size:9px; font-weight:700; padding:1px 6px; border-radius:8px; }
+.b4 { background:rgba(239,68,68,.15); color:var(--red); border:1px solid rgba(239,68,68,.25); }
+.b3 { background:rgba(234,88,12,.15); color:var(--orange); border:1px solid rgba(234,88,12,.25); }
+.b2 { background:rgba(245,158,11,.15); color:var(--amber); border:1px solid rgba(245,158,11,.25); }
+.ci-sub { font-size:10px; color:var(--text3); margin-bottom:3px; }
+.ci-time { font-size:9px; color:var(--text3); font-family:'JetBrains Mono',monospace; }
+
+/* ── 중앙: 메인 리포트 ── */
+.report-area {
+  flex:1; overflow-y:auto;
+  padding:20px 24px;
+}
+.report-area::-webkit-scrollbar { width:4px; }
+.report-area::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+/* 리포트 헤더 */
+.rpt-header {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:18px 20px;
+  margin-bottom:16px;
+  position:relative;
+  overflow:hidden;
+}
+.rpt-header::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg, var(--red), var(--orange));
+}
+.rpt-htop { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; }
+.rpt-title-block {}
+.rpt-label { font-size:10px; color:var(--purple); font-weight:600; letter-spacing:1.5px; margin-bottom:4px; }
+.rpt-title { font-size:17px; font-weight:700; color:var(--text); margin-bottom:3px; }
+.rpt-subtitle { font-size:11px; color:var(--text3); }
+.rpt-level {
+  text-align:right;
+}
+.rpt-cri-val { font-family:'JetBrains Mono',monospace; font-size:32px; font-weight:600; color:var(--red); line-height:1; }
+.rpt-cri-label { font-size:10px; color:var(--text3); margin-top:2px; }
+.rpt-meta { display:flex; gap:20px; padding-top:12px; border-top:1px solid var(--border); }
+.rpt-meta-item { }
+.rmi-label { font-size:9px; color:var(--text3); margin-bottom:2px; letter-spacing:.5px; }
+.rmi-val { font-size:11px; color:var(--text2); font-weight:500; }
+.rmi-val.warn { color:var(--red); font-weight:600; }
+
+/* 섹션 공통 */
+.section { margin-bottom:16px; }
+.sec-title {
+  font-size:11px; font-weight:600; color:var(--text3);
+  letter-spacing:1.5px; text-transform:uppercase;
+  margin-bottom:10px; display:flex; align-items:center; gap:8px;
+}
+.sec-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* SHAP 워터폴 */
+.waterfall { background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:16px; }
+.wf-baseline { display:flex; align-items:center; gap:10px; margin-bottom:14px; font-size:11px; }
+.wf-bl-bar { flex:1; height:28px; background:var(--navy3); border-radius:4px; position:relative; overflow:hidden; }
+.wf-bl-line { position:absolute; top:0; bottom:0; width:2px; background:rgba(255,255,255,.2); left:30%; }
+.wf-bl-label { font-size:10px; color:var(--text3); white-space:nowrap; }
+
+.wf-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; cursor:pointer; }
+.wf-row:hover .wf-varname { color:var(--text); }
+.wf-varname { width:130px; font-size:10px; color:var(--text2); flex-shrink:0; text-align:right; line-height:1.3; }
+.wf-barwrap { flex:1; height:26px; position:relative; background:rgba(255,255,255,.04); border-radius:4px; overflow:visible; }
+.wf-bar {
+  position:absolute; top:3px; height:20px; border-radius:3px;
+  display:flex; align-items:center; padding:0 6px;
+  font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:600;
+  white-space:nowrap; transition:width .7s cubic-bezier(.4,0,.2,1), left .7s;
+  min-width:36px;
+}
+.wf-bar.pos { background:linear-gradient(90deg,rgba(239,68,68,.7),rgba(239,68,68,.5)); color:var(--white); }
+.wf-bar.neg { background:linear-gradient(90deg,rgba(56,189,248,.5),rgba(56,189,248,.3)); color:var(--white); }
+.wf-arrow { width:16px; font-size:12px; flex-shrink:0; }
+.wf-total { display:flex; align-items:center; gap:10px; margin-top:10px; padding-top:10px; border-top:1px solid var(--border); }
+.wf-total .wf-varname { color:var(--text); font-weight:600; font-size:11px; }
+.wf-result-bar {
+  flex:1; height:28px; border-radius:4px;
+  background:linear-gradient(90deg, rgba(239,68,68,.6), rgba(239,68,68,.4));
+  display:flex; align-items:center; padding:0 10px;
+  font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; color:var(--white);
+  position:relative;
+}
+.wf-result-bar::after {
+  content:'4단계 경보'; position:absolute; right:10px;
+  font-size:10px; color:rgba(255,255,255,.7); font-family:'Noto Sans KR',sans-serif; font-weight:600;
+}
+
+/* 반사실 분석 */
+.counterfactual {
+  background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:16px;
+}
+.cf-scenario { display:flex; gap:10px; margin-bottom:10px; }
+.cf-chip {
+  padding:5px 12px; border-radius:20px; border:1px solid var(--border);
+  font-size:10px; color:var(--text3); cursor:pointer; transition:all .2s;
+}
+.cf-chip.on { background:rgba(139,92,246,.15); border-color:var(--purple); color:var(--purple); }
+.cf-compare {
+  display:grid; grid-template-columns:1fr auto 1fr; gap:12px; align-items:center;
+  background:var(--navy3); border-radius:8px; padding:14px;
+}
+.cf-box { }
+.cf-box-label { font-size:9px; color:var(--text3); margin-bottom:6px; letter-spacing:1px; text-transform:uppercase; }
+.cf-box-cri { font-family:'JetBrains Mono',monospace; font-size:28px; font-weight:700; line-height:1; margin-bottom:4px; }
+.cf-box-desc { font-size:10px; color:var(--text3); line-height:1.5; }
+.cf-arrow { text-align:center; font-size:20px; color:var(--purple); }
+.cf-insight {
+  margin-top:12px; padding:10px 14px;
+  background:rgba(139,92,246,.08); border:1px solid rgba(139,92,246,.2);
+  border-left:3px solid var(--purple); border-radius:6px;
+  font-size:11px; color:var(--text2); line-height:1.6;
+}
+.cf-insight strong { color:var(--purple); }
+
+/* 불확실성 */
+.uncertainty-wrap { background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:16px; }
+.unc-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.unc-label { width:90px; font-size:10px; color:var(--text2); flex-shrink:0; }
+.unc-bar-bg { flex:1; height:8px; background:rgba(255,255,255,.06); border-radius:4px; overflow:hidden; position:relative; }
+.unc-bar { height:8px; border-radius:4px; }
+.unc-range { width:60px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text3); text-align:right; }
+
+/* 자동 리포트 생성 */
+.auto-report {
+  background:var(--panel); border:1px solid var(--border); border-radius:8px; overflow:hidden;
+}
+.ar-toolbar {
+  background:var(--navy3); padding:10px 14px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--border);
+}
+.ar-toolbar-left { display:flex; gap:6px; }
+.ar-tab {
+  font-size:10px; padding:4px 10px; border-radius:4px; cursor:pointer;
+  color:var(--text3); transition:all .2s;
+}
+.ar-tab.on { background:rgba(13,148,136,.15); color:var(--teal2); }
+.ar-actions { display:flex; gap:6px; }
+.ar-btn {
+  font-size:10px; padding:4px 12px; border-radius:4px;
+  border:1px solid var(--border); cursor:pointer;
+  font-family:'Noto Sans KR',sans-serif; transition:all .2s;
+}
+.ar-btn.primary { background:var(--teal); border-color:var(--teal); color:var(--white); font-weight:600; }
+.ar-btn.secondary { background:transparent; color:var(--text3); }
+.ar-btn:hover { opacity:.8; }
+.ar-body {
+  padding:16px;
+  font-size:11px; color:var(--text2); line-height:1.9;
+  font-family:'Noto Sans KR',sans-serif;
+  min-height:160px;
+}
+.ar-body .hl-red { color:var(--red); font-weight:600; }
+.ar-body .hl-amber { color:var(--amber); font-weight:600; }
+.ar-body .hl-teal { color:var(--teal2); font-weight:600; }
+.ar-body .hl-purple { color:var(--purple); font-weight:600; }
+.typing-cursor { display:inline-block; width:2px; height:12px; background:var(--teal2); margin-left:2px; animation:blink .7s infinite; vertical-align:middle; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.ar-footer {
+  padding:8px 14px; background:var(--navy3);
+  border-top:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:10px; color:var(--text3);
+}
+.gen-progress { display:flex; align-items:center; gap:8px; }
+.gp-bar-bg { width:80px; height:4px; background:rgba(255,255,255,.08); border-radius:2px; overflow:hidden; }
+.gp-bar { height:4px; background:var(--teal2); border-radius:2px; transition:width .3s; }
+
+/* ── 오른쪽: 맥락 패널 ── */
+.context-panel {
+  width:260px; flex-shrink:0;
+  background:var(--panel);
+  border-left:1px solid var(--border);
+  display:flex; flex-direction:column;
+  overflow-y:auto;
+}
+.context-panel::-webkit-scrollbar { width:3px; }
+.context-panel::-webkit-scrollbar-thumb { background:var(--border); }
+.ctx-section { padding:14px; border-bottom:1px solid var(--border); }
+.ctx-label { font-size:10px; font-weight:600; color:var(--text3); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:10px; }
+
+/* 미니 차트 */
+.mini-chart { height:64px; position:relative; }
+.mini-chart svg { width:100%; height:100%; }
+
+/* 수치 그리드 */
+.ctx-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.ctx-card {
+  background:var(--navy3); border:1px solid var(--border);
+  border-radius:6px; padding:8px;
+}
+.ctx-card-label { font-size:9px; color:var(--text3); margin-bottom:3px; }
+.ctx-card-val { font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:600; }
+.ctx-card-unit { font-size:8px; color:var(--text3); font-family:'Noto Sans KR',sans-serif; margin-left:2px; }
+
+/* 유사 사례 */
+.similar-case {
+  background:var(--navy3); border:1px solid var(--border);
+  border-radius:6px; padding:10px 12px; margin-bottom:6px;
+  cursor:pointer; transition:border-color .2s;
+}
+.similar-case:hover { border-color:var(--teal); }
+.sc-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
+.sc-name { font-size:10px; font-weight:600; color:var(--text); }
+.sc-match { font-size:9px; color:var(--teal2); font-family:'JetBrains Mono',monospace; }
+.sc-desc { font-size:9px; color:var(--text3); line-height:1.4; }
+.sc-outcome { font-size:9px; margin-top:4px; padding:3px 6px; border-radius:3px; display:inline-block; }
+.sco-bad { background:rgba(239,68,68,.1); color:var(--red); }
+.sco-ok { background:rgba(16,185,129,.1); color:var(--green); }
+
+/* 하단 상태바 */
+.statusbar {
+  height:26px; background:rgba(7,24,40,.95); border-top:1px solid var(--border);
+  display:flex; align-items:center; padding:0 16px; gap:20px; flex-shrink:0;
+}
+.sb-item { display:flex; align-items:center; gap:5px; font-size:10px; color:var(--text3); }
+.sb-dot { width:5px; height:5px; border-radius:50%; background:var(--green); }
+
+/* 토스트 */
+#toast {
+  position:fixed; bottom:40px; right:20px;
+  background:rgba(13,148,136,.95); border:1px solid var(--teal2);
+  border-radius:8px; padding:9px 16px;
+  font-size:11px; color:var(--white);
+  transform:translateY(60px); opacity:0;
+  transition:all .3s; z-index:9999; max-width:280px;
+}
+</style>
+</head>
+<body>
+
+<!-- ── 헤더 ── -->
+<header class=&quot;header&quot;>
+  <div class=&quot;logo&quot;>K<span>|</span>CRP</div>
+  <div class=&quot;header-title&quot;>XAI 설명형 위험 리포트 — Geo-Physical AI 예측 분해 및 자동 보고서 생성</div>
+  <div class=&quot;header-badge&quot;>
+    <span class=&quot;hbadge&quot;>③ XAI 리포트 모듈</span>
+    <div class=&quot;live-badge&quot;><div class=&quot;live-dot&quot;></div>LIVE</div>
+    <div class=&quot;time-d&quot; id=&quot;clock&quot;>2025-08-03 14:32</div>
+  </div>
+</header>
+
+<div class=&quot;layout&quot;>
+
+  <!-- ── 왼쪽: 케이스 목록 ── -->
+  <div class=&quot;case-panel&quot;>
+    <div class=&quot;cp-header&quot;>분석 케이스 목록</div>
+    <div class=&quot;cp-filters&quot;>
+      <div class=&quot;cf-btn on&quot; onclick=&quot;filterCase(this,'all')&quot;>전체</div>
+      <div class=&quot;cf-btn&quot; onclick=&quot;filterCase(this,'4')&quot;>4단계</div>
+      <div class=&quot;cf-btn&quot; onclick=&quot;filterCase(this,'3')&quot;>3단계</div>
+    </div>
+    <div class=&quot;case-list&quot;>
+
+      <div class=&quot;case-item active&quot; onclick=&quot;selectCase(this,0)&quot;>
+        <div class=&quot;ci-top&quot;>
+          <span class=&quot;ci-name&quot;>통영·거제 고수온+빈산소</span>
+          <span class=&quot;ci-badge b4&quot;>4단계</span>
+        </div>
+        <div class=&quot;ci-sub&quot;>CRI 0.74 | 복합위험 동시 발생</div>
+        <div class=&quot;ci-time&quot;>14:18 발령 · 예측신뢰도 89%</div>
+      </div>
+
+      <div class=&quot;case-item&quot; onclick=&quot;selectCase(this,1)&quot;>
+        <div class=&quot;ci-top&quot;>
+          <span class=&quot;ci-name&quot;>여수 적조 확산</span>
+          <span class=&quot;ci-badge b3&quot;>3단계</span>
+        </div>
+        <div class=&quot;ci-sub&quot;>CRI 0.61 | Cochlodinium 급증</div>
+        <div class=&quot;ci-time&quot;>13:45 발령 · 예측신뢰도 82%</div>
+      </div>
+
+      <div class=&quot;case-item&quot; onclick=&quot;selectCase(this,2)&quot;>
+        <div class=&quot;ci-top&quot;>
+          <span class=&quot;ci-name&quot;>천수만 부유사 확산</span>
+          <span class=&quot;ci-badge b2&quot;>2단계</span>
+        </div>
+        <div class=&quot;ci-sub&quot;>CRI 0.48 | 준설 공사 영향</div>
+        <div class=&quot;ci-time&quot;>12:30 발령 · 예측신뢰도 76%</div>
+      </div>
+
+      <div class=&quot;case-item&quot; onclick=&quot;selectCase(this,3)&quot;>
+        <div class=&quot;ci-top&quot;>
+          <span class=&quot;ci-name&quot;>거제 빈산소 단독</span>
+          <span class=&quot;ci-badge b3&quot;>3단계</span>
+        </div>
+        <div class=&quot;ci-sub&quot;>CRI 0.55 | 저층 DO 3.2mg/L</div>
+        <div class=&quot;ci-time&quot;>11:55 발령 · 예측신뢰도 85%</div>
+      </div>
+
+      <div class=&quot;case-item&quot; onclick=&quot;selectCase(this,4)&quot;>
+        <div class=&quot;ci-top&quot;>
+          <span class=&quot;ci-name&quot;>고흥 고수온 단독</span>
+          <span class=&quot;ci-badge b2&quot;>2단계</span>
+        </div>
+        <div class=&quot;ci-sub&quot;>CRI 0.38 | SST 28.4°C</div>
+        <div class=&quot;ci-time&quot;>10:20 발령 · 예측신뢰도 79%</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── 중앙: 리포트 ── -->
+  <div class=&quot;report-area&quot; id=&quot;reportArea&quot;>
+
+    <!-- 리포트 헤더 -->
+    <div class=&quot;rpt-header&quot;>
+      <div class=&quot;rpt-htop&quot;>
+        <div class=&quot;rpt-title-block&quot;>
+          <div class=&quot;rpt-label&quot;>XAI RISK REPORT · AUTO-GENERATED</div>
+          <div class=&quot;rpt-title&quot; id=&quot;rptTitle&quot;>남해 통영·거제권 — 고수온 + 빈산소 복합위험</div>
+          <div class=&quot;rpt-subtitle&quot; id=&quot;rptSub&quot;>기준시각: 2025-08-03 14:00 KST &amp;nbsp;|&amp;nbsp; GPA 엔진 v2.1 &amp;nbsp;|&amp;nbsp; SHAP TreeExplainer</div>
+        </div>
+        <div class=&quot;rpt-level&quot;>
+          <div class=&quot;rpt-cri-val&quot; id=&quot;rptCRI&quot;>0.74</div>
+          <div class=&quot;rpt-cri-label&quot;>복합위험지수 (CRI)</div>
+          <div style=&quot;margin-top:4px&quot;>
+            <span class=&quot;ci-badge b4&quot; id=&quot;rptBadge&quot; style=&quot;font-size:10px;padding:3px 10px&quot;>4단계 경보</span>
+          </div>
+        </div>
+      </div>
+      <div class=&quot;rpt-meta&quot;>
+        <div class=&quot;rpt-meta-item&quot;>
+          <div class=&quot;rmi-label&quot;>표층 수온 (SST)</div>
+          <div class=&quot;rmi-val warn&quot; id=&quot;m1&quot;>29.2°C (+1.2°C 이상)</div>
+        </div>
+        <div class=&quot;rpt-meta-item&quot;>
+          <div class=&quot;rmi-label&quot;>저층 DO</div>
+          <div class=&quot;rmi-val warn&quot; id=&quot;m2&quot;>3.8 mg/L (기준: 4.0)</div>
+        </div>
+        <div class=&quot;rpt-meta-item&quot;>
+          <div class=&quot;rmi-label&quot;>혼합층 깊이</div>
+          <div class=&quot;rmi-val warn&quot; id=&quot;m3&quot;>MLD 4.2m (↓ 전일比)</div>
+        </div>
+        <div class=&quot;rpt-meta-item&quot;>
+          <div class=&quot;rmi-label&quot;>예측 신뢰도</div>
+          <div class=&quot;rmi-val&quot; id=&quot;m4&quot; style=&quot;color:var(--teal2)&quot;>89%</div>
+        </div>
+        <div class=&quot;rpt-meta-item&quot;>
+          <div class=&quot;rmi-label&quot;>리드타임</div>
+          <div class=&quot;rmi-val&quot; id=&quot;m5&quot;>72시간</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHAP 워터폴 -->
+    <div class=&quot;section&quot;>
+      <div class=&quot;sec-title&quot;>SHAP 워터폴 — 변수별 CRI 기여도 분해</div>
+      <div class=&quot;waterfall&quot;>
+        <!-- 기준값 -->
+        <div class=&quot;wf-row&quot; style=&quot;margin-bottom:16px&quot;>
+          <div class=&quot;wf-varname&quot; style=&quot;color:var(--text3)&quot;>기준값 (E[CRI])</div>
+          <div class=&quot;wf-barwrap&quot; style=&quot;background:transparent&quot;>
+            <div style=&quot;position:absolute;left:30%;top:0;bottom:0;width:2px;background:rgba(255,255,255,.1)&quot;></div>
+            <div class=&quot;wf-bar pos&quot; style=&quot;left:22%;width:16%;background:rgba(255,255,255,.08);color:var(--text3)&quot;>0.32</div>
+          </div>
+          <div class=&quot;wf-arrow&quot;></div>
+        </div>
+
+        <!-- 변수들 -->
+        <div class=&quot;wf-row&quot; id=&quot;wr0&quot; onclick=&quot;highlightRow(this)&quot;>
+          <div class=&quot;wf-varname&quot;>🌡 표층 수온<br><span style=&quot;color:var(--text3);font-size:9px&quot;>SST 29.2°C</span></div>
+          <div class=&quot;wf-barwrap&quot;>
+            <div class=&quot;wf-bar pos&quot; style=&quot;left:38%;width:34%&quot;>+0.42</div>
+          </div>
+          <div class=&quot;wf-arrow&quot; style=&quot;color:var(--red)&quot;>↑</div>
+        </div>
+
+        <div class=&quot;wf-row&quot; id=&quot;wr1&quot; onclick=&quot;highlightRow(this)&quot;>
+          <div class=&quot;wf-varname&quot;>💧 저층 DO<br><span style=&quot;color:var(--text3);font-size:9px&quot;>3.8 mg/L</span></div>
+          <div class=&quot;wf-barwrap&quot;>
+            <div class=&quot;wf-bar pos&quot; style=&quot;left:53%;width:25%&quot;>+0.31</div>
+          </div>
+          <div class=&quot;wf-arrow&quot; style=&quot;color:var(--red)&quot;>↑</div>
+        </div>
+
+        <div class=&quot;wf-row&quot; id=&quot;wr2&quot; onclick=&quot;highlightRow(this)&quot;>
+          <div class=&quot;wf-varname&quot;>🌊 해류 정체<br><span style=&quot;color:var(--text3);font-size:9px&quot;>순환 정지 3일</span></div>
+          <div class=&quot;wf-barwrap&quot;>
+            <div class=&quot;wf-bar pos&quot; style=&quot;left:65%;width:14%&quot;>+0.18</div>
+          </div>
+          <div class=&quot;wf-arrow&quot; style=&quot;color:var(--orange)&quot;>↑</div>
+        </div>
+
+        <div class=&quot;wf-row&quot; id=&quot;wr3&quot; onclick=&quot;highlightRow(this)&quot;>
+          <div class=&quot;wf-varname&quot;>🧂 염분 성층화<br><span style=&quot;color:var(--text3);font-size:9px&quot;>ΔS 1.8 psu</span></div>
+          <div class=&quot;wf-barwrap&quot;>
+            <div class=&quot;wf-bar pos&quot; style=&quot;left:72%;width:11%&quot;>+0.14</div>
+          </div>
+          <div class=&quot;wf-arrow&quot; style=&quot;color:var(--amber)&quot;>↑</div>
+        </div>
+
+        <div class=&quot;wf-row&quot; id=&quot;wr4&quot; onclick=&quot;highlightRow(this)&quot;>
+          <div class=&quot;wf-varname&quot;>🌤 MLD 변화<br><span style=&quot;color:var(--text3);font-size:9px&quot;>4.2m → 3.1m</span></div>
+          <div class=&quot;wf-barwrap&quot;>
+            <div class=&quot;wf-bar pos&quot; style=&quot;left:76%;width:7%&quot;>+0.08</div>
+          </div>
+          <div class=&quot;wf-arrow&quot; style=&quot;color:var(--amber)&quot;>↑</div>
+        </div>
+
+        <div class=&quot;wf-row&quot; id=&quot;wr5&quot; onclick=&quot;highlightRow(this)&quot;>
+          <div class=&quot;wf-varname&quot;>💨 풍속·방향<br><span style=&quot;color:var(--text3);font-size:9px&quot;>남서 1.2 m/s</span></div>
+          <div class=&quot;wf-barwrap&quot;>
+            <div class=&quot;wf-bar neg&quot; style=&quot;left:24%;width:7%&quot;>−0.09</div>
+          </div>
+          <div class=&quot;wf-arrow&quot; style=&quot;color:var(--sky)&quot;>↓</div>
+        </div>
+
+        <div class=&quot;wf-row&quot; id=&quot;wr6&quot; onclick=&quot;highlightRow(this)&quot;>
+          <div class=&quot;wf-varname&quot;>🌧 강수량<br><span style=&quot;color:var(--text3);font-size:9px&quot;>전일 0mm</span></div>
+          <div class=&quot;wf-barwrap&quot;>
+            <div class=&quot;wf-bar neg&quot; style=&quot;left:28%;width:4%&quot;>−0.04</div>
+          </div>
+          <div class=&quot;wf-arrow&quot; style=&quot;color:var(--sky)&quot;>↓</div>
+        </div>
+
+        <!-- 합계 -->
+        <div class=&quot;wf-total&quot;>
+          <div class=&quot;wf-varname&quot;>최종 예측 CRI</div>
+          <div class=&quot;wf-result-bar&quot;>CRI = 0.74</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 반사실 분석 -->
+    <div class=&quot;section&quot;>
+      <div class=&quot;sec-title&quot;>반사실 분석 (Counterfactual) — &quot;만약 ~였다면?&quot;</div>
+      <div class=&quot;counterfactual&quot;>
+        <div class=&quot;cf-scenario&quot;>
+          <div class=&quot;cf-chip on&quot; onclick=&quot;switchCF(this,0)&quot;>수온 −1°C</div>
+          <div class=&quot;cf-chip&quot; onclick=&quot;switchCF(this,1)&quot;>DO +0.5</div>
+          <div class=&quot;cf-chip&quot; onclick=&quot;switchCF(this,2)&quot;>해류 순환 회복</div>
+          <div class=&quot;cf-chip&quot; onclick=&quot;switchCF(this,3)&quot;>풍속 강화</div>
+        </div>
+        <div class=&quot;cf-compare&quot;>
+          <div class=&quot;cf-box&quot;>
+            <div class=&quot;cf-box-label&quot;>현재 상황</div>
+            <div class=&quot;cf-box-cri&quot; style=&quot;color:var(--red)&quot; id=&quot;cfCurrent&quot;>0.74</div>
+            <div class=&quot;cf-box-desc&quot; id=&quot;cfCurDesc&quot;>SST 29.2°C<br>DO 3.8mg/L<br>→ 4단계 경보</div>
+          </div>
+          <div class=&quot;cf-arrow&quot;>→</div>
+          <div class=&quot;cf-box&quot;>
+            <div class=&quot;cf-box-label&quot; id=&quot;cfScenLabel&quot;>수온이 1°C 낮았다면</div>
+            <div class=&quot;cf-box-cri&quot; id=&quot;cfResult&quot; style=&quot;color:var(--orange)&quot;>0.58</div>
+            <div class=&quot;cf-box-desc&quot; id=&quot;cfResDesc&quot;>SST 28.2°C<br>DO 3.8mg/L<br>→ 3단계 경보 수준</div>
+          </div>
+        </div>
+        <div class=&quot;cf-insight&quot; id=&quot;cfInsight&quot;>
+          <strong>핵심 인사이트:</strong> 표층 수온이 현재보다 1°C만 낮았다면 CRI는 0.74 → 0.58로 감소하여 3단계 수준이었을 것입니다. <strong>수온 임계치(28°C) 관리가 이 권역의 가장 중요한 대응 변수</strong>입니다. 사전에 양식장 차광막 설치 등 수온 저감 조치가 효과적입니다.
+        </div>
+      </div>
+    </div>
+
+    <!-- 예측 불확실성 -->
+    <div class=&quot;section&quot;>
+      <div class=&quot;sec-title&quot;>예측 불확실성 분포 — 앙상블 50개 멤버</div>
+      <div class=&quot;uncertainty-wrap&quot;>
+        <div class=&quot;unc-row&quot;>
+          <div class=&quot;unc-label&quot;>24h CRI</div>
+          <div class=&quot;unc-bar-bg&quot;>
+            <div class=&quot;unc-bar&quot; style=&quot;width:82%;background:linear-gradient(90deg,var(--red),rgba(239,68,68,.4))&quot;></div>
+          </div>
+          <div class=&quot;unc-range&quot;>0.71~0.82</div>
+        </div>
+        <div class=&quot;unc-row&quot;>
+          <div class=&quot;unc-label&quot;>48h CRI</div>
+          <div class=&quot;unc-bar-bg&quot;>
+            <div class=&quot;unc-bar&quot; style=&quot;width:75%;background:linear-gradient(90deg,var(--orange),rgba(234,88,12,.4))&quot;></div>
+          </div>
+          <div class=&quot;unc-range&quot;>0.64~0.79</div>
+        </div>
+        <div class=&quot;unc-row&quot;>
+          <div class=&quot;unc-label&quot;>72h CRI</div>
+          <div class=&quot;unc-bar-bg&quot;>
+            <div class=&quot;unc-bar&quot; style=&quot;width:60%;background:linear-gradient(90deg,var(--amber),rgba(245,158,11,.4))&quot;></div>
+          </div>
+          <div class=&quot;unc-range&quot;>0.48~0.72</div>
+        </div>
+        <div style=&quot;font-size:10px;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border)&quot;>
+          불확실성 주요 원인: ROMS 해류 예측 분산 (기여 44%) · 기상 예보 오차 (31%) · 관측 결측 (25%)
+        </div>
+      </div>
+    </div>
+
+    <!-- 자동 리포트 생성 -->
+    <div class=&quot;section&quot;>
+      <div class=&quot;sec-title&quot;>자동 리포트 생성 — NLG 엔진</div>
+      <div class=&quot;auto-report&quot;>
+        <div class=&quot;ar-toolbar&quot;>
+          <div class=&quot;ar-toolbar-left&quot;>
+            <div class=&quot;ar-tab on&quot; onclick=&quot;switchARtab(this,0)&quot;>행정 보고용</div>
+            <div class=&quot;ar-tab&quot; onclick=&quot;switchARtab(this,1)&quot;>어업인 알림</div>
+            <div class=&quot;ar-tab&quot; onclick=&quot;switchARtab(this,2)&quot;>연구기관용</div>
+          </div>
+          <div class=&quot;ar-actions&quot;>
+            <button class=&quot;ar-btn secondary&quot; onclick=&quot;showToast('PDF 저장 완료')&quot;>PDF 저장</button>
+            <button class=&quot;ar-btn secondary&quot; onclick=&quot;showToast('행정시스템 연계 완료')&quot;>시스템 연계</button>
+            <button class=&quot;ar-btn primary&quot; onclick=&quot;regenReport()&quot;>재생성</button>
+          </div>
+        </div>
+        <div class=&quot;ar-body&quot; id=&quot;arBody&quot;>
+          <span id=&quot;arText&quot;></span><span class=&quot;typing-cursor&quot; id=&quot;cursor&quot;></span>
+        </div>
+        <div class=&quot;ar-footer&quot;>
+          <span id=&quot;arFooter&quot;>NLG 엔진 생성 완료 · 2025-08-03 14:18:32</span>
+          <div class=&quot;gen-progress&quot;>
+            <span id=&quot;genLabel&quot;>생성 완료</span>
+            <div class=&quot;gp-bar-bg&quot;><div class=&quot;gp-bar&quot; id=&quot;gpBar&quot; style=&quot;width:100%&quot;></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /report-area -->
+
+  <!-- ── 오른쪽: 맥락 ── -->
+  <div class=&quot;context-panel&quot;>
+
+    <div class=&quot;ctx-section&quot;>
+      <div class=&quot;ctx-label&quot;>수온 시계열 (72h)</div>
+      <div class=&quot;mini-chart&quot;>
+        <svg viewBox=&quot;0 0 230 60&quot;>
+          <polyline points=&quot;0,45 30,42 60,38 90,32 120,25 150,20 180,18 210,16 230,14&quot;
+            fill=&quot;none&quot; stroke=&quot;rgba(239,68,68,.6)&quot; stroke-width=&quot;1.5&quot;/>
+          <line x1=&quot;0&quot; y1=&quot;28&quot; x2=&quot;230&quot; y2=&quot;28&quot; stroke=&quot;rgba(239,68,68,.25)&quot; stroke-width=&quot;1&quot; stroke-dasharray=&quot;3,3&quot;/>
+          <text x=&quot;185&quot; y=&quot;25&quot; font-size=&quot;8&quot; fill=&quot;rgba(239,68,68,.6)&quot; font-family=&quot;JetBrains Mono&quot;>28°C</text>
+          <circle cx=&quot;150&quot; cy=&quot;20&quot; r=&quot;3&quot; fill=&quot;var(--white)&quot; stroke=&quot;rgba(239,68,68,.8)&quot; stroke-width=&quot;1.5&quot;/>
+          <text x=&quot;0&quot; y=&quot;58&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.3)&quot; font-family=&quot;JetBrains Mono&quot;>-48h</text>
+          <text x=&quot;100&quot; y=&quot;58&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.3)&quot; font-family=&quot;JetBrains Mono&quot;>NOW</text>
+          <text x=&quot;196&quot; y=&quot;58&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.3)&quot; font-family=&quot;JetBrains Mono&quot;>+24h</text>
+          <line x1=&quot;120&quot; y1=&quot;0&quot; x2=&quot;120&quot; y2=&quot;52&quot; stroke=&quot;rgba(255,255,255,.1)&quot; stroke-width=&quot;1&quot; stroke-dasharray=&quot;2,2&quot;/>
+        </svg>
+      </div>
+    </div>
+
+    <div class=&quot;ctx-section&quot;>
+      <div class=&quot;ctx-label&quot;>핵심 관측값</div>
+      <div class=&quot;ctx-grid&quot;>
+        <div class=&quot;ctx-card&quot;>
+          <div class=&quot;ctx-card-label&quot;>SST</div>
+          <div class=&quot;ctx-card-val&quot; style=&quot;color:var(--red)&quot;>29.2<span class=&quot;ctx-card-unit&quot;>°C</span></div>
+        </div>
+        <div class=&quot;ctx-card&quot;>
+          <div class=&quot;ctx-card-label&quot;>DO (저층)</div>
+          <div class=&quot;ctx-card-val&quot; style=&quot;color:var(--orange)&quot;>3.8<span class=&quot;ctx-card-unit&quot;>mg/L</span></div>
+        </div>
+        <div class=&quot;ctx-card&quot;>
+          <div class=&quot;ctx-card-label&quot;>MLD</div>
+          <div class=&quot;ctx-card-val&quot; style=&quot;color:var(--sky)&quot;>4.2<span class=&quot;ctx-card-unit&quot;>m</span></div>
+        </div>
+        <div class=&quot;ctx-card&quot;>
+          <div class=&quot;ctx-card-label&quot;>클로로필</div>
+          <div class=&quot;ctx-card-val&quot; style=&quot;color:var(--green)&quot;>4.1<span class=&quot;ctx-card-unit&quot;>μg/L</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class=&quot;ctx-section&quot;>
+      <div class=&quot;ctx-label&quot;>유사 과거 사례</div>
+
+      <div class=&quot;similar-case&quot; onclick=&quot;showToast('2023-08-11 통영 사례 상세 조회')&quot;>
+        <div class=&quot;sc-top&quot;>
+          <span class=&quot;sc-name&quot;>2023-08-11 통영</span>
+          <span class=&quot;sc-match&quot;>유사도 91%</span>
+        </div>
+        <div class=&quot;sc-desc&quot;>SST 29.0°C, DO 3.6, MLD 3.8m<br>고수온+빈산소 동시 발생</div>
+        <span class=&quot;sc-outcome sco-bad&quot;>넙치 89톤 폐사 · 피해 4.2억</span>
+      </div>
+
+      <div class=&quot;similar-case&quot; onclick=&quot;showToast('2022-08-03 거제 사례 상세 조회')&quot;>
+        <div class=&quot;sc-top&quot;>
+          <span class=&quot;sc-name&quot;>2022-08-03 거제</span>
+          <span class=&quot;sc-match&quot;>유사도 84%</span>
+        </div>
+        <div class=&quot;sc-desc&quot;>SST 28.7°C, DO 4.1, MLD 5.2m<br>고수온 단독 · 빈산소 미발생</div>
+        <span class=&quot;sc-outcome sco-ok&quot;>선제 대응 · 피해 최소화</span>
+      </div>
+
+      <div class=&quot;similar-case&quot; onclick=&quot;showToast('2021-07-28 여수 사례 상세 조회')&quot;>
+        <div class=&quot;sc-top&quot;>
+          <span class=&quot;sc-name&quot;>2021-07-28 여수</span>
+          <span class=&quot;sc-match&quot;>유사도 78%</span>
+        </div>
+        <div class=&quot;sc-desc&quot;>SST 29.3°C, DO 3.4, MLD 3.5m</div>
+        <span class=&quot;sc-outcome sco-bad&quot;>참돔 62톤 폐사 · 피해 2.8억</span>
+      </div>
+    </div>
+
+    <div class=&quot;ctx-section&quot; style=&quot;border-bottom:none&quot;>
+      <div class=&quot;ctx-label&quot;>AI 모델 상태</div>
+      <div style=&quot;font-size:10px;color:var(--text3);line-height:2&quot;>
+        <div style=&quot;display:flex;justify-content:space-between&quot;>
+          <span>GPA 추론 시간</span>
+          <span style=&quot;color:var(--teal2);font-family:'JetBrains Mono',monospace&quot;>2.4s</span>
+        </div>
+        <div style=&quot;display:flex;justify-content:space-between&quot;>
+          <span>SHAP 계산 시간</span>
+          <span style=&quot;color:var(--teal2);font-family:'JetBrains Mono',monospace&quot;>8.1s</span>
+        </div>
+        <div style=&quot;display:flex;justify-content:space-between&quot;>
+          <span>NLG 생성 시간</span>
+          <span style=&quot;color:var(--teal2);font-family:'JetBrains Mono',monospace&quot;>3.7s</span>
+        </div>
+        <div style=&quot;display:flex;justify-content:space-between&quot;>
+          <span>앙상블 멤버</span>
+          <span style=&quot;color:var(--text2);font-family:'JetBrains Mono',monospace&quot;>50개</span>
+        </div>
+        <div style=&quot;display:flex;justify-content:space-between&quot;>
+          <span>학습 데이터 기간</span>
+          <span style=&quot;color:var(--text2);font-family:'JetBrains Mono',monospace&quot;>2010–2024</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 상태바 -->
+<div class=&quot;statusbar&quot;>
+  <div class=&quot;sb-item&quot;><div class=&quot;sb-dot&quot;></div>GPA 엔진 정상</div>
+  <div class=&quot;sb-item&quot;><div class=&quot;sb-dot&quot;></div>SHAP TreeExplainer 활성</div>
+  <div class=&quot;sb-item&quot;><div class=&quot;sb-dot&quot;></div>NLG 엔진 정상</div>
+  <div class=&quot;sb-item&quot; style=&quot;margin-left:auto&quot;><div class=&quot;sb-dot&quot;></div>③ XAI 리포트 모듈 v1.2</div>
+</div>
+
+<div id=&quot;toast&quot;></div>
+
+<script>
+// ── 시계 ──
+setInterval(() => {
+  const n = new Date();
+  document.getElementById('clock').textContent =
+    `2025-08-03 ${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;
+}, 10000);
+
+// ── 자동 리포트 타이핑 ──
+const reports = {
+  0: `■ 남해 통영·거제권 고수온·빈산소 위험 예보\n기준: 2025-08-03 14:00 KST | 발령: 4단계 경보\n\n현재 복합위험지수(CRI) 0.74로 4단계 경보 기준(0.70)을 초과하였습니다.\n\n주요 위험 원인:\n  · 표층 수온 29.2°C → 고수온 기준(28°C) 1.2°C 초과 (기여도 +0.42)\n  · 저층 용존산소 3.8mg/L → 빈산소 기준(4.0) 0.2mg/L 미달 (기여도 +0.31)\n  · 해수 순환 3일 연속 정체 → 성층화 심화 (기여도 +0.18)\n\n72시간 예측:\n  경보 단계 지속 확률 81% | CRI 범위 0.68~0.82\n\n즉시 대응 필요사항:\n  1. 양식장 산소공급장치 가동 점검\n  2. 피해 우려 품종(넙치·참돔) 긴급 출하 검토\n  3. 경남도청·통영시 재난안전과 즉시 통보`,
+  1: `🚨 긴급 문자 발송 (어업인용)\n\n[K-CRP 해양위험 4단계 경보]\n통영·거제 양식장 긴급 주의!\n\n• 수온 29.2°C — 기준 초과\n• 산소 부족 — 빈산소 발생 중\n\n즉시 조치:\n✅ 산소공급기 가동\n✅ 그물 수심 조절\n✅ 피해 우려 어류 출하 검토\n\n72시간 고위험 지속 예상\n자세히: kcrp.go.kr/alert/0803`,
+  2: `[연구기관용 기술 보고서]\n\n관측 데이터 요약:\n  SST: 29.2°C (GOCI-II, 13:00 KST)\n  DO(저층 10m): 3.8 mg/L (부이 관측)\n  MLD: 4.2m → 3.1m (KPP 진단)\n  염분 성층화: ΔS 1.8 psu\n\nGPA 모델 출력:\n  CRI_predicted: 0.742 ± 0.031\n  앙상블 분산: σ² = 0.0096\n  PINN 물리 제약 위반율: 0.3%\n\nSHAP 분해 (TreeExplainer):\n  E[f(x)] = 0.32 (기준값)\n  Σ φᵢ = +0.42 (계산값: 0.74)\n  최대 기여변수: SST (+0.42)\n\n유사 사례 참조 (DBScan 군집화):\n  2023-08-11 통영 (유사도 0.91)\n  2021-07-28 여수 (유사도 0.78)`
+};
+
+let currentReport = 0;
+let typingTimer = null;
+
+function typeText(text, target, speed=18) {
+  clearTimeout(typingTimer);
+  const cursor = document.getElementById('cursor');
+  cursor.style.display = 'inline-block';
+  target.textContent = '';
+  let i = 0;
+  const bar = document.getElementById('gpBar');
+  const label = document.getElementById('genLabel');
+  bar.style.width = '0%';
+  label.textContent = '생성 중...';
+
+  function next() {
+    if (i < text.length) {
+      target.textContent += text[i];
+      i++;
+      bar.style.width = Math.round(i/text.length*100) + '%';
+      typingTimer = setTimeout(next, speed);
+    } else {
+      cursor.style.display = 'none';
+      label.textContent = '생성 완료 · ' + new Date().toLocaleTimeString('ko-KR');
+    }
+  }
+  next();
+}
+
+function initReport() {
+  const arText = document.getElementById('arText');
+  typeText(reports[currentReport], arText, 14);
+}
+
+function regenReport() {
+  showToast('NLG 엔진 재생성 중...');
+  const arText = document.getElementById('arText');
+  typeText(reports[currentReport], arText, 10);
+}
+
+function switchARtab(el, idx) {
+  document.querySelectorAll('.ar-tab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  currentReport = idx;
+  const arText = document.getElementById('arText');
+  typeText(reports[idx], arText, 12);
+}
+
+// 초기 실행
+setTimeout(initReport, 400);
+
+// ── 케이스 데이터 ──
+const cases = [
+  {
+    title:'남해 통영·거제권 — 고수온 + 빈산소 복합위험',
+    sub:'기준시각: 2025-08-03 14:00 KST | GPA 엔진 v2.1 | SHAP TreeExplainer',
+    cri:'0.74', badge:'4단계 경보', badgeClass:'b4',
+    m1:'29.2°C (+1.2°C 이상)', m2:'3.8 mg/L (기준: 4.0)', m3:'MLD 4.2m (↓ 전일比)', m4:'89%', m5:'72시간'
+  },
+  {
+    title:'남해 여수·순천권 — 적조 확산 진행',
+    sub:'기준시각: 2025-08-03 13:45 KST | GPA 엔진 v2.1 | 적조 ST-GNN 모듈',
+    cri:'0.61', badge:'3단계 경보', badgeClass:'b3',
+    m1:'27.8°C (+0.8°C)', m2:'18.4 μg/L (클로로필)', m3:'해류 북동향 3.2cm/s', m4:'82%', m5:'48시간'
+  },
+  {
+    title:'서해 천수만권 — 부유사 확산',
+    sub:'기준시각: 2025-08-03 12:30 KST | GPA 엔진 v2.1 | 탁도 U-Net 모듈',
+    cri:'0.48', badge:'2단계 주의', badgeClass:'b2',
+    m1:'26.1°C (정상)', m2:'탁도 47.3 NTU', m3:'부유사 12.7 mg/L', m4:'76%', m5:'36시간'
+  },
+  {
+    title:'거제 빈산소 단독 발생',
+    sub:'기준시각: 2025-08-03 11:55 KST | GPA 엔진 v2.1 | DO 진단 모듈',
+    cri:'0.55', badge:'3단계 경보', badgeClass:'b3',
+    m1:'28.4°C (+0.4°C)', m2:'3.2 mg/L (기준: 4.0)', m3:'MLD 3.5m (↓↓)', m4:'85%', m5:'48시간'
+  },
+  {
+    title:'고흥만 고수온 단독',
+    sub:'기준시각: 2025-08-03 10:20 KST | GPA 엔진 v2.1 | SST 이상탐지 모듈',
+    cri:'0.38', badge:'2단계 주의', badgeClass:'b2',
+    m1:'28.4°C (+0.4°C)', m2:'5.2 mg/L (정상)', m3:'MLD 7.1m (안정)', m4:'79%', m5:'24시간'
+  },
+];
+
+function selectCase(el, idx) {
+  document.querySelectorAll('.case-item').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  const c = cases[idx];
+  document.getElementById('rptTitle').textContent = c.title;
+  document.getElementById('rptSub').textContent = c.sub;
+  document.getElementById('rptCRI').textContent = c.cri;
+  document.getElementById('rptBadge').textContent = c.badge;
+  document.getElementById('rptBadge').className = 'ci-badge ' + c.badgeClass;
+  document.getElementById('rptCRI').style.color = c.badgeClass==='b4'?'var(--red)':c.badgeClass==='b3'?'var(--orange)':'var(--amber)';
+  document.getElementById('m1').textContent = c.m1;
+  document.getElementById('m2').textContent = c.m2;
+  document.getElementById('m3').textContent = c.m3;
+  document.getElementById('m4').textContent = c.m4;
+  document.getElementById('m5').textContent = c.m5;
+  const arText = document.getElementById('arText');
+  typeText(reports[currentReport], arText, 12);
+  document.getElementById('reportArea').scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── 반사실 시나리오 ──
+const cfData = [
+  { label:'수온이 1°C 낮았다면', result:'0.58', rColor:'var(--orange)', curDesc:'SST 29.2°C<br>DO 3.8mg/L<br>→ 4단계 경보', resDesc:'SST 28.2°C<br>DO 3.8mg/L<br>→ 3단계 경보 수준', insight:'<strong>핵심 인사이트:</strong> 표층 수온이 1°C만 낮았다면 CRI는 0.74 → 0.58로 감소, 3단계 수준이었을 것입니다. <strong>수온 임계치(28°C) 관리가 핵심 대응 변수</strong>입니다. 사전 차광막 설치 등 수온 저감 조치가 효과적입니다.' },
+  { label:'DO가 0.5mg/L 높았다면', result:'0.63', rColor:'var(--orange)', curDesc:'SST 29.2°C<br>DO 3.8mg/L<br>→ 4단계 경보', resDesc:'SST 29.2°C<br>DO 4.3mg/L<br>→ 고수온 단독 3단계', insight:'<strong>핵심 인사이트:</strong> 저층 용존산소가 0.5mg/L만 높았다면 복합위험 판정을 피할 수 있었습니다. <strong>수중 산소공급 장치 사전 가동이 피해 규모를 크게 줄일 수 있는 가장 직접적인 대응</strong>입니다.' },
+  { label:'해류 순환이 회복됐다면', result:'0.51', rColor:'var(--orange)', curDesc:'SST 29.2°C<br>순환 정체 3일<br>→ 4단계 경보', resDesc:'SST 29.2°C<br>순환 1.5cm/s<br>→ 3단계 수준', insight:'<strong>핵심 인사이트:</strong> 해류 순환이 회복됐다면 CRI는 0.74 → 0.51로 감소합니다. 해류 정체는 빈산소·수온 악화를 동시에 촉진하는 <strong>복합위험의 구조적 원인</strong>입니다. 조류 예측 정확도 향상이 중장기 과제입니다.' },
+  { label:'풍속이 4m/s로 강화됐다면', result:'0.66', rColor:'var(--orange)', curDesc:'SST 29.2°C<br>풍속 1.2m/s<br>→ 4단계 경보', resDesc:'SST 28.8°C<br>풍속 4.0m/s<br>→ 경보 경계 수준', insight:'<strong>핵심 인사이트:</strong> 풍속 강화(1.2 → 4.0m/s)는 표층 혼합을 촉진하여 수온을 0.4°C 낮추고 DO를 개선시킵니다. 다만 풍속 변수는 통제 불가능하므로, <strong>이 분석은 기상 예보 정확도의 중요성을 시사</strong>합니다.' },
+];
+
+function switchCF(el, idx) {
+  document.querySelectorAll('.cf-chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  const d = cfData[idx];
+  document.getElementById('cfScenLabel').textContent = d.label;
+  document.getElementById('cfResult').textContent = d.result;
+  document.getElementById('cfResult').style.color = d.rColor;
+  document.getElementById('cfCurDesc').innerHTML = d.curDesc;
+  document.getElementById('cfResDesc').innerHTML = d.resDesc;
+  document.getElementById('cfInsight').innerHTML = d.insight;
+}
+
+// ── 워터폴 행 하이라이트 ──
+function highlightRow(el) {
+  document.querySelectorAll('.wf-row').forEach(r => r.style.background = '');
+  el.style.background = 'rgba(13,148,136,.06)';
+  el.style.borderRadius = '4px';
+}
+
+// ── 필터 ──
+function filterCase(el, type) {
+  document.querySelectorAll('.cf-btn').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  showToast(type==='all' ? '전체 케이스 표시' : type+'단계 케이스 필터링');
+}
+
+// ── 토스트 ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.cssText += 'transform:translateY(0);opacity:1;';
+  setTimeout(() => { t.style.transform='translateY(60px)'; t.style.opacity='0'; }, 2500);
+}
+</script>
+</body>
+</html>
+"></iframe>
+  <iframe class="mod-frame" id="fr-gis" srcdoc="<!DOCTYPE html>
+<html lang=&quot;ko&quot;>
+<head>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;>
+<title>K-CRP | 연안복합위험 실시간 진단·예측 플랫폼</title>
+<link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;>
+<link href=&quot;https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Bebas+Neue&amp;display=swap&quot; rel=&quot;stylesheet&quot;>
+<link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/leaflet@1.9.4/dist/leaflet.css&quot;/>
+<script src=&quot;https://unpkg.com/leaflet@1.9.4/dist/leaflet.js&quot;></script>
+<style>
+:root {
+  --navy:    #071828;
+  --navy2:   #0C2235;
+  --navy3:   #0F2E47;
+  --panel:   #0A1F30;
+  --border:  #1A3A52;
+  --teal:    #0D9488;
+  --teal2:   #14B8A6;
+  --teal3:   #5EEAD4;
+  --blue:    #0E5FA1;
+  --sky:     #38BDF8;
+  --amber:   #F59E0B;
+  --orange:  #EA580C;
+  --red:     #EF4444;
+  --green:   #10B981;
+  --text:    #E2F0FF;
+  --text2:   #8BAFC8;
+  --text3:   #4A7A9B;
+  --white:   #FFFFFF;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── 상단 헤더 ── */
+.header {
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1000;
+}
+.header-left { display: flex; align-items: center; gap: 16px; }
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 3px;
+  color: var(--teal2);
+  text-shadow: 0 0 20px rgba(20,184,166,0.4);
+}
+.logo span { color: var(--text); opacity: 0.5; margin: 0 6px; }
+.header-title { font-size: 13px; color: var(--text2); font-weight: 400; }
+.header-tabs { display: flex; gap: 2px; }
+.htab {
+  padding: 0 18px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: var(--text2);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all .2s;
+  white-space: nowrap;
+}
+.htab:hover { color: var(--text); background: rgba(13,148,136,.07); }
+.htab.active { color: var(--teal2); border-bottom-color: var(--teal2); background: rgba(13,148,136,.08); }
+.header-right { display: flex; align-items: center; gap: 16px; }
+.live-badge {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(16,185,129,.12);
+  border: 1px solid rgba(16,185,129,.3);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 11px; color: var(--green); font-weight: 600;
+}
+.live-dot { width:6px; height:6px; border-radius:50%; background:var(--green); animation: pulse-green 1.5s infinite; }
+.time-display { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text2); }
+@keyframes pulse-green { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
+
+/* ── 메인 레이아웃 ── */
+.main { display: flex; flex: 1; overflow: hidden; }
+
+/* ── 왼쪽 사이드바 ── */
+.sidebar {
+  width: 280px;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.sidebar-section { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+.sidebar-label {
+  font-size: 10px; font-weight: 600; color: var(--text3);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+/* CRI 게이지 */
+.cri-card {
+  background: var(--navy3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+}
+.cri-card:hover { border-color: var(--teal); background: rgba(13,148,136,.08); }
+.cri-card.selected { border-color: var(--teal2); background: rgba(13,148,136,.12); }
+.cri-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.cri-region { font-size: 12px; font-weight: 600; color: var(--text); }
+.cri-badge {
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+}
+.badge-1 { background:rgba(16,185,129,.2); color:var(--green); border:1px solid rgba(16,185,129,.3); }
+.badge-2 { background:rgba(245,158,11,.2); color:var(--amber); border:1px solid rgba(245,158,11,.3); }
+.badge-3 { background:rgba(234,88,12,.2); color:var(--orange); border:1px solid rgba(234,88,12,.3); }
+.badge-4 { background:rgba(239,68,68,.2); color:var(--red); border:1px solid rgba(239,68,68,.3); }
+.cri-bar-bg { background: rgba(255,255,255,.08); border-radius: 4px; height: 6px; overflow:hidden; }
+.cri-bar { height: 6px; border-radius: 4px; transition: width .8s ease; }
+.cri-footer { display: flex; justify-content: space-between; margin-top: 6px; font-size: 10px; color: var(--text3); }
+.cri-val { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; }
+
+/* 위험 지표 카드 */
+.metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.metric-card {
+  background: var(--navy3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 10px 8px;
+}
+.metric-label { font-size: 10px; color: var(--text3); margin-bottom: 4px; }
+.metric-value { font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:600; }
+.metric-unit { font-size: 9px; color: var(--text3); margin-left: 2px; font-weight:400; font-family:'Noto Sans KR',sans-serif; }
+.metric-trend { font-size: 9px; margin-top: 2px; }
+.trend-up { color: var(--red); }
+.trend-dn { color: var(--green); }
+.trend-st { color: var(--text3); }
+
+/* 경보 목록 */
+.alert-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.alert-item:last-child { border-bottom: none; }
+.alert-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:3px; }
+.alert-dot.l4 { background:var(--red); box-shadow:0 0 6px var(--red); animation:pulse-red 1s infinite; }
+.alert-dot.l3 { background:var(--orange); box-shadow:0 0 6px var(--orange); }
+.alert-dot.l2 { background:var(--amber); }
+.alert-dot.l1 { background:var(--green); }
+@keyframes pulse-red { 0%,100%{opacity:1} 50%{opacity:.4} }
+.alert-body { flex:1; }
+.alert-title { font-size:11px; font-weight:600; color:var(--text); margin-bottom:2px; }
+.alert-sub { font-size:10px; color:var(--text3); line-height:1.4; }
+.alert-time { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--text3); }
+
+/* ── 지도 영역 ── */
+.map-area { flex:1; position: relative; overflow: hidden; }
+#map { width:100%; height:100%; }
+.map-overlay-tl {
+  position: absolute; top: 14px; left: 14px; z-index: 800;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.map-btn {
+  background: rgba(10,31,48,.9);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 11px; color: var(--text2);
+  cursor: pointer;
+  transition: all .2s;
+  backdrop-filter: blur(4px);
+  white-space: nowrap;
+}
+.map-btn:hover, .map-btn.active { background: rgba(13,148,136,.2); border-color: var(--teal); color: var(--teal2); }
+.map-legend {
+  position: absolute; bottom: 14px; left: 14px; z-index: 800;
+  background: rgba(10,31,48,.92);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  backdrop-filter: blur(4px);
+}
+.legend-title { font-size: 10px; color: var(--text3); margin-bottom: 8px; letter-spacing:1px; text-transform:uppercase; }
+.legend-row { display:flex; align-items:center; gap:8px; margin-bottom:5px; font-size:11px; color:var(--text2); }
+.legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.map-time-label {
+  position: absolute; top: 14px; left: 50%; transform: translateX(-50%); z-index: 800;
+  background: rgba(10,31,48,.9);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 16px;
+  font-size: 11px; color: var(--teal2);
+  font-family:'JetBrains Mono',monospace;
+  backdrop-filter: blur(4px);
+}
+
+/* ── 오른쪽 패널 ── */
+.right-panel {
+  width: 320px;
+  background: var(--panel);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.rpanel-tabs { display:flex; border-bottom:1px solid var(--border); }
+.rtab {
+  flex:1; padding: 10px 0;
+  font-size: 11px; color: var(--text3);
+  text-align: center; cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all .2s;
+}
+.rtab:hover { color: var(--text2); }
+.rtab.active { color: var(--teal2); border-bottom-color: var(--teal2); }
+.rpanel-content { flex:1; overflow-y:auto; padding: 14px; }
+.rpanel-content::-webkit-scrollbar { width:3px; }
+.rpanel-content::-webkit-scrollbar-thumb { background:var(--border); }
+
+/* 예측 차트 시뮬레이션 */
+.forecast-header { margin-bottom: 12px; }
+.forecast-region { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.forecast-sub { font-size: 11px; color: var(--text3); }
+.chart-wrap { position:relative; height:120px; margin-bottom: 14px; }
+.chart-svg { width:100%; height:100%; }
+.forecast-hours {
+  display: flex; justify-content: space-between;
+  font-size: 9px; color: var(--text3);
+  font-family:'JetBrains Mono',monospace;
+  margin-bottom: 14px; padding: 0 2px;
+}
+.risk-timeline { margin-bottom: 14px; }
+.rtl-label { font-size: 10px; color: var(--text3); margin-bottom: 6px; }
+.rtl-bar { display:flex; border-radius:4px; overflow:hidden; height:20px; }
+.rtl-seg {
+  display:flex; align-items:center; justify-content:center;
+  font-size:9px; font-weight:700; color:rgba(255,255,255,.8);
+  transition: flex .5s;
+}
+
+/* XAI 패널 */
+.xai-title { font-size:12px; font-weight:600; color:var(--text); margin-bottom:4px; }
+.xai-sub { font-size:10px; color:var(--text3); margin-bottom:12px; line-height:1.5; }
+.shap-bar-row { margin-bottom: 8px; }
+.shap-var { font-size:10px; color:var(--text2); margin-bottom:3px; display:flex; justify-content:space-between; }
+.shap-track { background:rgba(255,255,255,.06); border-radius:3px; height:8px; overflow:hidden; }
+.shap-fill { height:8px; border-radius:3px; transition: width .6s ease; }
+.shap-pos { background: linear-gradient(90deg, var(--teal), var(--teal2)); }
+.shap-neg { background: linear-gradient(90deg, var(--blue), var(--sky)); }
+.xai-verdict {
+  margin-top: 12px;
+  background: rgba(239,68,68,.08);
+  border: 1px solid rgba(239,68,68,.2);
+  border-left: 3px solid var(--red);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 11px; color: var(--text2); line-height: 1.6;
+}
+.xai-verdict strong { color: var(--red); }
+
+/* 경보 관리 패널 */
+.alert-manage-card {
+  background: var(--navy3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+.am-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.am-title { font-size:12px; font-weight:600; color:var(--text); }
+.am-level {
+  font-size:10px; font-weight:700;
+  padding: 2px 8px; border-radius:10px;
+}
+.am-body { font-size:11px; color:var(--text3); line-height:1.5; margin-bottom:8px; }
+.am-actions { display:flex; gap:6px; }
+.am-btn {
+  flex:1; padding:5px 0; border-radius:4px; border:none;
+  font-size:10px; font-weight:600; cursor:pointer; font-family:'Noto Sans KR',sans-serif;
+  transition: opacity .2s;
+}
+.am-btn:hover { opacity:.8; }
+.am-btn.primary { background:var(--teal); color:var(--white); }
+.am-btn.secondary { background:rgba(255,255,255,.08); color:var(--text2); }
+
+/* 하단 상태바 */
+.statusbar {
+  height: 28px;
+  background: rgba(7,24,40,.95);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 20px;
+  flex-shrink: 0;
+}
+.sb-item { display:flex; align-items:center; gap:6px; font-size:10px; color:var(--text3); }
+.sb-dot { width:5px; height:5px; border-radius:50%; background:var(--green); }
+.sb-dot.warn { background:var(--amber); }
+
+/* 탭 패널 전환 */
+.tab-panel { display:none; }
+.tab-panel.active { display:flex; flex:1; overflow:hidden; }
+
+/* Leaflet 커스텀 */
+.leaflet-container { background: #071828 !important; }
+.leaflet-tile { filter: brightness(0.55) saturate(0.6) hue-rotate(185deg); }
+.risk-circle-popup .leaflet-popup-content-wrapper {
+  background: rgba(10,31,48,.97);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: 'Noto Sans KR', sans-serif;
+}
+.leaflet-popup-tip { background: rgba(10,31,48,.97); }
+.leaflet-control-zoom a {
+  background: var(--panel) !important;
+  color: var(--text2) !important;
+  border-color: var(--border) !important;
+}
+</style>
+</head>
+<body>
+
+<!-- ── 헤더 ── -->
+<header class=&quot;header&quot;>
+  <div class=&quot;header-left&quot;>
+    <div class=&quot;logo&quot;>K<span>|</span>CRP</div>
+    <div class=&quot;header-title&quot;>연안복합위험 실시간 진단·예측 및 정책지원 플랫폼</div>
+  </div>
+  <div class=&quot;header-tabs&quot;>
+    <div class=&quot;htab active&quot; onclick=&quot;switchMainTab(0,this)&quot;>🗺 위험지도</div>
+    <div class=&quot;htab&quot; onclick=&quot;switchMainTab(1,this)&quot;>📈 예측현황</div>
+    <div class=&quot;htab&quot; onclick=&quot;switchMainTab(2,this)&quot;>🤖 XAI 리포트</div>
+    <div class=&quot;htab&quot; onclick=&quot;switchMainTab(3,this)&quot;>🔔 경보관리</div>
+  </div>
+  <div class=&quot;header-right&quot;>
+    <div class=&quot;live-badge&quot;><div class=&quot;live-dot&quot;></div>LIVE</div>
+    <div class=&quot;time-display&quot; id=&quot;clock&quot;>2025-08-03 14:32:07</div>
+  </div>
+</header>
+
+<!-- ── 메인 (위험지도 탭) ── -->
+<div class=&quot;main&quot; id=&quot;panel-0&quot;>
+  <!-- 사이드바 -->
+  <aside class=&quot;sidebar&quot;>
+    <div class=&quot;sidebar-section&quot;>
+      <div class=&quot;sidebar-label&quot;>권역별 복합위험지수 (CRI)</div>
+
+      <div class=&quot;cri-card selected&quot; onclick=&quot;selectRegion(this,'남해 통영·거제권','0.74','4')&quot;>
+        <div class=&quot;cri-header&quot;>
+          <span class=&quot;cri-region&quot;>남해 통영·거제권</span>
+          <span class=&quot;cri-badge badge-4&quot;>4단계 경보</span>
+        </div>
+        <div class=&quot;cri-bar-bg&quot;><div class=&quot;cri-bar&quot; style=&quot;width:74%;background:var(--red)&quot;></div></div>
+        <div class=&quot;cri-footer&quot;>
+          <span>고수온+빈산소</span>
+          <span class=&quot;cri-val&quot; style=&quot;color:var(--red)&quot;>CRI 0.74</span>
+        </div>
+      </div>
+
+      <div class=&quot;cri-card&quot; onclick=&quot;selectRegion(this,'남해 여수·순천권','0.61','3')&quot;>
+        <div class=&quot;cri-header&quot;>
+          <span class=&quot;cri-region&quot;>남해 여수·순천권</span>
+          <span class=&quot;cri-badge badge-3&quot;>3단계 경보</span>
+        </div>
+        <div class=&quot;cri-bar-bg&quot;><div class=&quot;cri-bar&quot; style=&quot;width:61%;background:var(--orange)&quot;></div></div>
+        <div class=&quot;cri-footer&quot;>
+          <span>적조 확산 진행</span>
+          <span class=&quot;cri-val&quot; style=&quot;color:var(--orange)&quot;>CRI 0.61</span>
+        </div>
+      </div>
+
+      <div class=&quot;cri-card&quot; onclick=&quot;selectRegion(this,'서해 천수만권','0.48','2')&quot;>
+        <div class=&quot;cri-header&quot;>
+          <span class=&quot;cri-region&quot;>서해 천수만권</span>
+          <span class=&quot;cri-badge badge-2&quot;>2단계 주의</span>
+        </div>
+        <div class=&quot;cri-bar-bg&quot;><div class=&quot;cri-bar&quot; style=&quot;width:48%;background:var(--amber)&quot;></div></div>
+        <div class=&quot;cri-footer&quot;>
+          <span>부유사 확산</span>
+          <span class=&quot;cri-val&quot; style=&quot;color:var(--amber)&quot;>CRI 0.48</span>
+        </div>
+      </div>
+
+      <div class=&quot;cri-card&quot; onclick=&quot;selectRegion(this,'서해 가로림만권','0.31','2')&quot;>
+        <div class=&quot;cri-header&quot;>
+          <span class=&quot;cri-region&quot;>서해 가로림만권</span>
+          <span class=&quot;cri-badge badge-2&quot;>2단계 주의</span>
+        </div>
+        <div class=&quot;cri-bar-bg&quot;><div class=&quot;cri-bar&quot; style=&quot;width:31%;background:var(--amber)&quot;></div></div>
+        <div class=&quot;cri-footer&quot;>
+          <span>수온 상승 감시</span>
+          <span class=&quot;cri-val&quot; style=&quot;color:var(--amber)&quot;>CRI 0.31</span>
+        </div>
+      </div>
+
+      <div class=&quot;cri-card&quot; onclick=&quot;selectRegion(this,'동해 강릉·속초권','0.18','1')&quot;>
+        <div class=&quot;cri-header&quot;>
+          <span class=&quot;cri-region&quot;>동해 강릉·속초권</span>
+          <span class=&quot;cri-badge badge-1&quot;>1단계 관심</span>
+        </div>
+        <div class=&quot;cri-bar-bg&quot;><div class=&quot;cri-bar&quot; style=&quot;width:18%;background:var(--green)&quot;></div></div>
+        <div class=&quot;cri-footer&quot;>
+          <span>정상 범위</span>
+          <span class=&quot;cri-val&quot; style=&quot;color:var(--green)&quot;>CRI 0.18</span>
+        </div>
+      </div>
+    </div>
+
+    <div class=&quot;sidebar-section&quot;>
+      <div class=&quot;sidebar-label&quot;>실시간 핵심 지표</div>
+      <div class=&quot;metric-grid&quot;>
+        <div class=&quot;metric-card&quot;>
+          <div class=&quot;metric-label&quot;>표층 수온 (통영)</div>
+          <div class=&quot;metric-value&quot; style=&quot;color:var(--red)&quot;>29.2<span class=&quot;metric-unit&quot;>°C</span></div>
+          <div class=&quot;metric-trend trend-up&quot;>▲ 0.8°C / 6h</div>
+        </div>
+        <div class=&quot;metric-card&quot;>
+          <div class=&quot;metric-label&quot;>용존산소 (저층)</div>
+          <div class=&quot;metric-value&quot; style=&quot;color:var(--orange)&quot;>3.8<span class=&quot;metric-unit&quot;>mg/L</span></div>
+          <div class=&quot;metric-trend trend-dn&quot;>▼ 0.4 / 6h</div>
+        </div>
+        <div class=&quot;metric-card&quot;>
+          <div class=&quot;metric-label&quot;>클로로필-a (여수)</div>
+          <div class=&quot;metric-value&quot; style=&quot;color:var(--amber)&quot;>18.4<span class=&quot;metric-unit&quot;>μg/L</span></div>
+          <div class=&quot;metric-trend trend-up&quot;>▲ 3.2 / 6h</div>
+        </div>
+        <div class=&quot;metric-card&quot;>
+          <div class=&quot;metric-label&quot;>혼합층 깊이 (MLD)</div>
+          <div class=&quot;metric-value&quot; style=&quot;color:var(--sky)&quot;>4.2<span class=&quot;metric-unit&quot;>m</span></div>
+          <div class=&quot;metric-trend trend-dn&quot;>▼ 1.1m / 6h</div>
+        </div>
+        <div class=&quot;metric-card&quot;>
+          <div class=&quot;metric-label&quot;>부유사 농도</div>
+          <div class=&quot;metric-value&quot; style=&quot;color:var(--text)&quot;>12.7<span class=&quot;metric-unit&quot;>mg/L</span></div>
+          <div class=&quot;metric-trend trend-st&quot;>— 0.1 / 6h</div>
+        </div>
+        <div class=&quot;metric-card&quot;>
+          <div class=&quot;metric-label&quot;>예측 리드타임</div>
+          <div class=&quot;metric-value&quot; style=&quot;color:var(--teal2)&quot;>72<span class=&quot;metric-unit&quot;>h</span></div>
+          <div class=&quot;metric-trend trend-st&quot;>GPA 엔진 산출</div>
+        </div>
+      </div>
+    </div>
+
+    <div class=&quot;sidebar-section&quot; style=&quot;flex:1&quot;>
+      <div class=&quot;sidebar-label&quot;>최신 경보 이력</div>
+      <div class=&quot;alert-item&quot;>
+        <div class=&quot;alert-dot l4&quot;></div>
+        <div class=&quot;alert-body&quot;>
+          <div class=&quot;alert-title&quot;>4단계 경보 — 통영 욕지·사량</div>
+          <div class=&quot;alert-sub&quot;>고수온(29.2°C)+빈산소(DO 3.8) 동시 발생<br>양식장 긴급 대응 요청</div>
+          <div class=&quot;alert-time&quot;>14:18 발령</div>
+        </div>
+      </div>
+      <div class=&quot;alert-item&quot;>
+        <div class=&quot;alert-dot l3&quot;></div>
+        <div class=&quot;alert-body&quot;>
+          <div class=&quot;alert-title&quot;>3단계 경보 — 여수 돌산도</div>
+          <div class=&quot;alert-sub&quot;>적조(Cochlodinium) 밀도 ↑, 해류 북동향</div>
+          <div class=&quot;alert-time&quot;>13:45 발령</div>
+        </div>
+      </div>
+      <div class=&quot;alert-item&quot;>
+        <div class=&quot;alert-dot l2&quot;></div>
+        <div class=&quot;alert-body&quot;>
+          <div class=&quot;alert-title&quot;>2단계 주의 — 천수만</div>
+          <div class=&quot;alert-sub&quot;>준설 공사 부유사 확산 반경 확대 추세</div>
+          <div class=&quot;alert-time&quot;>12:30 발령</div>
+        </div>
+      </div>
+      <div class=&quot;alert-item&quot;>
+        <div class=&quot;alert-dot l1&quot;></div>
+        <div class=&quot;alert-body&quot;>
+          <div class=&quot;alert-title&quot;>1단계 해제 — 고흥만</div>
+          <div class=&quot;alert-sub&quot;>수온 정상화, 위험지수 0.22로 하강</div>
+          <div class=&quot;alert-time&quot;>11:05 해제</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 지도 -->
+  <div class=&quot;map-area&quot;>
+    <div id=&quot;map&quot;></div>
+
+    <!-- 레이어 버튼 -->
+    <div class=&quot;map-overlay-tl&quot;>
+      <div class=&quot;map-btn active&quot; onclick=&quot;toggleLayer(this,'heat')&quot;>🌡 수온 레이어</div>
+      <div class=&quot;map-btn&quot; onclick=&quot;toggleLayer(this,'oxy')&quot;>💧 빈산소 레이어</div>
+      <div class=&quot;map-btn&quot; onclick=&quot;toggleLayer(this,'algae')&quot;>🟢 적조 레이어</div>
+      <div class=&quot;map-btn&quot; onclick=&quot;toggleLayer(this,'sed')&quot;>🟤 부유사 레이어</div>
+      <div class=&quot;map-btn&quot; onclick=&quot;toggleLayer(this,'pred')&quot;>🔮 72h 예측 경로</div>
+    </div>
+
+    <!-- 시간 라벨 -->
+    <div class=&quot;map-time-label&quot; id=&quot;timeLabel&quot;>기준시각: 2025-08-03 14:00 KST</div>
+
+    <!-- 범례 -->
+    <div class=&quot;map-legend&quot;>
+      <div class=&quot;legend-title&quot;>복합위험지수 (CRI)</div>
+      <div class=&quot;legend-row&quot;><div class=&quot;legend-dot&quot; style=&quot;background:var(--red)&quot;></div>4단계 경보 (CRI ≥ 0.7)</div>
+      <div class=&quot;legend-row&quot;><div class=&quot;legend-dot&quot; style=&quot;background:var(--orange)&quot;></div>3단계 경보 (CRI ≥ 0.5)</div>
+      <div class=&quot;legend-row&quot;><div class=&quot;legend-dot&quot; style=&quot;background:var(--amber)&quot;></div>2단계 주의 (CRI ≥ 0.3)</div>
+      <div class=&quot;legend-row&quot;><div class=&quot;legend-dot&quot; style=&quot;background:var(--green)&quot;></div>1단계 관심 (CRI < 0.3)</div>
+    </div>
+  </div>
+
+  <!-- 우측 패널 -->
+  <div class=&quot;right-panel&quot;>
+    <div class=&quot;rpanel-tabs&quot;>
+      <div class=&quot;rtab active&quot; onclick=&quot;switchRtab(0,this)&quot;>72h 예측</div>
+      <div class=&quot;rtab&quot; onclick=&quot;switchRtab(1,this)&quot;>XAI 분석</div>
+      <div class=&quot;rtab&quot; onclick=&quot;switchRtab(2,this)&quot;>대응지침</div>
+    </div>
+
+    <!-- 72h 예측 -->
+    <div class=&quot;rpanel-content&quot; id=&quot;rc-0&quot;>
+      <div class=&quot;forecast-header&quot;>
+        <div class=&quot;forecast-region&quot; id=&quot;fc-region&quot;>남해 통영·거제권</div>
+        <div class=&quot;forecast-sub&quot;>GPA 엔진 기반 72시간 CRI 예측</div>
+      </div>
+      <div class=&quot;chart-wrap&quot;>
+        <svg class=&quot;chart-svg&quot; id=&quot;forecastChart&quot; viewBox=&quot;0 0 290 110&quot;>
+          <defs>
+            <linearGradient id=&quot;cg&quot; x1=&quot;0&quot; y1=&quot;0&quot; x2=&quot;0&quot; y2=&quot;1&quot;>
+              <stop offset=&quot;0%&quot; stop-color=&quot;#EF4444&quot; stop-opacity=&quot;0.3&quot;/>
+              <stop offset=&quot;100%&quot; stop-color=&quot;#EF4444&quot; stop-opacity=&quot;0&quot;/>
+            </linearGradient>
+            <linearGradient id=&quot;cg2&quot; x1=&quot;0&quot; y1=&quot;0&quot; x2=&quot;0&quot; y2=&quot;1&quot;>
+              <stop offset=&quot;0%&quot; stop-color=&quot;#F59E0B&quot; stop-opacity=&quot;0.3&quot;/>
+              <stop offset=&quot;100%&quot; stop-color=&quot;#F59E0B&quot; stop-opacity=&quot;0&quot;/>
+            </linearGradient>
+          </defs>
+          <!-- 그리드 -->
+          <line x1=&quot;0&quot; y1=&quot;90&quot; x2=&quot;290&quot; y2=&quot;90&quot; stroke=&quot;rgba(255,255,255,.06)&quot; stroke-width=&quot;1&quot;/>
+          <line x1=&quot;0&quot; y1=&quot;63&quot; x2=&quot;290&quot; y2=&quot;63&quot; stroke=&quot;rgba(255,255,255,.06)&quot; stroke-width=&quot;1&quot;/>
+          <line x1=&quot;0&quot; y1=&quot;36&quot; x2=&quot;290&quot; y2=&quot;36&quot; stroke=&quot;rgba(255,255,255,.06)&quot; stroke-width=&quot;1&quot;/>
+          <line x1=&quot;0&quot; y1=&quot;9&quot;  x2=&quot;290&quot; y2=&quot;9&quot;  stroke=&quot;rgba(255,255,255,.06)&quot; stroke-width=&quot;1&quot;/>
+          <!-- 임계선 0.7 -->
+          <line x1=&quot;0&quot; y1=&quot;23&quot; x2=&quot;290&quot; y2=&quot;23&quot; stroke=&quot;rgba(239,68,68,.4)&quot; stroke-width=&quot;1&quot; stroke-dasharray=&quot;4,3&quot;/>
+          <text x=&quot;292&quot; y=&quot;26&quot; font-size=&quot;7&quot; fill=&quot;rgba(239,68,68,.7)&quot; font-family=&quot;JetBrains Mono&quot;>0.7</text>
+          <!-- 현재 수직선 -->
+          <line x1=&quot;96&quot; y1=&quot;0&quot; x2=&quot;96&quot; y2=&quot;100&quot; stroke=&quot;rgba(255,255,255,.15)&quot; stroke-width=&quot;1&quot; stroke-dasharray=&quot;3,3&quot;/>
+          <text x=&quot;88&quot; y=&quot;104&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.3)&quot; font-family=&quot;JetBrains Mono&quot;>NOW</text>
+          <!-- 예측 영역 (불확실성) -->
+          <path d=&quot;M96,28 C130,20 160,10 200,8 C230,7 260,10 288,14 L288,60 C260,52 230,42 200,38 C160,36 130,36 96,34Z&quot;
+                fill=&quot;rgba(239,68,68,.1)&quot; stroke=&quot;none&quot;/>
+          <!-- 과거 실선 -->
+          <path id=&quot;pastLine&quot; d=&quot;M0,82 C20,78 40,74 60,70 C75,67 86,60 96,28&quot;
+                fill=&quot;none&quot; stroke=&quot;#EF4444&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot;/>
+          <!-- 과거 영역 -->
+          <path d=&quot;M0,82 C20,78 40,74 60,70 C75,67 86,60 96,28 L96,90 L0,90Z&quot;
+                fill=&quot;url(#cg)&quot;/>
+          <!-- 예측 중앙선 -->
+          <path d=&quot;M96,28 C120,22 150,13 188,10 C220,8 255,11 288,16&quot;
+                fill=&quot;none&quot; stroke=&quot;#EF4444&quot; stroke-width=&quot;1.5&quot; stroke-dasharray=&quot;5,3&quot; opacity=&quot;0.8&quot;/>
+          <!-- y축 라벨 -->
+          <text x=&quot;1&quot; y=&quot;13&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.3)&quot; font-family=&quot;JetBrains Mono&quot;>1.0</text>
+          <text x=&quot;1&quot; y=&quot;40&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.3)&quot; font-family=&quot;JetBrains Mono&quot;>0.7</text>
+          <text x=&quot;1&quot; y=&quot;67&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.3)&quot; font-family=&quot;JetBrains Mono&quot;>0.4</text>
+          <text x=&quot;1&quot; y=&quot;93&quot; font-size=&quot;7&quot; fill=&quot;rgba(255,255,255,.3)&quot; font-family=&quot;JetBrains Mono&quot;>0.0</text>
+        </svg>
+      </div>
+      <div class=&quot;forecast-hours&quot;>
+        <span>-24h</span><span>-12h</span><span>NOW</span><span>+24h</span><span>+48h</span><span>+72h</span>
+      </div>
+
+      <div class=&quot;risk-timeline&quot;>
+        <div class=&quot;rtl-label&quot;>72시간 위험단계 예측 분포</div>
+        <div class=&quot;rtl-bar&quot; id=&quot;rtlBar&quot;>
+          <div class=&quot;rtl-seg&quot; style=&quot;flex:8;background:var(--red)&quot;>경보</div>
+          <div class=&quot;rtl-seg&quot; style=&quot;flex:2;background:var(--orange)&quot;>주의</div>
+        </div>
+        <div style=&quot;display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-top:3px;font-family:'JetBrains Mono',monospace&quot;>
+          <span>0h</span><span>36h</span><span>72h</span>
+        </div>
+      </div>
+
+      <!-- 위험 변수 요약 -->
+      <div style=&quot;background:var(--navy3);border:1px solid var(--border);border-radius:6px;padding:10px 12px;&quot;>
+        <div style=&quot;font-size:10px;color:var(--text3);margin-bottom:8px;letter-spacing:1px;&quot;>주요 위험 원인 (SHAP 기여도)</div>
+        <div class=&quot;shap-bar-row&quot;>
+          <div class=&quot;shap-var&quot;><span>표층 수온 이상</span><span style=&quot;color:var(--red);font-family:'JetBrains Mono',monospace&quot;>+0.42</span></div>
+          <div class=&quot;shap-track&quot;><div class=&quot;shap-fill shap-pos&quot; style=&quot;width:84%&quot;></div></div>
+        </div>
+        <div class=&quot;shap-bar-row&quot;>
+          <div class=&quot;shap-var&quot;><span>저층 DO 감소</span><span style=&quot;color:var(--red);font-family:'JetBrains Mono',monospace&quot;>+0.31</span></div>
+          <div class=&quot;shap-track&quot;><div class=&quot;shap-fill shap-pos&quot; style=&quot;width:62%&quot;></div></div>
+        </div>
+        <div class=&quot;shap-bar-row&quot;>
+          <div class=&quot;shap-var&quot;><span>해수 순환 정체</span><span style=&quot;color:var(--red);font-family:'JetBrains Mono',monospace&quot;>+0.18</span></div>
+          <div class=&quot;shap-track&quot;><div class=&quot;shap-fill shap-pos&quot; style=&quot;width:36%&quot;></div></div>
+        </div>
+        <div class=&quot;shap-bar-row&quot;>
+          <div class=&quot;shap-var&quot;><span>바람 (남서풍 약화)</span><span style=&quot;color:var(--sky);font-family:'JetBrains Mono',monospace&quot;>−0.09</span></div>
+          <div class=&quot;shap-track&quot;><div class=&quot;shap-fill shap-neg&quot; style=&quot;width:18%&quot;></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- XAI 분석 탭 (숨김) -->
+    <div class=&quot;rpanel-content&quot; id=&quot;rc-1&quot; style=&quot;display:none&quot;>
+      <div class=&quot;xai-title&quot;>XAI 위험원인 설명 리포트</div>
+      <div class=&quot;xai-sub&quot; id=&quot;xai-region-text&quot;>남해 통영·거제권 | 2025-08-03 14:00 기준<br>Geo-Physical AI 예측 + SHAP 분해</div>
+      <div style=&quot;font-size:10px;color:var(--text3);margin-bottom:8px;letter-spacing:1px;&quot;>변수별 CRI 기여도 분석</div>
+      <div class=&quot;shap-bar-row&quot;>
+        <div class=&quot;shap-var&quot;><span>🌡 표층 수온 (SST 29.2°C)</span><span style=&quot;color:var(--red)&quot;>+0.42</span></div>
+        <div class=&quot;shap-track&quot;><div class=&quot;shap-fill shap-pos&quot; style=&quot;width:84%&quot;></div></div>
+      </div>
+      <div class=&quot;shap-bar-row&quot;>
+        <div class=&quot;shap-var&quot;><span>💧 저층 DO (3.8 mg/L)</span><span style=&quot;color:var(--red)&quot;>+0.31</span></div>
+        <div class=&quot;shap-track&quot;><div class=&quot;shap-fill shap-pos&quot; style=&quot;width:62%&quot;></div></div>
+      </div>
+      <div class=&quot;shap-bar-row&quot;>
+        <div class=&quot;shap-var&quot;><span>🌊 해류 정체 지속일수</span><span style=&quot;color:var(--red)&quot;>+0.18</span></div>
+        <div class=&quot;shap-track&quot;><div class=&quot;shap-fill shap-pos&quot; style=&quot;width:36%&quot;></div></div>
+      </div>
+      <div class=&quot;shap-bar-row&quot;>
+        <div class=&quot;shap-var&quot;><span>🧂 염분 성층화 지수</span><span style=&quot;color:var(--red)&quot;>+0.14</span></div>
+        <div class=&quot;shap-track&quot;><div class=&quot;shap-fill shap-pos&quot; style=&quot;width:28%&quot;></div></div>
+      </div>
+      <div class=&quot;shap-bar-row&quot;>
+        <div class=&quot;shap-var&quot;><span>💨 풍속 (남서 1.2 m/s)</span><span style=&quot;color:var(--sky)&quot;>−0.09</span></div>
+        <div class=&quot;shap-track&quot;><div class=&quot;shap-fill shap-neg&quot; style=&quot;width:18%&quot;></div></div>
+      </div>
+      <div class=&quot;shap-bar-row&quot;>
+        <div class=&quot;shap-var&quot;><span>🌧 강수량 (전일 0mm)</span><span style=&quot;color:var(--sky)&quot;>−0.04</span></div>
+        <div class=&quot;shap-track&quot;><div class=&quot;shap-fill shap-neg&quot; style=&quot;width:8%&quot;></div></div>
+      </div>
+      <div class=&quot;xai-verdict&quot;>
+        <strong>AI 진단:</strong> 현재 고수온(28°C 초과)과 저층 빈산소(4mg/L 미만)가 동시 발생 중이며, 남서풍 약화로 해수 순환이 정체된 상태입니다. 향후 24시간 내 MLD 추가 하강(3m 이하) 가능성 <strong>71%</strong>로, 양식생물 대량폐사 위험이 매우 높습니다.
+        <br><br>
+        <strong>반사실 분석:</strong> 수온이 현재보다 1°C 낮았다면 CRI는 0.74 → 0.58로 감소하여 3단계 수준이었을 것입니다.
+      </div>
+    </div>
+
+    <!-- 대응지침 탭 (숨김) -->
+    <div class=&quot;rpanel-content&quot; id=&quot;rc-2&quot; style=&quot;display:none&quot;>
+      <div style=&quot;font-size:12px;font-weight:600;color:var(--red);margin-bottom:12px;&quot;>⚠ 4단계 경보 — 즉시 대응 필요</div>
+
+      <div class=&quot;alert-manage-card&quot;>
+        <div class=&quot;am-header&quot;>
+          <div class=&quot;am-title&quot;>🐟 양식업 대응</div>
+          <span class=&quot;am-level badge-4&quot;>긴급</span>
+        </div>
+        <div class=&quot;am-body&quot;>
+          • 산소공급장치 즉시 가동·점검<br>
+          • 피해 우려 품종(넙치·참돔) 긴급 출하 검토<br>
+          • 가두리 그물 수심 조절 (표층 회피)
+        </div>
+        <div class=&quot;am-actions&quot;>
+          <button class=&quot;am-btn primary&quot; onclick=&quot;showToast('어업인 문자 발송 완료 (1,247명)')&quot;>문자 발송</button>
+          <button class=&quot;am-btn secondary&quot; onclick=&quot;showToast('대응 매뉴얼 PDF 다운로드')&quot;>매뉴얼</button>
+        </div>
+      </div>
+
+      <div class=&quot;alert-manage-card&quot;>
+        <div class=&quot;am-header&quot;>
+          <div class=&quot;am-title&quot;>🏛 행정 대응</div>
+          <span class=&quot;am-level badge-4&quot;>즉시 보고</span>
+        </div>
+        <div class=&quot;am-body&quot;>
+          • 경남도청·통영시 재난안전과 즉시 통보<br>
+          • 해양수산부 어업재해 대응 보고서 자동 생성<br>
+          • 재난지원금 사전 검토 절차 착수
+        </div>
+        <div class=&quot;am-actions&quot;>
+          <button class=&quot;am-btn primary&quot; onclick=&quot;showToast('XAI 리포트 자동 생성 완료')&quot;>리포트 생성</button>
+          <button class=&quot;am-btn secondary&quot; onclick=&quot;showToast('관계기관 일괄 공유 완료')&quot;>기관 공유</button>
+        </div>
+      </div>
+
+      <div class=&quot;alert-manage-card&quot;>
+        <div class=&quot;am-header&quot;>
+          <div class=&quot;am-title&quot;>🔬 현장 모니터링</div>
+          <span class=&quot;am-level badge-3&quot;>강화</span>
+        </div>
+        <div class=&quot;am-body&quot;>
+          • 통영·욕지 부이 관측 주기 1시간 → 30분 단축<br>
+          • GOCI-II 위성 집중 분석 구역 설정<br>
+          • 국립수산과학원 현장 조사선 파견 요청
+        </div>
+        <div class=&quot;am-actions&quot;>
+          <button class=&quot;am-btn primary&quot; onclick=&quot;showToast('모니터링 강화 지시 완료')&quot;>지시 발령</button>
+          <button class=&quot;am-btn secondary&quot;>이력 조회</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 하단 상태바 ── -->
+<div class=&quot;statusbar&quot;>
+  <div class=&quot;sb-item&quot;><div class=&quot;sb-dot&quot;></div>GPA 엔진 정상 (추론 2.4s)</div>
+  <div class=&quot;sb-item&quot;><div class=&quot;sb-dot&quot;></div>GOCI-II 수신 정상 (13:00 KST)</div>
+  <div class=&quot;sb-item&quot;><div class=&quot;sb-dot warn&quot;></div>ROMS 출력 지연 (6분)</div>
+  <div class=&quot;sb-item&quot;><div class=&quot;sb-dot&quot;></div>현장관측망 47/52 정상</div>
+  <div class=&quot;sb-item&quot; style=&quot;margin-left:auto&quot;><div class=&quot;sb-dot&quot;></div>v1.0.4-beta | K-CRP 시범운영</div>
+</div>
+
+<!-- 토스트 알림 -->
+<div id=&quot;toast&quot; style=&quot;
+  position:fixed;bottom:50px;right:20px;
+  background:rgba(13,148,136,.95);
+  border:1px solid var(--teal2);
+  border-radius:8px;padding:10px 16px;
+  font-size:12px;color:var(--white);
+  transform:translateY(80px);opacity:0;
+  transition:all .3s;z-index:9999;
+  max-width:260px;
+&quot;></div>
+
+<script>
+// ── 시계 ──
+function updateClock() {
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  document.getElementById('clock').textContent =
+    `2025-08-03 ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+}
+setInterval(updateClock, 1000); updateClock();
+
+// ── Leaflet 지도 ──
+const map = L.map('map', {
+  center: [35.5, 127.8],
+  zoom: 7,
+  zoomControl: true,
+  attributionControl: false
+});
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '', maxZoom: 18
+}).addTo(map);
+
+// 위험 구역 원
+const zones = [
+  { lat:34.85, lng:128.43, r:28000, color:'#EF4444', fill:.25, label:'통영·거제\nCRI 0.74', level:4 },
+  { lat:34.72, lng:127.73, r:22000, color:'#EA580C', fill:.22, label:'여수\nCRI 0.61', level:3 },
+  { lat:36.52, lng:126.48, r:18000, color:'#F59E0B', fill:.18, label:'천수만\nCRI 0.48', level:2 },
+  { lat:36.78, lng:126.35, r:14000, color:'#F59E0B', fill:.15, label:'가로림만\nCRI 0.31', level:2 },
+  { lat:37.82, lng:128.92, r:10000, color:'#10B981', fill:.10, label:'강릉\nCRI 0.18', level:1 },
+];
+
+const circles = [];
+zones.forEach(z => {
+  const c = L.circle([z.lat, z.lng], {
+    radius: z.r,
+    color: z.color,
+    weight: 1.5,
+    opacity: 0.8,
+    fillColor: z.color,
+    fillOpacity: z.fill
+  }).addTo(map);
+  c.bindPopup(`
+    <div style=&quot;font-family:'Noto Sans KR',sans-serif;padding:4px&quot;>
+      <div style=&quot;font-weight:700;color:${z.color};margin-bottom:4px&quot;>${['','1단계 관심','2단계 주의','3단계 경보','4단계 경보'][z.level]}</div>
+      <div style=&quot;font-size:11px;color:#8BAFC8&quot;>${z.label.replace('\n','<br>')}</div>
+    </div>
+  `, { className: 'risk-circle-popup' });
+  circles.push(c);
+});
+
+// 펄스 애니메이션 (4단계)
+let pulse = false;
+setInterval(() => {
+  pulse = !pulse;
+  circles[0].setStyle({ fillOpacity: pulse ? 0.35 : 0.18 });
+}, 800);
+
+// 예측 경로 화살표 (여수 적조)
+const arrow = L.polyline([
+  [34.72, 127.73],
+  [34.80, 127.95],
+  [34.88, 128.15],
+], { color: '#EA580C', weight: 2, opacity: 0.6, dashArray: '6,4' }).addTo(map);
+
+// ── 탭 전환 ──
+function switchMainTab(idx, el) {
+  document.querySelectorAll('.htab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  // 현재는 위험지도 패널만 구현 (나머지는 추후)
+  if (idx !== 0) showToast(`${el.textContent.trim()} 화면은 다음 목업에서 공개됩니다`);
+}
+
+// ── 우측 탭 ──
+function switchRtab(idx, el) {
+  document.querySelectorAll('.rtab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  ['rc-0','rc-1','rc-2'].forEach((id,i) => {
+    document.getElementById(id).style.display = i===idx ? 'block' : 'none';
+  });
+}
+
+// ── 권역 선택 ──
+const regionData = {
+  '남해 통영·거제권': { cri:'0.74', lvl:4, color:'var(--red)', line:'M0,82 C20,78 40,74 60,70 C75,67 86,60 96,28', rtl:[8,2], xaiRegion:'남해 통영·거제권 | 2025-08-03 14:00 기준' },
+  '남해 여수·순천권': { cri:'0.61', lvl:3, color:'var(--orange)', line:'M0,75 C20,71 40,68 60,65 C76,62 86,55 96,38', rtl:[4,4,2], xaiRegion:'남해 여수·순천권 | 적조 확산 진행 중' },
+  '서해 천수만권':    { cri:'0.48', lvl:2, color:'var(--amber)', line:'M0,70 C20,67 40,65 60,63 C76,61 86,57 96,48', rtl:[0,5,5], xaiRegion:'서해 천수만권 | 부유사 확산 감시 중' },
+  '서해 가로림만권':  { cri:'0.31', lvl:2, color:'var(--amber)', line:'M0,82 C20,80 40,78 60,76 C76,74 86,72 96,64', rtl:[0,3,7], xaiRegion:'서해 가로림만권 | 수온 상승 감시' },
+  '동해 강릉·속초권': { cri:'0.18', lvl:1, color:'var(--green)', line:'M0,88 C20,87 40,86 60,85 C76,84 86,83 96,81', rtl:[0,0,10], xaiRegion:'동해 강릉·속초권 | 정상 범위' },
+};
+
+function selectRegion(el, name, cri, lvl) {
+  document.querySelectorAll('.cri-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('fc-region').textContent = name;
+  const d = regionData[name];
+  if (d) {
+    document.getElementById('pastLine').setAttribute('d', d.line);
+    document.getElementById('xai-region-text').textContent = d.xaiRegion + '\nGeo-Physical AI 예측 + SHAP 분해';
+  }
+}
+
+// ── 레이어 토글 ──
+function toggleLayer(el, layer) {
+  el.classList.toggle('active');
+  const msgs = {
+    heat:'수온 히트맵 레이어 ' + (el.classList.contains('active')?'활성화':'비활성화'),
+    oxy:'빈산소 레이어 ' + (el.classList.contains('active')?'활성화':'비활성화'),
+    algae:'적조 분포 레이어 ' + (el.classList.contains('active')?'활성화':'비활성화'),
+    sed:'부유사 탁도 레이어 ' + (el.classList.contains('active')?'활성화':'비활성화'),
+    pred:'72h 예측 확산 경로 ' + (el.classList.contains('active')?'표시':'숨김'),
+  };
+  showToast(msgs[layer]);
+}
+
+// ── 토스트 ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.transform = 'translateY(0)';
+  t.style.opacity = '1';
+  setTimeout(() => { t.style.transform='translateY(80px)'; t.style.opacity='0'; }, 2500);
+}
+
+// ── CRI 수치 애니메이션 ──
+let tick = 0;
+setInterval(() => {
+  tick++;
+  // 통영 CRI 미세 변동
+  const base = 0.74;
+  const noise = (Math.sin(tick * 0.3) * 0.012).toFixed(3);
+  // statusbar 업데이트
+  const items = document.querySelectorAll('.sb-item');
+  if (tick % 10 === 0) {
+    const delay = Math.floor(Math.random() * 8 + 2);
+    items[2].querySelector('div').nextSibling.textContent = ` ROMS 출력 지연 (${delay}분)`;
+  }
+}, 2000);
+</script>
+</body>
+</html>
+"></iframe>
+</div>
+
+<div class="u-sb">
+  <div class="u-sbi"><div class="u-sbd" style="background:#10B981"></div>GPA 엔진 정상</div>
+  <div class="u-sbi"><div class="u-sbd" style="background:#10B981"></div>GOCI-II 수신 정상</div>
+  <div class="u-sbi"><div class="u-sbd" style="background:#F59E0B"></div>ROMS 6분 지연</div>
+  <div class="u-sbi"><div class="u-sbd" style="background:#10B981"></div>현장관측망 47/52</div>
+  <div class="u-sbi"><div class="u-sbd" style="background:#EF4444"></div>4단계 경보 발령 중 (통영·거제)</div>
+  <div class="u-sbi" style="margin-left:auto"><div class="u-sbd" style="background:#10B981"></div>K-CRP 통합 v1.0 | 시범운영</div>
+</div>
+
+<script>
+var subinfo = {
+  algo: ['① 복합위험 알고리즘 — 시나리오 설정 및 GPA 예측 실행',   '#38BDF8','rgba(14,95,161,.18)','알고리즘 v1.2'],
+  gpa:  ['② GPA 분석엔진 — PINN 기반 해양 복합위험 예측',           '#14B8A6','rgba(13,148,136,.18)','GPA v2.1'],
+  xai:  ['③ XAI 설명형 리포트 — AI 예측 분해 및 자동 보고서 생성',   '#8B5CF6','rgba(139,92,246,.18)','XAI v1.2'],
+  gis:  ['④ GIS·API 정책지원 플랫폼 — 실시간 위험지도 및 경보관리', '#10B981','rgba(16,185,129,.14)','GIS v1.0']
+};
+
+function uSwitch(key, btn) {
+  document.querySelectorAll('.mod-frame').forEach(function(f){ f.classList.remove('on'); });
+  document.querySelectorAll('.u-btn').forEach(function(b){ b.classList.remove('on'); });
+  document.getElementById('fr-'+key).classList.add('on');
+  btn.classList.add('on');
+  var info = subinfo[key];
+  document.getElementById('u-sub-title').textContent = info[0];
+  document.getElementById('u-sub-badge').textContent = info[3];
+  document.getElementById('u-sub-badge').style.cssText = 'background:'+info[2]+';border:1px solid '+info[1]+';color:'+info[1];
+}
+
+(function tick(){
+  var n=new Date(), p=function(x){return String(x).padStart(2,'0');};
+  var el=document.getElementById('u-clk');
+  if(el) el.textContent='2025-08-03 '+p(n.getHours())+':'+p(n.getMinutes())+':'+p(n.getSeconds());
+  setTimeout(tick,1000);
+})();
+</script>
+</body>
+</html>

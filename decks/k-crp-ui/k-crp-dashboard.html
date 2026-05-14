@@ -1,0 +1,351 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0B1220;--bg2:#111827;--line:#ffffff14;
+  --txt:#E8EDF5;--txt2:#94A3B8;--txt3:#64748B;
+  --accent:#38BDF8;--mono:Consolas,monospace;
+}
+body{background:#12182a;display:flex;align-items:center;justify-content:center;min-height:100vh}
+.shell{width:1280px;height:720px;display:flex;flex-direction:column;background:var(--bg);font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;color:var(--txt);overflow:hidden}
+
+.topbar{height:42px;background:var(--bg2);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 18px;gap:12px;flex-shrink:0}
+.logo-badge{background:linear-gradient(135deg,#0EA5E9,#3B82F6);border-radius:5px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+.logo-text{font-size:13px;font-weight:700}
+.logo-sub{font-size:9px;color:var(--txt3);letter-spacing:.6px}
+.nav-tabs{display:flex;gap:2px;margin-left:16px}
+.tab{height:28px;padding:0 12px;border-radius:5px;font-size:10px;color:var(--txt3);display:flex;align-items:center;border:1px solid transparent}
+.tab.active{background:#0EA5E920;border-color:#0EA5E940;color:var(--accent);font-weight:600}
+.live-badge{display:flex;align-items:center;gap:4px;background:#EF444415;border:1px solid #EF444440;border-radius:10px;padding:2px 9px;font-size:9px;color:#FCA5A5;font-weight:700}
+.live-dot{width:5px;height:5px;border-radius:50%;background:#EF4444;animation:blink 1.4s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.alert-pill{display:flex;align-items:center;gap:5px;background:#F59E0B18;border:1px solid #F59E0B40;border-radius:10px;padding:2px 10px;font-size:9px;color:#FDE68A;font-weight:700}
+
+.body{flex:1;display:flex;min-height:0}
+
+/* SIDEBAR */
+.sidebar{width:44px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:4px}
+.nav-icon{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:var(--txt3)}
+.nav-icon.active{background:#0EA5E920;color:var(--accent)}
+.nav-icon svg{width:15px;height:15px}
+.nav-sep{width:22px;height:1px;background:var(--line);margin:3px 0}
+
+/* MAP PANEL */
+.panel-map{width:530px;flex-shrink:0;display:flex;flex-direction:column;border-right:1px solid var(--line)}
+.ph{height:32px;display:flex;align-items:center;padding:0 14px;gap:8px;border-bottom:1px solid var(--line);background:var(--bg2);flex-shrink:0}
+.pt{font-size:10px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.8px}
+.pctrl{margin-left:auto;display:flex;gap:4px}
+.cb{height:18px;padding:0 8px;border-radius:3px;border:1px solid var(--line);background:transparent;color:var(--txt3);font-size:9px;cursor:pointer;font-family:inherit}
+.cb.on{background:#0EA5E920;border-color:#0EA5E940;color:var(--accent)}
+
+.map-area{flex:1;position:relative;overflow:hidden;background:#0B1220}
+
+.stat-row{height:64px;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr 1fr 1fr;background:var(--bg2);flex-shrink:0}
+.sc{padding:7px 12px;border-right:1px solid var(--line);display:flex;flex-direction:column;justify-content:center;gap:2px}
+.sc:last-child{border-right:none}
+.sl{font-size:8px;color:var(--txt3);text-transform:uppercase;letter-spacing:.6px}
+.sv{font-size:20px;font-weight:700;line-height:1}
+.su{font-size:8px;color:var(--txt3)}
+.st{font-size:8px}
+.up{color:#EF4444}.dn{color:#10B981}
+
+/* CENTER */
+.panel-center{flex:1;display:flex;flex-direction:column;min-width:0;border-right:1px solid var(--line)}
+
+.gauge-sec{padding:14px;border-bottom:1px solid var(--line);background:var(--bg2)}
+.gr{display:flex;align-items:flex-start;gap:16px}
+.gb{width:116px;flex-shrink:0;text-align:center}
+.gv{font-size:28px;font-weight:700;color:#F59E0B;font-family:var(--mono);display:block;line-height:1}
+.gs{font-size:8px;color:#FDE68A;background:#F59E0B18;border:1px solid #F59E0B30;border-radius:8px;padding:2px 8px;display:inline-block;margin-top:3px}
+.sc2{flex:1}
+.sht{font-size:8px;color:var(--txt3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px}
+.shr{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.shn{font-size:9px;color:var(--txt2);width:50px;flex-shrink:0}
+.shb{flex:1;height:8px;background:#ffffff0a;border-radius:2px;overflow:hidden}
+.shbi{height:100%;border-radius:2px}
+.shp{font-size:9px;font-family:var(--mono);color:var(--txt2);width:28px;text-align:right;flex-shrink:0}
+.ai{background:#0EA5E90c;border:1px solid #0EA5E930;border-radius:5px;padding:8px 10px;margin-top:8px}
+.aib{font-size:7px;font-weight:700;color:#38BDF8;letter-spacing:.8px;margin-bottom:3px}
+.ait{font-size:9px;color:#BAE6FD;line-height:1.55}
+
+.alert-sec{flex:1;overflow-y:auto;background:var(--bg)}
+.ai-item{display:flex;align-items:flex-start;gap:9px;padding:10px 14px;border-bottom:1px solid var(--line)}
+.al{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0}
+.la{background:#EF444420;color:#FCA5A5;border:1px solid #EF444440}
+.lw{background:#F59E0B20;color:#FDE68A;border:1px solid #F59E0B40}
+.ls{background:#10B98120;color:#6EE7B7;border:1px solid #10B98140}
+.ab{flex:1}
+.an{font-size:10px;font-weight:600;color:var(--txt);margin-bottom:2px}
+.ad{font-size:9px;color:var(--txt2);line-height:1.4}
+.at{font-size:8px;color:var(--txt3);font-family:var(--mono);margin-top:2px}
+
+.mbar{height:26px;background:var(--bg2);border-top:1px solid var(--line);display:flex;align-items:center;padding:0 14px;gap:12px;flex-shrink:0}
+.ms{font-size:8px}
+
+/* RIGHT */
+.panel-right{width:220px;flex-shrink:0;display:flex;flex-direction:column}
+.rr{display:flex;align-items:center;padding:7px 12px;border-bottom:1px solid var(--line);gap:8px}
+.rn{font-size:9px;color:var(--txt2);flex:1}
+.cp{font-size:8px;font-family:var(--mono);font-weight:700;padding:2px 7px;border-radius:7px}
+.cl{background:#1D4ED820;color:#93C5FD;border:1px solid #1D4ED840}
+.cm{background:#10B98120;color:#6EE7B7;border:1px solid #10B98140}
+.cw{background:#F59E0B20;color:#FDE68A;border:1px solid #F59E0B40}
+.ch{background:#EF444420;color:#FCA5A5;border:1px solid #EF444440}
+.ta{font-size:11px}
+
+.ts-sec{height:100px;padding:8px 12px;border-top:1px solid var(--line);background:var(--bg2)}
+.tst{font-size:8px;color:var(--txt3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+
+.leg{padding:8px 12px;border-top:1px solid var(--line);background:var(--bg2)}
+.legt{font-size:8px;color:var(--txt3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.li{display:flex;align-items:center;gap:5px;font-size:8.5px;color:var(--txt2);margin-bottom:3px}
+.ld{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+</style>
+
+<div class="shell">
+<div class="topbar">
+  <div class="logo-badge">K</div>
+  <div><div class="logo-text">K-CRP</div><div class="logo-sub">COASTAL RISK PLATFORM</div></div>
+  <div style="width:1px;height:22px;background:var(--line)"></div>
+  <div class="nav-tabs">
+    <div class="tab active">대시보드</div>
+    <div class="tab">XAI 분석</div>
+    <div class="tab">모바일 경보</div>
+    <div class="tab">데이터 파이프라인</div>
+    <div class="tab">시스템 아키텍처</div>
+  </div>
+  <div style="flex:1"></div>
+  <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+  <div class="alert-pill">⚠ 경보 2건 활성</div>
+  <div style="width:1px;height:18px;background:var(--line)"></div>
+  <span style="font-size:9px;color:var(--txt3);font-family:var(--mono)" id="clk">2026-04-27 14:32 KST</span>
+</div>
+
+<div class="body">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="nav-icon active">
+      <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+    </div>
+    <div class="nav-icon">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 2a1 1 0 0 1 .894.553l4.5 9A1 1 0 0 1 12.5 13h-9a1 1 0 0 1-.894-1.447l4.5-9A1 1 0 0 1 8 2z"/></svg>
+    </div>
+    <div class="nav-sep"></div>
+    <div class="nav-icon">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><polyline points="1,12 5,7 8,10 12,5 15,7"/></svg>
+    </div>
+    <div class="nav-icon">
+      <svg viewBox="0 0 16 16" fill="currentColor"><circle cx="3.5" cy="8" r="1.8"/><circle cx="12.5" cy="4" r="1.8"/><circle cx="12.5" cy="12" r="1.8"/><line x1="5.2" y1="7.1" x2="10.8" y2="4.9" stroke="currentColor" stroke-width="1"/><line x1="5.2" y1="8.9" x2="10.8" y2="11.1" stroke="currentColor" stroke-width="1"/></svg>
+    </div>
+    <div class="nav-sep"></div>
+    <div class="nav-icon">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5" stroke-linecap="round"/></svg>
+    </div>
+  </div>
+
+  <!-- MAP PANEL -->
+  <div class="panel-map">
+    <div class="ph">
+      <div class="pt">실시간 해역 위험도 지도</div>
+      <div class="pctrl">
+        <button class="cb on">CRI</button>
+        <button class="cb">수온</button>
+        <button class="cb">Chl-a</button>
+        <button class="cb">DO</button>
+      </div>
+    </div>
+    <div class="map-area">
+      <svg width="530" height="546" viewBox="0 0 530 546" xmlns="http://www.w3.org/2000/svg">
+        <rect width="530" height="546" fill="#0B1220"/>
+        <defs>
+          <radialGradient id="mg" cx="50%" cy="50%" r="55%">
+            <stop offset="0%" stop-color="#0EA5E9" stop-opacity="0.05"/>
+            <stop offset="100%" stop-color="#0B1220" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <rect width="530" height="546" fill="url(#mg)"/>
+        <g stroke="#ffffff05" stroke-width="0.5">
+          <line x1="0" y1="91" x2="530" y2="91"/><line x1="0" y1="182" x2="530" y2="182"/>
+          <line x1="0" y1="273" x2="530" y2="273"/><line x1="0" y1="364" x2="530" y2="364"/>
+          <line x1="0" y1="455" x2="530" y2="455"/>
+          <line x1="88" y1="0" x2="88" y2="546"/><line x1="176" y1="0" x2="176" y2="546"/>
+          <line x1="264" y1="0" x2="264" y2="546"/><line x1="352" y1="0" x2="352" y2="546"/>
+          <line x1="440" y1="0" x2="440" y2="546"/>
+        </g>
+        <!-- Korea -->
+        <path d="M238 40 L272 32 L305 45 L322 76 L316 118 L336 164 L330 208 L305 232 L295 272 L278 305 L260 334 L248 363 L240 394 L230 410 L218 398 L212 368 L220 338 L207 308 L200 274 L207 238 L194 208 L188 170 L196 132 L182 98 L190 68 L212 50 Z" fill="#1a2a3a" stroke="#2a3f55" stroke-width="0.9"/>
+        <path d="M238 40 L218 48 L196 70 L182 98 L196 132" fill="#1a2a3a" stroke="none"/>
+        <ellipse cx="216" cy="450" rx="26" ry="14" fill="#1a2a3a" stroke="#2a3f55" stroke-width="0.7"/>
+        <ellipse cx="450" cy="228" rx="14" ry="10" fill="#1a2a3a" stroke="#2a3f55" stroke-width="0.7"/>
+
+        <!-- West sea CRI -->
+        <rect x="22" y="82" width="60" height="60" fill="#EF4444" fill-opacity="0.38" rx="1"/>
+        <rect x="22" y="142" width="60" height="60" fill="#F59E0B" fill-opacity="0.32" rx="1"/>
+        <rect x="22" y="202" width="60" height="60" fill="#F59E0B" fill-opacity="0.25" rx="1"/>
+        <rect x="82" y="95" width="58" height="56" fill="#EF4444" fill-opacity="0.26" rx="1"/>
+        <rect x="82" y="151" width="58" height="52" fill="#F59E0B" fill-opacity="0.20" rx="1"/>
+        <rect x="82" y="203" width="58" height="58" fill="#10B981" fill-opacity="0.20" rx="1"/>
+        <rect x="22" y="262" width="60" height="60" fill="#10B981" fill-opacity="0.16" rx="1"/>
+        <rect x="22" y="322" width="60" height="60" fill="#0EA5E9" fill-opacity="0.16" rx="1"/>
+        <rect x="82" y="261" width="58" height="60" fill="#10B981" fill-opacity="0.14" rx="1"/>
+        <!-- South sea -->
+        <rect x="140" y="390" width="62" height="60" fill="#F59E0B" fill-opacity="0.28" rx="1"/>
+        <rect x="202" y="406" width="62" height="60" fill="#10B981" fill-opacity="0.20" rx="1"/>
+        <rect x="264" y="400" width="62" height="60" fill="#10B981" fill-opacity="0.16" rx="1"/>
+        <rect x="78" y="398" width="62" height="60" fill="#F59E0B" fill-opacity="0.22" rx="1"/>
+        <!-- East sea -->
+        <rect x="358" y="68" width="66" height="66" fill="#0EA5E9" fill-opacity="0.13" rx="1"/>
+        <rect x="358" y="134" width="66" height="66" fill="#10B981" fill-opacity="0.15" rx="1"/>
+        <rect x="358" y="200" width="66" height="66" fill="#10B981" fill-opacity="0.15" rx="1"/>
+        <rect x="358" y="266" width="66" height="66" fill="#0EA5E9" fill-opacity="0.11" rx="1"/>
+        <rect x="424" y="82" width="76" height="66" fill="#0EA5E9" fill-opacity="0.10" rx="1"/>
+        <rect x="424" y="148" width="76" height="66" fill="#0EA5E9" fill-opacity="0.09" rx="1"/>
+
+        <!-- Alert markers -->
+        <circle cx="52" cy="112" r="17" fill="none" stroke="#EF4444" stroke-width="1.6" stroke-dasharray="3 2" opacity=".9"/>
+        <circle cx="52" cy="112" r="7" fill="#EF4444" opacity=".75"/>
+        <text x="73" y="107" fill="#FCA5A5" font-size="9" font-family="Segoe UI,sans-serif" font-weight="700">경계</text>
+        <text x="73" y="119" fill="#FCA5A5" font-size="8.5" font-family="Segoe UI,sans-serif">CRI 0.71</text>
+
+        <circle cx="171" cy="415" r="13" fill="none" stroke="#F59E0B" stroke-width="1.6" stroke-dasharray="3 2" opacity=".9"/>
+        <circle cx="171" cy="415" r="6" fill="#F59E0B" opacity=".75"/>
+        <text x="190" y="410" fill="#FDE68A" font-size="9" font-family="Segoe UI,sans-serif" font-weight="700">주의</text>
+        <text x="190" y="422" fill="#FDE68A" font-size="8.5" font-family="Segoe UI,sans-serif">CRI 0.52</text>
+
+        <!-- Obs stations -->
+        <rect x="145" y="218" width="8" height="8" fill="#38BDF8" rx="1" transform="rotate(45 149 222)"/>
+        <rect x="252" y="288" width="8" height="8" fill="#38BDF8" rx="1" transform="rotate(45 256 292)"/>
+        <rect x="380" y="238" width="8" height="8" fill="#38BDF8" rx="1" transform="rotate(45 384 242)"/>
+
+        <!-- Labels -->
+        <text x="52" y="72" fill="#374151" font-size="8" font-family="var(--mono)">38°N</text>
+        <text x="52" y="163" fill="#374151" font-size="8" font-family="var(--mono)">36°N</text>
+        <text x="52" y="254" fill="#374151" font-size="8" font-family="var(--mono)">34°N</text>
+        <text x="22" y="538" fill="#374151" font-size="8" font-family="var(--mono)">125°E</text>
+        <text x="162" y="538" fill="#374151" font-size="8" font-family="var(--mono)">127°E</text>
+        <text x="350" y="538" fill="#374151" font-size="8" font-family="var(--mono)">129°E</text>
+        <text x="52" y="310" fill="#60A5FA" font-size="10" font-family="Segoe UI,sans-serif" text-anchor="middle" font-weight="500">서해</text>
+        <text x="214" y="470" fill="#60A5FA" font-size="10" font-family="Segoe UI,sans-serif" text-anchor="middle" font-weight="500">남해</text>
+        <text x="466" y="195" fill="#60A5FA" font-size="10" font-family="Segoe UI,sans-serif" text-anchor="middle" font-weight="500">동해</text>
+
+        <!-- Scale -->
+        <line x1="394" y1="520" x2="490" y2="520" stroke="#374151" stroke-width="1"/>
+        <line x1="394" y1="515" x2="394" y2="525" stroke="#374151" stroke-width="1"/>
+        <line x1="490" y1="515" x2="490" y2="525" stroke="#374151" stroke-width="1"/>
+        <text x="442" y="534" fill="#374151" font-size="8" font-family="var(--mono)" text-anchor="middle">100 km</text>
+
+        <rect x="330" y="8" width="82" height="17" rx="3" fill="#0EA5E910" stroke="#0EA5E930" stroke-width="0.8"/>
+        <text x="371" y="20" fill="#38BDF8" font-size="8" font-family="Segoe UI,sans-serif" text-anchor="middle" font-weight="600">GOCI-II · Sentinel</text>
+      </svg>
+    </div>
+    <div class="stat-row">
+      <div class="sc"><div class="sl">CRI 최고값</div><div><span class="sv" style="color:#EF4444">0.71</span> <span class="su">경계</span></div><div class="st up">▲ +0.08 (3h)</div></div>
+      <div class="sc"><div class="sl">표층수온</div><div><span class="sv">28.3</span> <span class="su">°C</span></div><div class="st up">▲ +1.2 (24h)</div></div>
+      <div class="sc"><div class="sl">엽록소-a</div><div><span class="sv" style="color:#F59E0B">18.4</span> <span class="su">㎍/L</span></div><div class="st up">▲ +3.1 (24h)</div></div>
+      <div class="sc"><div class="sl">용존산소</div><div><span class="sv" style="color:#F59E0B">5.2</span> <span class="su">mg/L</span></div><div class="st dn">▼ −0.9 (24h)</div></div>
+    </div>
+  </div>
+
+  <!-- CENTER -->
+  <div class="panel-center">
+    <div class="ph"><div class="pt">XAI 위험도 진단</div></div>
+    <div class="gauge-sec">
+      <div class="gr">
+        <div class="gb">
+          <svg width="116" height="68" viewBox="0 0 116 68" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="gr" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#1D4ED8"/>
+              <stop offset="35%" stop-color="#10B981"/>
+              <stop offset="62%" stop-color="#F59E0B"/>
+              <stop offset="100%" stop-color="#EF4444"/>
+            </linearGradient></defs>
+            <path d="M8 64 A50 50 0 0 1 108 64" fill="none" stroke="#ffffff0e" stroke-width="10" stroke-linecap="round"/>
+            <path d="M8 64 A50 50 0 0 1 108 64" fill="none" stroke="url(#gr)" stroke-width="10" stroke-linecap="round"/>
+            <line x1="58" y1="64" x2="18" y2="24" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="58" cy="64" r="4.5" fill="#F59E0B"/>
+          </svg>
+          <span class="gv">0.71</span>
+          <span class="gs">경 계</span>
+        </div>
+        <div class="sc2">
+          <div class="sht">SHAP 기여도 — 서해 목포 해역</div>
+          <div class="shr"><div class="shn">수온</div><div class="shb"><div class="shbi" style="width:40%;background:#EF4444"></div></div><div class="shp" style="color:#FCA5A5">40%</div></div>
+          <div class="shr"><div class="shn">Chl-a</div><div class="shb"><div class="shbi" style="width:35%;background:#F59E0B"></div></div><div class="shp" style="color:#FDE68A">35%</div></div>
+          <div class="shr"><div class="shn">DO</div><div class="shb"><div class="shbi" style="width:15%;background:#0EA5E9"></div></div><div class="shp" style="color:#7DD3FC">15%</div></div>
+          <div class="shr"><div class="shn">염분</div><div class="shb"><div class="shbi" style="width:10%;background:#8B5CF6"></div></div><div class="shp" style="color:#C4B5FD">10%</div></div>
+          <div class="ai"><div class="aib">XAI 자동 진단</div><div class="ait">고수온(+1.2°C)과 엽록소-a 급증(+3.1 ㎍/L)이 복합 작용. 향후 48h 내 적조 발생 가능성 높음.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ph" style="border-top:none"><div class="pt">활성 경보</div></div>
+    <div class="alert-sec">
+      <div class="ai-item">
+        <div class="al la">경계</div>
+        <div class="ab"><div class="an">서해 목포 해역 — 적조 발생 경보</div><div class="ad">CRI 0.71 · 고수온·고엽록소 복합 요인 · 양식장 피해 주의 · 반경 30km 조업 자제</div><div class="at">2026-04-27 11:40 · 국립수산과학원</div></div>
+      </div>
+      <div class="ai-item">
+        <div class="al lw">주의</div>
+        <div class="ab"><div class="an">남해 여수 해역 — 빈산소 주의보</div><div class="ad">CRI 0.52 · DO 5.2 mg/L (기준 6.0 하회) · 저층 확산 모니터링 강화</div><div class="at">2026-04-27 08:15 · 국립수산과학원</div></div>
+      </div>
+      <div class="ai-item">
+        <div class="al ls">정상</div>
+        <div class="ab"><div class="an">동해 전 해역 — 안전</div><div class="ad">CRI 0.18–0.29 · 전 지표 정상 범위 · 72h 예측 이상 없음</div><div class="at">2026-04-27 14:00 갱신</div></div>
+      </div>
+    </div>
+
+    <div class="mbar">
+      <span class="ms" style="color:var(--txt3)">모델</span>
+      <span class="ms" style="color:#6EE7B7">XGBoost v2.1 ●</span>
+      <span class="ms" style="color:var(--txt3)">정탐률 83.2%</span>
+      <div style="width:1px;height:12px;background:var(--line)"></div>
+      <span class="ms" style="color:#6EE7B7">GOCI-II ●</span>
+      <span class="ms" style="color:#6EE7B7">ROMS ●</span>
+      <span class="ms" style="color:#FDE68A">KMA ◐</span>
+      <div style="flex:1"></div>
+      <span class="ms" style="color:var(--txt3);font-family:var(--mono)">갱신 3h</span>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="panel-right">
+    <div class="ph"><div class="pt">해역별 CRI</div></div>
+    <div style="flex:1;border-bottom:1px solid var(--line)">
+      <div class="rr"><div class="rn">서해 목포</div><div class="cp ch">0.71</div><span class="ta up">↑</span></div>
+      <div class="rr"><div class="rn">남해 여수</div><div class="cp cw">0.52</div><span class="ta up">↑</span></div>
+      <div class="rr"><div class="rn">서해 군산</div><div class="cp cw">0.48</div><span class="ta" style="color:var(--txt3)">→</span></div>
+      <div class="rr"><div class="rn">남해 통영</div><div class="cp cm">0.33</div><span class="ta dn" style="color:#10B981">↓</span></div>
+      <div class="rr"><div class="rn">동해 강릉</div><div class="cp cl">0.21</div><span class="ta" style="color:var(--txt3)">→</span></div>
+      <div class="rr"><div class="rn">동해 포항</div><div class="cp cl">0.18</div><span class="ta dn" style="color:#10B981">↓</span></div>
+    </div>
+    <div class="ts-sec">
+      <div class="tst">서해 목포 — CRI 72h 추이</div>
+      <svg width="196" height="64" viewBox="0 0 196 64" xmlns="http://www.w3.org/2000/svg">
+        <line x1="0" y1="12" x2="196" y2="12" stroke="#ffffff08" stroke-width="0.5"/>
+        <line x1="0" y1="32" x2="196" y2="32" stroke="#ffffff08" stroke-width="0.5"/>
+        <line x1="0" y1="52" x2="196" y2="52" stroke="#ffffff08" stroke-width="0.5"/>
+        <text x="0" y="11" fill="#374151" font-size="7.5">0.8</text>
+        <text x="0" y="31" fill="#374151" font-size="7.5">0.5</text>
+        <text x="0" y="51" fill="#374151" font-size="7.5">0.2</text>
+        <polyline points="18,52 38,50 58,47 78,43 98,38 118,32 138,26 158,19 178,14 196,10"
+          fill="none" stroke="#EF4444" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="196" cy="10" r="3.5" fill="#EF4444"/>
+        <line x1="18" y1="22" x2="196" y2="22" stroke="#F59E0B" stroke-width="0.8" stroke-dasharray="3 2"/>
+        <text x="136" y="20" fill="#FDE68A" font-size="7">경계 0.65</text>
+      </svg>
+    </div>
+    <div class="leg">
+      <div class="legt">CRI 등급 기준</div>
+      <div class="li"><div class="ld" style="background:#EF4444"></div>경계 0.65–1.0</div>
+      <div class="li"><div class="ld" style="background:#F59E0B"></div>주의 0.40–0.64</div>
+      <div class="li"><div class="ld" style="background:#10B981"></div>보통 0.20–0.39</div>
+      <div class="li"><div class="ld" style="background:#1D4ED8"></div>안전 0.0–0.19</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+function tick(){const n=new Date(),el=document.getElementById('clk');if(el)el.textContent=n.toISOString().slice(0,10)+' '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+' KST';}
+tick();setInterval(tick,30000);
+</script>

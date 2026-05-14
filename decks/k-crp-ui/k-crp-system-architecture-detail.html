@@ -1,0 +1,570 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0B1220;--bg2:#111827;--line:#ffffff14;
+  --txt:#E8EDF5;--txt2:#94A3B8;--txt3:#64748B;
+  --accent:#38BDF8;--mono:Consolas,monospace;
+}
+body{background:#12182a;display:flex;align-items:center;justify-content:center;min-height:100vh}
+.shell{width:1280px;height:720px;display:flex;flex-direction:column;background:var(--bg);font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;color:var(--txt);overflow:hidden}
+
+.topbar{height:42px;background:var(--bg2);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 18px;gap:12px;flex-shrink:0}
+.logo-badge{background:linear-gradient(135deg,#0EA5E9,#3B82F6);border-radius:5px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+.logo-text{font-size:13px;font-weight:700}
+.logo-sub{font-size:9px;color:var(--txt3);letter-spacing:.6px}
+.nav-tabs{display:flex;gap:2px;margin-left:16px}
+.tab{height:28px;padding:0 12px;border-radius:5px;font-size:10px;color:var(--txt3);display:flex;align-items:center;border:1px solid transparent}
+.tab.active{background:#0EA5E920;border-color:#0EA5E940;color:var(--accent);font-weight:600}
+
+.body{flex:1;display:flex;min-height:0}
+
+/* LEFT LEGEND */
+.legend-col{width:148px;flex-shrink:0;border-right:1px solid var(--line);background:var(--bg2);display:flex;flex-direction:column;padding:14px 12px;gap:14px}
+.leg-title{font-size:8px;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.leg-item{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.leg-box{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.leg-label{font-size:8.5px;color:var(--txt2)}
+.leg-divider{height:1px;background:var(--line)}
+
+.conn-item{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.conn-line{width:20px;height:2px;flex-shrink:0;border-radius:1px}
+.conn-label{font-size:8px;color:var(--txt2)}
+
+/* MAIN ARCH AREA */
+.arch{flex:1;position:relative;overflow:hidden;background:var(--bg)}
+
+/* LAYER BANDS */
+.layer{position:absolute;left:0;right:0;border-bottom:1px solid var(--line)}
+.layer-label{position:absolute;left:8px;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;opacity:.5}
+
+/* COMPONENT BOXES */
+.comp{position:absolute;border-radius:7px;border:1px solid;padding:7px 9px;display:flex;flex-direction:column;gap:3px}
+.comp-head{display:flex;align-items:center;gap:5px}
+.comp-icon{font-size:11px;flex-shrink:0}
+.comp-name{font-size:9px;font-weight:700;color:var(--txt);line-height:1.2}
+.comp-sub{font-size:7.5px;color:var(--txt3);line-height:1.4}
+.comp-tag{font-size:7px;padding:1px 5px;border-radius:4px;background:#ffffff08;color:var(--txt3);border:1px solid var(--line);font-family:var(--mono);display:inline-block;margin-top:2px}
+.status-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-left:auto}
+
+/* BOTTOM STATUS */
+.statusbar{height:30px;background:var(--bg2);border-top:1px solid var(--line);display:flex;align-items:center;padding:0 18px;gap:20px;flex-shrink:0}
+.sb{font-size:8px;color:var(--txt3);display:flex;align-items:center;gap:5px}
+.sd{width:5px;height:5px;border-radius:50%}
+</style>
+
+<div class="shell">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo-badge">K</div>
+  <div><div class="logo-text">K-CRP</div><div class="logo-sub">COASTAL RISK PLATFORM</div></div>
+  <div style="width:1px;height:22px;background:var(--line)"></div>
+  <div class="nav-tabs">
+    <div class="tab">대시보드</div>
+    <div class="tab">XAI 분석</div>
+    <div class="tab">모바일 경보</div>
+    <div class="tab">데이터 파이프라인</div>
+    <div class="tab active">시스템 아키텍처</div>
+  </div>
+  <div style="flex:1"></div>
+  <span style="font-size:9px;color:var(--txt3)">K-CRP 전체 기술 아키텍처 — 5개 레이어</span>
+  <div style="width:1px;height:18px;background:var(--line);margin:0 8px"></div>
+  <span style="font-size:9px;color:var(--txt3);font-family:var(--mono)" id="clk">2026-04-27 14:32 KST</span>
+</div>
+
+<div class="body">
+
+<!-- LEGEND -->
+<div class="legend-col">
+  <div>
+    <div class="leg-title">레이어</div>
+    <div class="leg-item"><div class="leg-box" style="background:#38BDF820;border:1px solid #38BDF840"></div><div class="leg-label">데이터 수집</div></div>
+    <div class="leg-item"><div class="leg-box" style="background:#8B5CF620;border:1px solid #8B5CF640"></div><div class="leg-label">처리 / 저장</div></div>
+    <div class="leg-item"><div class="leg-box" style="background:#F59E0B20;border:1px solid #F59E0B40"></div><div class="leg-label">AI / ML</div></div>
+    <div class="leg-item"><div class="leg-box" style="background:#10B98118;border:1px solid #10B98138"></div><div class="leg-label">API / 서비스</div></div>
+    <div class="leg-item"><div class="leg-box" style="background:#EF444418;border:1px solid #EF444438"></div><div class="leg-label">사용자 채널</div></div>
+  </div>
+  <div class="leg-divider"></div>
+  <div>
+    <div class="leg-title">연결 유형</div>
+    <div class="conn-item"><div class="conn-line" style="background:#38BDF860"></div><div class="conn-label">실시간 스트림</div></div>
+    <div class="conn-item"><div class="conn-line" style="background:#8B5CF660;border-top:1px dashed #8B5CF660;height:0"></div><div class="conn-label">배치 처리</div></div>
+    <div class="conn-item"><div class="conn-line" style="background:#F59E0B60"></div><div class="conn-label">API 호출</div></div>
+    <div class="conn-item"><div class="conn-line" style="background:#EF444460"></div><div class="conn-label">경보 발송</div></div>
+  </div>
+  <div class="leg-divider"></div>
+  <div>
+    <div class="leg-title">운영 상태</div>
+    <div class="leg-item"><div class="leg-box" style="background:#10B98130;border:1px solid #10B98150"></div><div class="leg-label">운용 중</div></div>
+    <div class="leg-item"><div class="leg-box" style="background:#8B5CF630;border:1px solid #8B5CF650"></div><div class="leg-label">개발 중</div></div>
+    <div class="leg-item"><div class="leg-box" style="background:#F59E0B28;border:1px solid #F59E0B48"></div><div class="leg-label">계획 중</div></div>
+  </div>
+  <div class="leg-divider"></div>
+  <div style="background:#0EA5E90a;border:1px solid #0EA5E920;border-radius:5px;padding:8px">
+    <div class="leg-title" style="margin-bottom:4px">주관/공동 기관</div>
+    <div style="font-size:8px;color:#7DD3FC;margin-bottom:2px">주관: 국립수산과학원</div>
+    <div style="font-size:7.5px;color:var(--txt3);line-height:1.6">공동: 한국연안협회<br>공동: ㈜엔지스<br>공동: ㈜해강기술</div>
+  </div>
+</div>
+
+<!-- ARCH SVG CANVAS -->
+<div class="arch">
+<svg width="1132" height="648" viewBox="0 0 1132 648" xmlns="http://www.w3.org/2000/svg">
+
+<!-- LAYER BANDS -->
+<!-- L1 Data Collection: y 0–120 -->
+<rect x="0" y="0" width="1132" height="118" fill="#38BDF808"/>
+<line x1="0" y1="118" x2="1132" y2="118" stroke="#ffffff12" stroke-width="0.8"/>
+<text x="8" y="14" fill="#38BDF840" font-size="8" font-family="Segoe UI,sans-serif" font-weight="700" letter-spacing="1">LAYER 1 — 데이터 수집 &amp; 외부 인터페이스</text>
+
+<!-- L2 Processing: y 118–248 -->
+<rect x="0" y="118" width="1132" height="124" fill="#8B5CF608"/>
+<line x1="0" y1="242" x2="1132" y2="242" stroke="#ffffff12" stroke-width="0.8"/>
+<text x="8" y="132" fill="#8B5CF640" font-size="8" font-family="Segoe UI,sans-serif" font-weight="700" letter-spacing="1">LAYER 2 — 전처리 / 융합 / 저장</text>
+
+<!-- L3 AI/ML: y 242–372 -->
+<rect x="0" y="242" width="1132" height="124" fill="#F59E0B06"/>
+<line x1="0" y1="366" x2="1132" y2="366" stroke="#ffffff12" stroke-width="0.8"/>
+<text x="8" y="256" fill="#F59E0B40" font-size="8" font-family="Segoe UI,sans-serif" font-weight="700" letter-spacing="1">LAYER 3 — AI / ML 모델링 &amp; XAI</text>
+
+<!-- L4 API/Service: y 366–480 -->
+<rect x="0" y="366" width="1132" height="114" fill="#10B98106"/>
+<line x1="0" y1="480" x2="1132" y2="480" stroke="#ffffff12" stroke-width="0.8"/>
+<text x="8" y="380" fill="#10B98140" font-size="8" font-family="Segoe UI,sans-serif" font-weight="700" letter-spacing="1">LAYER 4 — API 게이트웨이 &amp; 서비스</text>
+
+<!-- L5 User: y 480–648 -->
+<rect x="0" y="480" width="1132" height="168" fill="#EF444406"/>
+<text x="8" y="494" fill="#EF444440" font-size="8" font-family="Segoe UI,sans-serif" font-weight="700" letter-spacing="1">LAYER 5 — 사용자 채널 &amp; 확산</text>
+
+<!-- ============================================================ -->
+<!-- LAYER 1 COMPONENTS -->
+
+<!-- GOCI-II -->
+<rect x="18" y="24" width="108" height="80" rx="6" fill="#0B1525" stroke="#38BDF840" stroke-width="1"/>
+<text x="28" y="42" fill="#38BDF8" font-size="10">🛰</text>
+<text x="44" y="42" fill="#E8EDF5" font-size="9" font-weight="700">GOCI-II</text>
+<rect x="84" y="30" width="34" height="12" rx="4" fill="#10B98120" stroke="#10B98140" stroke-width="0.8"/>
+<text x="87" y="40" fill="#6EE7B7" font-size="7" font-weight="700">LIVE</text>
+<text x="28" y="57" fill="#64748B" font-size="7.5">Chl-a · SST · TSS</text>
+<text x="28" y="68" fill="#64748B" font-size="7.5">1h 갱신 · L2 산출</text>
+<rect x="28" y="76" width="40" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="30" y="85" fill="#64748B" font-size="7" font-family="Consolas,monospace">정지궤도</text>
+<circle cx="98" cy="90" r="4" fill="#10B981"/>
+
+<!-- Sentinel -->
+<rect x="140" y="24" width="108" height="80" rx="6" fill="#0B1525" stroke="#38BDF835" stroke-width="1"/>
+<text x="150" y="42" fill="#38BDF8" font-size="10">🛰</text>
+<text x="166" y="42" fill="#E8EDF5" font-size="9" font-weight="700">Sentinel-2/3</text>
+<text x="150" y="57" fill="#64748B" font-size="7.5">10m 해상도 · NDVI</text>
+<text x="150" y="68" fill="#64748B" font-size="7.5">탁도 · 구름 마스킹</text>
+<rect x="150" y="76" width="40" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="152" y="85" fill="#64748B" font-size="7" font-family="Consolas,monospace">ESA / Daily</text>
+<circle cx="220" cy="90" r="4" fill="#10B981"/>
+
+<!-- ROMS/HYCOM -->
+<rect x="262" y="24" width="118" height="80" rx="6" fill="#0B1525" stroke="#38BDF830" stroke-width="1"/>
+<text x="272" y="42" fill="#38BDF8" font-size="10">🌊</text>
+<text x="288" y="42" fill="#E8EDF5" font-size="9" font-weight="700">ROMS / HYCOM</text>
+<text x="272" y="57" fill="#64748B" font-size="7.5">수온·염분·유속·DO</text>
+<text x="272" y="68" fill="#64748B" font-size="7.5">3D 수치모델 · 3h</text>
+<rect x="272" y="76" width="52" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="274" y="85" fill="#64748B" font-size="7" font-family="Consolas,monospace">국수과 도메인</text>
+<circle cx="352" cy="90" r="4" fill="#10B981"/>
+
+<!-- KMA -->
+<rect x="394" y="24" width="102" height="80" rx="6" fill="#0B1525" stroke="#38BDF828" stroke-width="1"/>
+<text x="404" y="42" fill="#38BDF8" font-size="10">☁</text>
+<text x="420" y="42" fill="#E8EDF5" font-size="9" font-weight="700">KMA 기상예보</text>
+<text x="404" y="57" fill="#64748B" font-size="7.5">풍속·기온·강수</text>
+<text x="404" y="68" fill="#64748B" font-size="7.5">파고 · 3h 격자</text>
+<rect x="404" y="76" width="44" height="11" rx="3" fill="#F59E0B18" stroke="#F59E0B35" stroke-width="0.5"/>
+<text x="406" y="85" fill="#FDE68A" font-size="7" font-family="Consolas,monospace">지연 +12min</text>
+<circle cx="468" cy="90" r="4" fill="#F59E0B"/>
+
+<!-- KHOA 부이 -->
+<rect x="510" y="24" width="110" height="80" rx="6" fill="#0B1525" stroke="#38BDF824" stroke-width="1"/>
+<text x="520" y="42" fill="#38BDF8" font-size="10">📡</text>
+<text x="536" y="42" fill="#E8EDF5" font-size="9" font-weight="700">KHOA 해양관측</text>
+<text x="520" y="57" fill="#64748B" font-size="7.5">부이·조위·조류</text>
+<text x="520" y="68" fill="#64748B" font-size="7.5">실시간 42개소</text>
+<rect x="520" y="76" width="36" height="11" rx="3" fill="#10B98118" stroke="#10B98135" stroke-width="0.5"/>
+<text x="522" y="85" fill="#6EE7B7" font-size="7" font-family="Consolas,monospace">LIVE</text>
+<circle cx="592" cy="90" r="4" fill="#10B981"/>
+
+<!-- Kafka / 스트림 -->
+<rect x="648" y="18" width="180" height="92" rx="6" fill="#0B1525" stroke="#38BDF830" stroke-width="1"/>
+<text x="658" y="36" fill="#38BDF8" font-size="10">⚡</text>
+<text x="674" y="36" fill="#E8EDF5" font-size="9" font-weight="700">Kafka 스트림 브로커</text>
+<text x="658" y="52" fill="#64748B" font-size="7.5">실시간 데이터 수집·분배</text>
+<text x="658" y="63" fill="#64748B" font-size="7.5">토픽: satellite / model / obs</text>
+<text x="658" y="74" fill="#64748B" font-size="7.5">파티션 3 · 복제 2</text>
+<rect x="658" y="82" width="36" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="660" y="91" fill="#64748B" font-size="7" font-family="Consolas,monospace">Kafka</text>
+<rect x="700" y="82" width="36" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="702" y="91" fill="#64748B" font-size="7" font-family="Consolas,monospace">Airflow</text>
+<circle cx="818" cy="30" r="4" fill="#10B981"/>
+
+<!-- 외부 연계 -->
+<rect x="850" y="24" width="130" height="80" rx="6" fill="#0B1525" stroke="#38BDF820" stroke-width="1"/>
+<text x="860" y="42" fill="#38BDF8" font-size="10">🏛</text>
+<text x="876" y="42" fill="#E8EDF5" font-size="9" font-weight="700">외부 기관 연계</text>
+<text x="860" y="57" fill="#64748B" font-size="7.5">해수부 · 환경부 · 지자체</text>
+<text x="860" y="68" fill="#64748B" font-size="7.5">국가해양데이터센터</text>
+<rect x="860" y="76" width="52" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="862" y="85" fill="#64748B" font-size="7" font-family="Consolas,monospace">GeoJSON / WMS</text>
+
+<!-- ============================================================ -->
+<!-- LAYER 2 COMPONENTS -->
+
+<!-- 데이터 레이크 -->
+<rect x="18" y="134" width="128" height="92" rx="6" fill="#0B1525" stroke="#8B5CF640" stroke-width="1"/>
+<text x="28" y="153" fill="#C4B5FD" font-size="10">🗄</text>
+<text x="44" y="153" fill="#E8EDF5" font-size="9" font-weight="700">데이터 레이크</text>
+<text x="28" y="168" fill="#64748B" font-size="7.5">NetCDF · GeoTIFF · JSON</text>
+<text x="28" y="179" fill="#64748B" font-size="7.5">시공간 인덱싱</text>
+<rect x="28" y="187" width="38" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="30" y="196" fill="#64748B" font-size="7" font-family="Consolas,monospace">PostGIS</text>
+<rect x="70" y="187" width="28" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="72" y="196" fill="#64748B" font-size="7" font-family="Consolas,monospace">MinIO</text>
+<circle cx="136" cy="148" r="4" fill="#10B981"/>
+
+<!-- QC 엔진 -->
+<rect x="162" y="134" width="128" height="92" rx="6" fill="#0B1525" stroke="#8B5CF635" stroke-width="1"/>
+<text x="172" y="153" fill="#C4B5FD" font-size="10">⚙</text>
+<text x="188" y="153" fill="#E8EDF5" font-size="9" font-weight="700">QC 품질 관리</text>
+<text x="172" y="168" fill="#64748B" font-size="7.5">QARTOD 기준 적용</text>
+<text x="172" y="179" fill="#64748B" font-size="7.5">이상값·결측 자동 처리</text>
+<rect x="172" y="187" width="68" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="174" y="196" fill="#64748B" font-size="7" font-family="Consolas,monospace">24,180건/일</text>
+<circle cx="280" cy="148" r="4" fill="#10B981"/>
+
+<!-- 격자 융합 -->
+<rect x="306" y="134" width="128" height="92" rx="6" fill="#0B1525" stroke="#8B5CF630" stroke-width="1"/>
+<text x="316" y="153" fill="#C4B5FD" font-size="10">🔗</text>
+<text x="332" y="153" fill="#E8EDF5" font-size="9" font-weight="700">공간 격자 융합</text>
+<text x="316" y="168" fill="#64748B" font-size="7.5">0.05° 리샘플링</text>
+<text x="316" y="179" fill="#64748B" font-size="7.5">Bilinear 보간 · xarray</text>
+<rect x="316" y="187" width="40" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="318" y="196" fill="#64748B" font-size="7" font-family="Consolas,monospace">xarray</text>
+<rect x="360" y="187" width="36" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="362" y="196" fill="#64748B" font-size="7" font-family="Consolas,monospace">GDAL</text>
+<circle cx="424" cy="148" r="4" fill="#10B981"/>
+
+<!-- 피처 스토어 -->
+<rect x="450" y="134" width="128" height="92" rx="6" fill="#0B1525" stroke="#8B5CF628" stroke-width="1"/>
+<text x="460" y="153" fill="#C4B5FD" font-size="10">💾</text>
+<text x="476" y="153" fill="#E8EDF5" font-size="9" font-weight="700">피처 스토어</text>
+<text x="460" y="168" fill="#64748B" font-size="7.5">42개 피처 · TTL 3h</text>
+<text x="460" y="179" fill="#64748B" font-size="7.5">실시간 캐싱</text>
+<rect x="460" y="187" width="32" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="462" y="196" fill="#64748B" font-size="7" font-family="Consolas,monospace">Redis</text>
+<circle cx="568" cy="148" r="4" fill="#10B981"/>
+
+<!-- 이력 DB -->
+<rect x="600" y="134" width="148" height="92" rx="6" fill="#0B1525" stroke="#8B5CF622" stroke-width="1"/>
+<text x="610" y="153" fill="#C4B5FD" font-size="10">📚</text>
+<text x="626" y="153" fill="#E8EDF5" font-size="9" font-weight="700">시계열 이력 DB</text>
+<text x="610" y="168" fill="#64748B" font-size="7.5">CRI · SHAP · 환경변수</text>
+<text x="610" y="179" fill="#64748B" font-size="7.5">2018–현재 · 파티셔닝</text>
+<rect x="610" y="187" width="62" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="612" y="196" fill="#64748B" font-size="7" font-family="Consolas,monospace">TimescaleDB</text>
+<circle cx="738" cy="148" r="4" fill="#10B981"/>
+
+<!-- 모델 레지스트리 -->
+<rect x="766" y="134" width="148" height="92" rx="6" fill="#0B1525" stroke="#8B5CF820" stroke-width="1"/>
+<text x="776" y="153" fill="#C4B5FD" font-size="10">📦</text>
+<text x="792" y="153" fill="#E8EDF5" font-size="9" font-weight="700">모델 레지스트리</text>
+<text x="776" y="168" fill="#64748B" font-size="7.5">버전 관리 · A/B 테스트</text>
+<text x="776" y="179" fill="#64748B" font-size="7.5">자동 롤백 지원</text>
+<rect x="776" y="187" width="46" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="778" y="196" fill="#64748B" font-size="7" font-family="Consolas,monospace">MLflow</text>
+<circle cx="904" cy="148" r="4" fill="#10B981"/>
+
+<!-- ============================================================ -->
+<!-- LAYER 3 COMPONENTS -->
+
+<!-- 가중합 (1단계) -->
+<rect x="18" y="258" width="118" height="92" rx="6" fill="#0B1525" stroke="#F59E0B40" stroke-width="1"/>
+<text x="28" y="277" fill="#FDE68A" font-size="10">⚖</text>
+<text x="44" y="277" fill="#E8EDF5" font-size="9" font-weight="700">가중합 모델</text>
+<rect x="84" y="264" width="44" height="12" rx="4" fill="#10B98120" stroke="#10B98140" stroke-width="0.8"/>
+<text x="87" y="274" fill="#6EE7B7" font-size="7" font-weight="700">1단계</text>
+<text x="28" y="292" fill="#64748B" font-size="7.5">전문가 규칙 기반</text>
+<text x="28" y="303" fill="#64748B" font-size="7.5">해석가능 · 빠른 추론</text>
+<rect x="28" y="311" width="56" height="11" rx="3" fill="#10B98118" stroke="#10B98135" stroke-width="0.5"/>
+<text x="30" y="320" fill="#6EE7B7" font-size="7" font-family="Consolas,monospace">운용 중</text>
+<circle cx="126" cy="272" r="4" fill="#10B981"/>
+
+<!-- XGBoost -->
+<rect x="152" y="258" width="128" height="92" rx="6" fill="#0B1525" stroke="#F59E0B38" stroke-width="1.5"/>
+<text x="162" y="277" fill="#FDE68A" font-size="10">🌲</text>
+<text x="178" y="277" fill="#E8EDF5" font-size="9" font-weight="700">XGBoost + SHAP</text>
+<rect x="242" y="264" width="30" height="12" rx="4" fill="#F59E0B20" stroke="#F59E0B40" stroke-width="0.8"/>
+<text x="244" y="274" fill="#FDE68A" font-size="7" font-weight="700">2단계</text>
+<text x="162" y="292" fill="#64748B" font-size="7.5">RMSE 0.042 · 정탐 83.2%</text>
+<text x="162" y="303" fill="#64748B" font-size="7.5">SHAP 설명가능성</text>
+<rect x="162" y="311" width="56" height="11" rx="3" fill="#F59E0B18" stroke="#F59E0B38" stroke-width="0.5"/>
+<text x="164" y="320" fill="#FDE68A" font-size="7" font-family="Consolas,monospace">현재 운용</text>
+<circle cx="270" cy="272" r="4" fill="#F59E0B"/>
+
+<!-- LSTM/Transformer -->
+<rect x="296" y="258" width="138" height="92" rx="6" fill="#0B1525" stroke="#8B5CF638" stroke-width="1"/>
+<text x="306" y="277" fill="#C4B5FD" font-size="10">🔮</text>
+<text x="322" y="277" fill="#E8EDF5" font-size="9" font-weight="700">LSTM / Transformer</text>
+<rect x="396" y="264" width="30" height="12" rx="4" fill="#8B5CF620" stroke="#8B5CF640" stroke-width="0.8"/>
+<text x="398" y="274" fill="#C4B5FD" font-size="7" font-weight="700">3단계</text>
+<text x="306" y="292" fill="#64748B" font-size="7.5">72h 시계열 예측</text>
+<text x="306" y="303" fill="#64748B" font-size="7.5">목표 RMSE ≤ 0.030</text>
+<rect x="306" y="311" width="56" height="11" rx="3" fill="#8B5CF618" stroke="#8B5CF638" stroke-width="0.5"/>
+<text x="308" y="320" fill="#C4B5FD" font-size="7" font-family="Consolas,monospace">개발 중</text>
+<circle cx="424" cy="272" r="4" fill="#8B5CF6"/>
+
+<!-- MLOps -->
+<rect x="450" y="258" width="128" height="92" rx="6" fill="#0B1525" stroke="#F59E0B28" stroke-width="1"/>
+<text x="460" y="277" fill="#FDE68A" font-size="10">📐</text>
+<text x="476" y="277" fill="#E8EDF5" font-size="9" font-weight="700">MLOps 파이프라인</text>
+<text x="460" y="292" fill="#64748B" font-size="7.5">드리프트 감지 · 자동 재학습</text>
+<text x="460" y="303" fill="#64748B" font-size="7.5">K-fold CV · 모델 배포</text>
+<rect x="460" y="311" width="40" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="462" y="320" fill="#64748B" font-size="7" font-family="Consolas,monospace">Airflow</text>
+<circle cx="568" cy="272" r="4" fill="#10B981"/>
+
+<!-- 임계값 판정 + 경보 엔진 -->
+<rect x="596" y="258" width="148" height="92" rx="6" fill="#0B1525" stroke="#EF444435" stroke-width="1"/>
+<text x="606" y="277" fill="#FCA5A5" font-size="10">⚡</text>
+<text x="622" y="277" fill="#E8EDF5" font-size="9" font-weight="700">경보 판정 엔진</text>
+<text x="606" y="292" fill="#64748B" font-size="7.5">CRI 4등급 임계값 판정</text>
+<text x="606" y="303" fill="#64748B" font-size="7.5">중복 방지 · 상태머신</text>
+<rect x="606" y="311" width="68" height="11" rx="3" fill="#EF444418" stroke="#EF444438" stroke-width="0.5"/>
+<text x="608" y="320" fill="#FCA5A5" font-size="7" font-family="Consolas,monospace">활성 경보 2건</text>
+<circle cx="734" cy="272" r="4" fill="#EF4444"/>
+
+<!-- SHAP 해석 -->
+<rect x="762" y="258" width="148" height="92" rx="6" fill="#0B1525" stroke="#38BDF830" stroke-width="1"/>
+<text x="772" y="277" fill="#7DD3FC" font-size="10">🔍</text>
+<text x="788" y="277" fill="#E8EDF5" font-size="9" font-weight="700">XAI / SHAP 해석</text>
+<text x="772" y="292" fill="#64748B" font-size="7.5">변수 기여도 산출</text>
+<text x="772" y="303" fill="#64748B" font-size="7.5">자동 진단문 생성</text>
+<rect x="772" y="311" width="36" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="774" y="320" fill="#64748B" font-size="7" font-family="Consolas,monospace">SHAP</text>
+<circle cx="900" cy="272" r="4" fill="#10B981"/>
+
+<!-- ============================================================ -->
+<!-- LAYER 4 COMPONENTS -->
+
+<!-- API Gateway -->
+<rect x="18" y="382" width="148" height="82" rx="6" fill="#0B1525" stroke="#10B98140" stroke-width="1"/>
+<text x="28" y="400" fill="#6EE7B7" font-size="10">🔌</text>
+<text x="44" y="400" fill="#E8EDF5" font-size="9" font-weight="700">API Gateway</text>
+<text x="28" y="415" fill="#64748B" font-size="7.5">FastAPI · OAuth2 · Rate Limit</text>
+<text x="28" y="426" fill="#64748B" font-size="7.5">/risk-index · /alert · /shap</text>
+<rect x="28" y="434" width="68" height="11" rx="3" fill="#10B98118" stroke="#10B98135" stroke-width="0.5"/>
+<text x="30" y="443" fill="#6EE7B7" font-size="7" font-family="Consolas,monospace">68ms avg · 99.5%</text>
+
+<!-- 타일 서버 -->
+<rect x="182" y="382" width="138" height="82" rx="6" fill="#0B1525" stroke="#10B98135" stroke-width="1"/>
+<text x="192" y="400" fill="#6EE7B7" font-size="10">🗺</text>
+<text x="208" y="400" fill="#E8EDF5" font-size="9" font-weight="700">GIS 타일 서버</text>
+<text x="192" y="415" fill="#64748B" font-size="7.5">MVT · MapLibre 지원</text>
+<text x="192" y="426" fill="#64748B" font-size="7.5">줌 레벨 캐싱 · 42ms</text>
+<rect x="192" y="434" width="36" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="194" y="443" fill="#64748B" font-size="7" font-family="Consolas,monospace">Martin</text>
+
+<!-- 경보 발송 -->
+<rect x="336" y="382" width="138" height="82" rx="6" fill="#0B1525" stroke="#EF444435" stroke-width="1"/>
+<text x="346" y="400" fill="#FCA5A5" font-size="10">🚨</text>
+<text x="362" y="400" fill="#E8EDF5" font-size="9" font-weight="700">경보 발송 서버</text>
+<text x="346" y="415" fill="#64748B" font-size="7.5">FCM · SMS · 카카오</text>
+<text x="346" y="426" fill="#64748B" font-size="7.5">지연 &lt; 90sec · 다채널</text>
+<rect x="346" y="434" width="36" height="11" rx="3" fill="#EF444418" stroke="#EF444438" stroke-width="0.5"/>
+<text x="348" y="443" fill="#FCA5A5" font-size="7" font-family="Consolas,monospace">LIVE</text>
+
+<!-- 인증 / 보안 -->
+<rect x="490" y="382" width="128" height="82" rx="6" fill="#0B1525" stroke="#10B98128" stroke-width="1"/>
+<text x="500" y="400" fill="#6EE7B7" font-size="10">🔐</text>
+<text x="516" y="400" fill="#E8EDF5" font-size="9" font-weight="700">인증 / 보안</text>
+<text x="500" y="415" fill="#64748B" font-size="7.5">OAuth2 · JWT · WAF</text>
+<text x="500" y="426" fill="#64748B" font-size="7.5">HTTPS · VPN 연계망</text>
+<rect x="500" y="434" width="46" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="502" y="443" fill="#64748B" font-size="7" font-family="Consolas,monospace">Keycloak</text>
+
+<!-- 모니터링 -->
+<rect x="634" y="382" width="138" height="82" rx="6" fill="#0B1525" stroke="#10B98120" stroke-width="1"/>
+<text x="644" y="400" fill="#6EE7B7" font-size="10">📊</text>
+<text x="660" y="400" fill="#E8EDF5" font-size="9" font-weight="700">시스템 모니터링</text>
+<text x="644" y="415" fill="#64748B" font-size="7.5">파이프라인 상태·지연</text>
+<text x="644" y="426" fill="#64748B" font-size="7.5">모델 드리프트 감지</text>
+<rect x="644" y="434" width="44" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="646" y="443" fill="#64748B" font-size="7" font-family="Consolas,monospace">Grafana</text>
+
+<!-- ============================================================ -->
+<!-- LAYER 5 COMPONENTS -->
+
+<!-- 웹 GIS 대시보드 -->
+<rect x="18" y="496" width="158" height="116" rx="6" fill="#0B1525" stroke="#EF444438" stroke-width="1"/>
+<text x="28" y="515" fill="#FCA5A5" font-size="10">🖥</text>
+<text x="44" y="515" fill="#E8EDF5" font-size="9" font-weight="700">웹 GIS 대시보드</text>
+<text x="28" y="530" fill="#64748B" font-size="7.5">정책 담당자 · 연구자</text>
+<text x="28" y="541" fill="#64748B" font-size="7.5">CRI 지도 · SHAP 분석</text>
+<text x="28" y="552" fill="#64748B" font-size="7.5">시계열 · 경보 관리</text>
+<rect x="28" y="560" width="36" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="30" y="569" fill="#64748B" font-size="7" font-family="Consolas,monospace">React</text>
+<rect x="68" y="560" width="46" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="70" y="569" fill="#64748B" font-size="7" font-family="Consolas,monospace">MapLibre</text>
+<rect x="28" y="575" width="130" height="26" rx="4" fill="#EF444410" stroke="#EF444430" stroke-width="0.5"/>
+<text x="54" y="587" fill="#FCA5A5" font-size="7.5" font-weight="600">정책 의사결정 지원</text>
+<text x="44" y="597" fill="#EF444460" font-size="7">지자체 · 해수부 · 환경부</text>
+
+<!-- 모바일 경보 앱 -->
+<rect x="192" y="496" width="158" height="116" rx="6" fill="#0B1525" stroke="#EF444430" stroke-width="1"/>
+<text x="202" y="515" fill="#FCA5A5" font-size="10">📱</text>
+<text x="218" y="515" fill="#E8EDF5" font-size="9" font-weight="700">모바일 경보 앱</text>
+<text x="202" y="530" fill="#64748B" font-size="7.5">어업인 · 양식업자</text>
+<text x="202" y="541" fill="#64748B" font-size="7.5">위치기반 경보 · GPS</text>
+<text x="202" y="552" fill="#64748B" font-size="7.5">대응 가이드 자동 제공</text>
+<rect x="202" y="560" width="30" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="204" y="569" fill="#64748B" font-size="7" font-family="Consolas,monospace">FCM</text>
+<rect x="236" y="560" width="30" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="238" y="569" fill="#64748B" font-size="7" font-family="Consolas,monospace">SMS</text>
+<rect x="270" y="560" width="36" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="272" y="569" fill="#64748B" font-size="7" font-family="Consolas,monospace">카카오</text>
+<rect x="202" y="575" width="130" height="26" rx="4" fill="#EF444410" stroke="#EF444430" stroke-width="0.5"/>
+<text x="222" y="587" fill="#FCA5A5" font-size="7.5" font-weight="600">현장 피해 사전 예방</text>
+<text x="222" y="597" fill="#EF444460" font-size="7">어업인 · 양식장 관리자</text>
+
+<!-- REST API -->
+<rect x="366" y="496" width="158" height="116" rx="6" fill="#0B1525" stroke="#EF444428" stroke-width="1"/>
+<text x="376" y="515" fill="#FCA5A5" font-size="10">🔌</text>
+<text x="392" y="515" fill="#E8EDF5" font-size="9" font-weight="700">공개 REST API</text>
+<text x="376" y="530" fill="#64748B" font-size="7.5">민간 · 연구기관</text>
+<text x="376" y="541" fill="#64748B" font-size="7.5">/risk-index · /forecast</text>
+<text x="376" y="552" fill="#64748B" font-size="7.5">/shap · /alert-status</text>
+<rect x="376" y="560" width="52" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="378" y="569" fill="#64748B" font-size="7" font-family="Consolas,monospace">OpenAPI 3.0</text>
+<rect x="376" y="575" width="130" height="26" rx="4" fill="#EF444410" stroke="#EF444428" stroke-width="0.5"/>
+<text x="396" y="587" fill="#FCA5A5" font-size="7.5" font-weight="600">데이터 생태계 확산</text>
+<text x="390" y="597" fill="#EF444460" font-size="7">민간서비스 · 학술연구</text>
+
+<!-- 재난망 연계 -->
+<rect x="540" y="496" width="158" height="116" rx="6" fill="#0B1525" stroke="#EF444420" stroke-width="1"/>
+<text x="550" y="515" fill="#FCA5A5" font-size="10">🏛</text>
+<text x="566" y="515" fill="#E8EDF5" font-size="9" font-weight="700">재난망 / 행정 연계</text>
+<text x="550" y="530" fill="#64748B" font-size="7.5">지자체 재난안전시스템</text>
+<text x="550" y="541" fill="#64748B" font-size="7.5">해수부 MOIS 연동</text>
+<text x="550" y="552" fill="#64748B" font-size="7.5">SLA 99.5%</text>
+<rect x="550" y="560" width="52" height="11" rx="3" fill="#ffffff08" stroke="#ffffff14" stroke-width="0.5"/>
+<text x="552" y="569" fill="#64748B" font-size="7" font-family="Consolas,monospace">GeoJSON</text>
+<rect x="550" y="575" width="130" height="26" rx="4" fill="#EF444410" stroke="#EF444420" stroke-width="0.5"/>
+<text x="570" y="587" fill="#FCA5A5" font-size="7.5" font-weight="600">행정 의사결정 연계</text>
+<text x="564" y="597" fill="#EF444460" font-size="7">경보 발령 · 예산 우선순위</text>
+
+<!-- AIS 단말 -->
+<rect x="714" y="496" width="148" height="116" rx="6" fill="#0B1525" stroke="#8B5CF830" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="724" y="515" fill="#C4B5FD" font-size="10">⛵</text>
+<text x="740" y="515" fill="#E8EDF5" font-size="9" font-weight="700">AIS 선박 단말</text>
+<text x="724" y="530" fill="#64748B" font-size="7.5">선박 자동식별장치</text>
+<text x="724" y="541" fill="#64748B" font-size="7.5">항해 중 실시간 경보</text>
+<rect x="724" y="560" width="56" height="11" rx="3" fill="#8B5CF618" stroke="#8B5CF635" stroke-width="0.5"/>
+<text x="726" y="569" fill="#C4B5FD" font-size="7" font-family="Consolas,monospace">BETA 개발 중</text>
+<rect x="724" y="575" width="120" height="26" rx="4" fill="#8B5CF610" stroke="#8B5CF828" stroke-width="0.5"/>
+<text x="740" y="587" fill="#C4B5FD" font-size="7.5" font-weight="600">3단계 확산 채널</text>
+<text x="742" y="597" fill="#8B5CF860" font-size="7">출어 선박 안전 지원</text>
+
+<!-- 인프라 박스 -->
+<rect x="880" y="382" width="238" height="230" rx="7" fill="#0B1525" stroke="#38BDF820" stroke-width="1"/>
+<text x="890" y="400" fill="#38BDF8" font-size="10">☁</text>
+<text x="906" y="400" fill="#E8EDF5" font-size="9" font-weight="700">클라우드 인프라</text>
+<text x="890" y="416" fill="#64748B" font-size="7.5" font-weight="600">컴퓨팅</text>
+<text x="890" y="428" fill="#64748B" font-size="7.5">GPU 서버 (ML 학습)</text>
+<text x="890" y="439" fill="#64748B" font-size="7.5">CPU 클러스터 (추론)</text>
+<line x1="890" y1="448" x2="1108" y2="448" stroke="#ffffff10" stroke-width="0.5"/>
+<text x="890" y="462" fill="#64748B" font-size="7.5" font-weight="600">스토리지</text>
+<text x="890" y="474" fill="#64748B" font-size="7.5">PostGIS + TimescaleDB</text>
+<text x="890" y="485" fill="#64748B" font-size="7.5">MinIO (오브젝트)</text>
+<text x="890" y="496" fill="#64748B" font-size="7.5">Redis (캐시)</text>
+<line x1="890" y1="505" x2="1108" y2="505" stroke="#ffffff10" stroke-width="0.5"/>
+<text x="890" y="519" fill="#64748B" font-size="7.5" font-weight="600">네트워킹</text>
+<text x="890" y="531" fill="#64748B" font-size="7.5">VPN · WAF · CDN</text>
+<text x="890" y="542" fill="#64748B" font-size="7.5">국가망 전용회선</text>
+<line x1="890" y1="551" x2="1108" y2="551" stroke="#ffffff10" stroke-width="0.5"/>
+<text x="890" y="565" fill="#64748B" font-size="7.5" font-weight="600">운영</text>
+<text x="890" y="577" fill="#64748B" font-size="7.5">Docker · Kubernetes</text>
+<text x="890" y="588" fill="#64748B" font-size="7.5">Grafana · Airflow</text>
+<text x="890" y="599" fill="#64748B" font-size="7.5">CI/CD (GitHub Actions)</text>
+
+<!-- ============================================================ -->
+<!-- CONNECTIONS — vertical flow arrows -->
+
+<!-- L1 → L2 (data flow) -->
+<line x1="82" y1="104" x2="82" y2="134" stroke="#38BDF840" stroke-width="1.2"/>
+<polygon points="78,131 82,140 86,131" fill="#38BDF850"/>
+<line x1="204" y1="104" x2="226" y2="134" stroke="#38BDF835" stroke-width="1"/>
+<polygon points="222,131 226,140 230,131" fill="#38BDF845"/>
+<line x1="321" y1="104" x2="370" y2="134" stroke="#38BDF830" stroke-width="1"/>
+<polygon points="366,131 370,140 374,131" fill="#38BDF840"/>
+<line x1="445" y1="104" x2="514" y2="134" stroke="#38BDF828" stroke-width="1"/>
+<polygon points="510,131 514,140 518,131" fill="#38BDF838"/>
+<line x1="565" y1="104" x2="674" y2="134" stroke="#38BDF825" stroke-width="1"/>
+<polygon points="670,131 674,140 678,131" fill="#38BDF835"/>
+<line x1="738" y1="104" x2="830" y2="134" stroke="#38BDF820" stroke-width="1"/>
+<polygon points="826,131 830,140 834,131" fill="#38BDF830"/>
+
+<!-- L2 → L3 -->
+<line x1="514" y1="226" x2="216" y2="258" stroke="#8B5CF640" stroke-width="1.2"/>
+<polygon points="212,255 216,264 220,255" fill="#8B5CF650"/>
+<line x1="514" y1="226" x2="370" y2="258" stroke="#8B5CF838" stroke-width="1.2"/>
+<polygon points="366,255 370,264 374,255" fill="#8B5CF848"/>
+<line x1="514" y1="226" x2="514" y2="258" stroke="#8B5CF835" stroke-width="1.2"/>
+<polygon points="510,255 514,264 518,255" fill="#8B5CF845"/>
+<line x1="830" y1="226" x2="826" y2="258" stroke="#8B5CF828" stroke-width="1"/>
+<polygon points="822,255 826,264 830,255" fill="#8B5CF838"/>
+
+<!-- L3 → L4 -->
+<line x1="216" y1="350" x2="92" y2="382" stroke="#F59E0B40" stroke-width="1.2"/>
+<polygon points="88,379 92,388 96,379" fill="#F59E0B50"/>
+<line x1="370" y1="350" x2="251" y2="382" stroke="#F59E0B38" stroke-width="1.2"/>
+<polygon points="247,379 251,388 255,379" fill="#F59E0B48"/>
+<line x1="660" y1="350" x2="405" y2="382" stroke="#EF444438" stroke-width="1.2"/>
+<polygon points="401,379 405,388 409,379" fill="#EF444448"/>
+<line x1="836" y1="350" x2="703" y2="382" stroke="#38BDF830" stroke-width="1.2"/>
+<polygon points="699,379 703,388 707,379" fill="#38BDF840"/>
+
+<!-- L4 → L5 -->
+<line x1="92" y1="464" x2="97" y2="496" stroke="#10B98140" stroke-width="1.2"/>
+<polygon points="93,493 97,502 101,493" fill="#10B98150"/>
+<line x1="251" y1="464" x2="271" y2="496" stroke="#10B98138" stroke-width="1.2"/>
+<polygon points="267,493 271,502 275,493" fill="#10B98148"/>
+<line x1="405" y1="464" x2="445" y2="496" stroke="#10B98130" stroke-width="1.2"/>
+<polygon points="441,493 445,502 449,493" fill="#10B98140"/>
+<line x1="405" y1="464" x2="619" y2="496" stroke="#10B98128" stroke-width="1"/>
+<polygon points="615,493 619,502 623,493" fill="#10B98138"/>
+
+</svg>
+</div>
+
+</div>
+
+<!-- STATUS BAR -->
+<div class="statusbar">
+  <div class="sb"><div class="sd" style="background:#10B981"></div>전체 시스템 정상</div>
+  <div style="width:1px;height:14px;background:var(--line)"></div>
+  <div class="sb"><div class="sd" style="background:#F59E0B"></div>KMA 지연 +12min</div>
+  <div style="width:1px;height:14px;background:var(--line)"></div>
+  <div class="sb">컴포넌트 <span style="color:var(--accent);font-family:var(--mono);margin:0 3px">24개</span></div>
+  <div class="sb">활성 경보 <span style="color:#FCA5A5;font-family:var(--mono);margin:0 3px">2건</span></div>
+  <div class="sb">API 응답 <span style="color:#6EE7B7;font-family:var(--mono);margin:0 3px">68ms</span></div>
+  <div class="sb">SLA <span style="color:#6EE7B7;font-family:var(--mono);margin:0 3px">99.5%</span></div>
+  <div style="flex:1"></div>
+  <div class="sb" style="font-family:var(--mono);font-size:8px">2026-04-27 14:32 KST</div>
+</div>
+
+</div>
+
+<script>
+function tick(){
+  const n=new Date(),el=document.getElementById('clk');
+  if(el) el.textContent=n.toISOString().slice(0,10)+' '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+' KST';
+}
+tick();setInterval(tick,30000);
+</script>

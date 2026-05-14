@@ -1,0 +1,214 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.phone{background:var(--color-background-secondary);border-radius:16px;padding:16px;max-width:380px;margin:0 auto}
+.screen{background:var(--color-background-primary);border-radius:12px;border:0.5px solid var(--color-border-tertiary);overflow:hidden}
+.status-bar{background:var(--color-background-secondary);padding:8px 16px;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--color-text-tertiary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.header{padding:14px 16px 10px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.farm-selector{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--color-text-secondary);margin-bottom:4px;cursor:pointer}
+.farm-name{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.update-time{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.cri-banner{margin:12px;border-radius:12px;padding:16px;border:0.5px solid}
+.cri-danger{background:#FAECE7;border-color:#F0997B}
+.cri-warn{background:#FAEEDA;border-color:#FAC775}
+.cri-safe{background:#EAF3DE;border-color:#C0DD97}
+.cri-top{display:flex;justify-content:space-between;align-items:flex-start}
+.cri-label{font-size:11px;font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+.cri-danger .cri-label{color:#993C1D}
+.cri-warn .cri-label{color:#854F0B}
+.cri-safe .cri-label{color:#3B6D11}
+.cri-score{font-size:40px;font-weight:500;line-height:1}
+.cri-danger .cri-score{color:#993C1D}
+.cri-warn .cri-score{color:#854F0B}
+.cri-safe .cri-score{color:#3B6D11}
+.cri-max{font-size:13px;color:var(--color-text-tertiary);margin-top:2px}
+.cri-status{font-size:15px;font-weight:500;margin-top:8px}
+.cri-danger .cri-status{color:#712B13}
+.cri-warn .cri-status{color:#633806}
+.cri-safe .cri-status{color:#27500A}
+.cri-reason{font-size:12px;margin-top:4px;line-height:1.5}
+.cri-danger .cri-reason{color:#993C1D}
+.cri-warn .cri-reason{color:#854F0B}
+.cri-safe .cri-reason{color:#3B6D11}
+.shap-bar-wrap{margin-top:10px}
+.shap-row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.shap-name{font-size:11px;width:52px;flex-shrink:0;color:var(--color-text-secondary)}
+.shap-track{flex:1;height:5px;background:var(--color-background-secondary);border-radius:3px;overflow:hidden}
+.shap-fill{height:100%;border-radius:3px}
+.shap-danger .shap-fill{background:#D85A30}
+.shap-warn .shap-fill{background:#BA7517}
+.shap-pct{font-size:10px;width:26px;text-align:right;color:var(--color-text-tertiary)}
+.action-section{padding:0 12px 12px}
+.section-title{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em}
+.action-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:10px;padding:12px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+.action-card:hover{background:var(--color-background-secondary)}
+.action-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
+.icon-danger{background:#FAECE7;color:#D85A30}
+.icon-warn{background:#FAEEDA;color:#BA7517}
+.icon-info{background:#E6F1FB;color:#185FA5}
+.action-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.action-desc{font-size:11px;color:var(--color-text-secondary);line-height:1.5}
+.action-time{font-size:11px;color:var(--color-text-tertiary);margin-top:3px}
+.forecast-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:0 12px 12px}
+.fc-cell{background:var(--color-background-secondary);border-radius:8px;padding:8px 4px;text-align:center}
+.fc-day{font-size:10px;color:var(--color-text-tertiary);margin-bottom:4px}
+.fc-dot{width:28px;height:28px;border-radius:50%;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500}
+.dot-danger{background:#FAECE7;color:#993C1D}
+.dot-warn{background:#FAEEDA;color:#854F0B}
+.dot-safe{background:#EAF3DE;color:#3B6D11}
+.fc-score{font-size:11px;font-weight:500}
+.score-danger{color:#993C1D}
+.score-warn{color:#854F0B}
+.score-safe{color:#3B6D11}
+.divider{height:0.5px;background:var(--color-border-tertiary);margin:0 12px 12px}
+.farm-tabs{display:flex;gap:6px;padding:10px 12px 0;overflow-x:auto}
+.ftab{font-size:12px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);cursor:pointer;white-space:nowrap;color:var(--color-text-secondary);background:transparent}
+.ftab.active{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary)}
+.nav-bar{display:flex;justify-content:space-around;padding:10px 0 8px;border-top:0.5px solid var(--color-border-tertiary)}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;cursor:pointer}
+.nav-active{color:var(--color-text-primary)}
+.nav-inactive{color:var(--color-text-tertiary)}
+.badge-new{display:inline-block;background:#E24B4A;color:#fff;font-size:9px;border-radius:8px;padding:1px 5px;margin-left:4px;vertical-align:middle}
+</style>
+
+<h2 class="sr-only">어업인·양식업자 대상 K-CRP L3 의사결정 지원 서비스 모바일 UI 목업</h2>
+
+<div class="phone">
+  <div class="screen">
+    <div class="status-bar">
+      <span>09:42</span>
+      <span>K-CRP</span>
+      <span><i class="ti ti-wifi" aria-hidden="true"></i> <i class="ti ti-battery-2" aria-hidden="true"></i></span>
+    </div>
+
+    <div class="header">
+      <div class="farm-selector">
+        <i class="ti ti-map-pin" style="font-size:14px" aria-hidden="true"></i>
+        <span>내 양식장</span>
+        <i class="ti ti-chevron-down" style="font-size:14px" aria-hidden="true"></i>
+      </div>
+      <div class="farm-name">거제 가두리 1호</div>
+      <div class="update-time">방금 업데이트 · 경남 거제시 장목면</div>
+    </div>
+
+    <div class="farm-tabs">
+      <div class="ftab active">1호 (거제)</div>
+      <div class="ftab">2호 (통영)</div>
+      <div class="ftab">+ 추가</div>
+    </div>
+
+    <div class="cri-banner cri-danger" style="margin-top:12px">
+      <div class="cri-top">
+        <div>
+          <div class="cri-label">복합위험도 (CRI)</div>
+          <div style="display:flex;align-items:baseline;gap:4px;margin-top:4px">
+            <div class="cri-score">78</div>
+            <div class="cri-max">/100</div>
+          </div>
+        </div>
+        <i class="ti ti-alert-triangle" style="font-size:28px;color:#D85A30" aria-hidden="true"></i>
+      </div>
+      <div class="cri-status">위험 — 즉각 조치 필요</div>
+      <div class="cri-reason">적조(55%) + 고수온(28%) 복합 발현 중</div>
+      <div class="shap-bar-wrap">
+        <div class="shap-row shap-danger"><span class="shap-name">적조 밀도</span><div class="shap-track"><div class="shap-fill" style="width:55%"></div></div><span class="shap-pct">55%</span></div>
+        <div class="shap-row shap-danger"><span class="shap-name">수온</span><div class="shap-track"><div class="shap-fill" style="width:28%"></div></div><span class="shap-pct">28%</span></div>
+        <div class="shap-row shap-warn"><span class="shap-name">DO</span><div class="shap-track"><div class="shap-fill" style="width:17%;background:#BA7517"></div></div><span class="shap-pct">17%</span></div>
+      </div>
+    </div>
+
+    <div class="action-section">
+      <div class="section-title">지금 해야 할 일</div>
+
+      <div class="action-card">
+        <div class="action-icon icon-danger"><i class="ti ti-fish" aria-hidden="true"></i></div>
+        <div>
+          <div class="action-title">사료 공급 즉시 중단</div>
+          <div class="action-desc">적조 밀도 기준 초과. 사료 잔재가 DO 추가 저하 유발</div>
+          <div class="action-time"><i class="ti ti-urgent" style="font-size:12px" aria-hidden="true"></i> 지금 바로</div>
+        </div>
+      </div>
+
+      <div class="action-card">
+        <div class="action-icon icon-danger"><i class="ti ti-wind" aria-hidden="true"></i></div>
+        <div>
+          <div class="action-title">산소공급기 전체 가동</div>
+          <div class="action-desc">DO 5.1 mg/L (임계 5.0 근접). 전 가두리 즉시 가동 권장</div>
+          <div class="action-time"><i class="ti ti-urgent" style="font-size:12px" aria-hidden="true"></i> 지금 바로</div>
+        </div>
+      </div>
+
+      <div class="action-card">
+        <div class="action-icon icon-warn"><i class="ti ti-arrows-move" aria-hidden="true"></i></div>
+        <div>
+          <div class="action-title">가두리 이동 검토</div>
+          <div class="action-desc">72시간 내 적조 북상 예보. 장목 → 거제 남부 이동 권장</div>
+          <div class="action-time"><i class="ti ti-clock" style="font-size:12px" aria-hidden="true"></i> 오늘 중</div>
+        </div>
+      </div>
+
+      <div class="action-card">
+        <div class="action-icon icon-info"><i class="ti ti-package-export" aria-hidden="true"></i></div>
+        <div>
+          <div class="action-title">조기 출하 고려</div>
+          <div class="action-desc">주말 CRI 85+ 예측. 출하 가능 규격이면 목요일 전 출하 유리</div>
+          <div class="action-time"><i class="ti ti-clock" style="font-size:12px" aria-hidden="true"></i> 3일 이내</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="padding:0 12px 8px">
+      <div class="section-title">72시간 예보</div>
+    </div>
+    <div class="forecast-row">
+      <div class="fc-cell">
+        <div class="fc-day">오늘</div>
+        <div class="fc-dot dot-danger">78</div>
+        <div class="fc-score score-danger">위험</div>
+      </div>
+      <div class="fc-cell">
+        <div class="fc-day">내일</div>
+        <div class="fc-dot dot-danger">85</div>
+        <div class="fc-score score-danger">위험</div>
+      </div>
+      <div class="fc-cell">
+        <div class="fc-day">모레</div>
+        <div class="fc-dot dot-warn">61</div>
+        <div class="fc-score score-warn">주의</div>
+      </div>
+      <div class="fc-cell">
+        <div class="fc-day">3일후</div>
+        <div class="fc-dot dot-safe">34</div>
+        <div class="fc-score score-safe">안전</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="nav-bar">
+      <div class="nav-item nav-active">
+        <i class="ti ti-home" style="font-size:20px" aria-hidden="true"></i>
+        <span>홈</span>
+      </div>
+      <div class="nav-item nav-inactive">
+        <i class="ti ti-map" style="font-size:20px" aria-hidden="true"></i>
+        <span>해역지도</span>
+      </div>
+      <div class="nav-item nav-inactive">
+        <i class="ti ti-bell" style="font-size:20px" aria-hidden="true"></i>
+        <span>알림<span class="badge-new">3</span></span>
+      </div>
+      <div class="nav-item nav-inactive">
+        <i class="ti ti-chart-line" style="font-size:20px" aria-hidden="true"></i>
+        <span>이력</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+  <button onclick="sendPrompt('해역지도 화면은 어떻게 설계하면 좋을까?')">해역지도 화면 설계 ↗</button>
+  <button onclick="sendPrompt('알림 시스템(푸시 경보 로직)은 어떻게 설계할까?')">알림 설계 ↗</button>
+  <button onclick="sendPrompt('이 UI에서 SHAP 기여도를 어업인에게 어떻게 쉽게 설명할 수 있을까?')">SHAP 설명 UX ↗</button>
+</div>
